@@ -145,8 +145,15 @@ public class MasterResumeService {
 
     // ---------------------------------------------------------------- writes
 
-    /** Runs the whole pipeline without saving: what would happen if this were saved now. */
-    @Transactional(readOnly = true)
+    /**
+     * Runs the whole pipeline without saving: what would happen if this were saved now.
+     *
+     * <p>Why {@code noRollbackFor}: callers ask this for a verdict, and "invalid" is a normal answer. Without
+     * it, a {@link MasterValidationException} leaving this method marks the caller's transaction (which this
+     * method joins) rollback-only, even when the caller catches it, and the caller's commit then fails with
+     * {@code UnexpectedRollbackException}. Safe because {@code prepare} writes nothing before it throws.
+     */
+    @Transactional(readOnly = true, noRollbackFor = MasterValidationException.class)
     public SaveResult validate(String rawJson) {
         return prepare(parse(rawJson), Set.of()).toResult();
     }
@@ -157,8 +164,11 @@ public class MasterResumeService {
         return persist(prepare(parse(rawJson), Set.of()), changeNote);
     }
 
-    /** {@link #validate(String)} for a document that is already parsed (e.g. the result of a JSON Patch). */
-    @Transactional(readOnly = true)
+    /**
+     * {@link #validate(String)} for a document that is already parsed (e.g. the result of a JSON Patch).
+     * Update previews call this inside their own transaction and catch the exception (see {@link #validate}).
+     */
+    @Transactional(readOnly = true, noRollbackFor = MasterValidationException.class)
     public SaveResult validateDocument(JsonNode document) {
         return prepare(document, Set.of()).toResult();
     }

@@ -54,9 +54,12 @@ tailorsg:
       effort: high                 # Sonnet 5.5 default; quality matters most here
       max-tokens: 16000            # includes thinking tokens
       refusal-fallback: true       # server-side refusal fallback (beta header server-side-fallback-2026-07-01)
+    # max-tokens: the SDK refuses non-streaming calls above about 21,000 ("Streaming is required..."), so
+    # don't raise either role past 21000 without switching AnthropicTransport to streaming.
     extractor:
-      effort: medium               # Haiku 5.5 default, set explicitly. Try "low" for cheaper extraction.
-      max-tokens: 16000            # a 2-page resume import is ~4k tokens of JSON, plus thinking
+      effort: medium               # Haiku 5.5 default, set explicitly. Keep at high or below: the import
+                                   # prompts send thinking: disabled, which Haiku 5.5 only accepts up to high.
+      max-tokens: 16000            # a 3-page resume's import entries are ~11k tokens of JSON (thinking is off)
 
   # USD per million tokens, from platform.claude.com/docs/en/about-claude/pricing (checked 2026-10-15).
   # Used only for the running cost estimate. Keys must match the model IDs above.

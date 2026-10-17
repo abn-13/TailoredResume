@@ -19,6 +19,7 @@ import com.anthropic.models.messages.MessageCreateParams;
 import com.anthropic.models.messages.OutputConfig;
 import com.anthropic.models.messages.StopReason;
 import com.anthropic.models.messages.TextBlockParam;
+import com.anthropic.models.messages.ThinkingConfigDisabled;
 import com.anthropic.models.messages.Usage;
 import com.bu.tailorsg.config.TailorSgProperties;
 import org.springframework.beans.factory.DisposableBean;
@@ -93,6 +94,10 @@ public class AnthropicTransport implements LlmTransport, DisposableBean {
                         .effort(OutputConfig.Effort.of(request.effort()))
                         .format(JsonOutputFormat.builder().schema(toSdkSchema(request.apiSchema())).build())
                         .build());
+        if (request.thinkingDisabled()) {
+            // Without this the model thinks adaptively, and those (invisible) tokens count toward max_tokens.
+            builder.thinking(ThinkingConfigDisabled.builder().build());
+        }
         if (request.refusalFallback()) {
             // Server-side refusal fallback ("default" routing). If a safety classifier declines the request,
             // the API retries it on a fallback model instead of returning stop_reason=refusal.

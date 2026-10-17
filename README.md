@@ -7,7 +7,7 @@ descriptions, then checks the output with deterministic, rule-based checks, not 
 - Design decisions and conventions: [CLAUDE.md](CLAUDE.md)
 - Licence: MIT ([LICENSE](LICENSE))
 
-**Status:** all phases (0-9, plus 5b) are built and tested: 438 automated tests pass, plus 2 live API tests
+**Status:** all phases (0-9, plus 5b) are built and tested: 450 automated tests pass, plus 3 live API tests
 that run only when a key is set. Screenshots of every page are in [docs/screenshots/](docs/screenshots/), and a
 sample exported resume and cover letter (fake person) are in [docs/samples/](docs/samples/).
 
@@ -132,7 +132,7 @@ Tests use an in-memory database (the `test` profile is set in `pom.xml`) and nev
 Run each step in order. Expected results are in *italics*.
 
 1. **Tests pass without a key.** In a shell without `ANTHROPIC_API_KEY`: `./mvnw test`.
-   *`Failures: 0, Errors: 0, Skipped: 2` (the two live API tests: ping and schema compile).*
+   *`Failures: 0, Errors: 0, Skipped: 3` (the live API tests: ping, schema compile, long resume import).*
 2. **App starts without a key.** `./mvnw spring-boot:run`.
    *Log ends with `Started TailorSgApplication`. `./data/tailorsg.mv.db` now exists.*
 3. **Health endpoint.** `curl -s localhost:8080/api/health`
@@ -170,7 +170,7 @@ Try this phase on a **throwaway in-memory database** first, so the fake sample n
 ./mvnw spring-boot:run -Dspring-boot.run.arguments="--spring.datasource.url=jdbc:h2:mem:try"
 ```
 
-1. **Tests.** `./mvnw test` *All pass, 2 skipped (live API tests without a key).*
+1. **Tests.** `./mvnw test` *All pass, 3 skipped (live API tests without a key).*
 2. **Empty state.** Open <http://localhost:8080/master>.
    *"No master resume yet" and a **Load sample (fake data)** button. Dashboard shows Master resume "Not created".*
 3. **Load the sample.** Click **Load sample**.
@@ -218,7 +218,7 @@ Again on a throwaway database, with the sample loaded:
 # then open http://localhost:8080/master and click Load sample
 ```
 
-1. **Tests.** `./mvnw test` *All pass, 2 skipped (live API tests).*
+1. **Tests.** `./mvnw test` *All pass, 3 skipped (live API tests).*
 2. **Readable view.** Master Resume, then **View**.
    *Jordan Tan's resume in reading order: dates like "May 2026 - Present", IDs such as `work-1.h1` next to each
    highlight, green metric chips, skills grouped by category, Kubernetes with a dashed "no evidence" chip.*
@@ -233,7 +233,9 @@ Again on a throwaway database, with the sample loaded:
 5. **Privacy still applies.** Back on the Highlight tab, enter text containing `NRIC S1234567D` and submit.
    *Red box "nothing was proposed" with a PRIVACY error.*
 6. **Edit the patch.** On update #1, open **Edit the patch**, change the highlight's `"priority": 2` to `3`, and
-   click **Preview changes**. *The changes table updates with a "not saved" note.* Click **Save patch**.
+   click **Preview changes**. *The changes table updates with a "not saved" note.* Click **Save patch**. Line numbers run down the left and the cursor's line and column show below the editor. Now delete a
+   comma so the JSON breaks and click **Save patch**. *The page keeps your text and shows "Patch not saved. Line N,
+   column M: ..."; clicking the line and column selects that spot in the editor.*
    *"Patch saved."* Type invalid JSON and Preview: *"does not apply ... Line 1, column ..."*.
 7. **Apply.** Click **Apply to master resume**.
    *"Applied. Your master resume is now version 2; new IDs: work-1.h4, skill-14." The badge says applied, with a link
@@ -273,7 +275,7 @@ Claude's own output go through the same checks.
 
 **Phase 3: CheckEngine and master health**
 
-1. **Tests.** `./mvnw test` *All pass, 2 skipped (live API tests).* `CheckRuleFixturesTest` runs a passing and a failing JSON
+1. **Tests.** `./mvnw test` *All pass, 3 skipped (live API tests).* `CheckRuleFixturesTest` runs a passing and a failing JSON
    fixture for every rule (`src/test/resources/fixtures/checks/`).
 2. **Health.** Master Resume, **Health**. *Scorecard with "Singapore norms" and "Bullet quality" panels,
    PASS/WARN/FAIL badges and 0-100 sub-scores, the banner "Scores are heuristics from published guidance, not a

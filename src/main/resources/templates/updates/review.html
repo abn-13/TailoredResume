@@ -58,12 +58,17 @@
                     Fix the problems first.</span>
             </div>
 
-            <details class="patch-editor" th:open="${!preview.canApply() and preview.changes().size() > 0}">
+            <details class="patch-editor"
+                     th:open="${patchSaveError != null or (!preview.canApply() and preview.changes().size() > 0)}">
                 <summary>Edit the patch (RFC 6902 JSON Patch)</summary>
                 <p class="small muted">Each operation is <code>add</code>, <code>remove</code>, <code>replace</code>,
                     <code>move</code>, <code>copy</code> or <code>test</code> at a JSON Pointer path.
                     <code>test</code> operations guard against the master having changed. New items may use
                     <code>"NEW-1"</code> placeholder IDs.</p>
+                <!-- Your edited text is kept below; click the line and column to jump there. -->
+                <div th:if="${patchSaveError != null}" id="patch-save-error" class="result result-fail" data-json-editor="patch">
+                    <strong>Patch not saved.</strong> <span th:text="${patchSaveError}">Line 3, column 5: ...</span>
+                </div>
                 <form method="post" th:action="@{/updates/{id}/patch(id=${update.id})}">
                     <label for="patch" class="visually-hidden">Patch</label>
                     <textarea id="patch" name="patch" class="json-editor patch-textarea" spellcheck="false"

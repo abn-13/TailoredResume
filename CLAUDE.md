@@ -92,7 +92,11 @@ not the LLM's own opinion.
   extra user block, then `LlmValidationException`. `refusal` / `max_tokens` /
   `model_context_window_exceeded` fail immediately (no retry).
 - **Do not use:** forced `tool_choice` (`any`/`tool` returns 400 on Sonnet 5.5), assistant prefill (400),
-  `thinking.budget_tokens` (400), `thinking: disabled` (400 on Sonnet 5.5).
+  `thinking.budget_tokens` (400), `thinking: disabled` on writer prompts (400 on Sonnet 5.5).
+- **Thinking off per prompt:** front matter `thinking: disabled` (extractor prompts only, tested; Haiku 5.5
+  accepts it at effort ≤ high). Used by both import prompts: thinking tokens count toward `max-tokens`
+  even when unseen, and cost ~6,600 per import call at effort low with no quality gain.
+- **`max-tokens` ≤ ~21,000** while calls are non-streaming: above that the SDK throws "Streaming is required".
 - **Refusal fallback:** writer calls opt in (`tailorsg.llm.writer.refusal-fallback: true`: body
   `fallbacks: "default"` + beta header `server-side-fallback-2026-07-01`). Haiku 5.5 has none.
 - **Prompt caching:** MASTER is always the first user block, marked cacheable (`TextBlock(text, true)`), in
@@ -178,9 +182,14 @@ not the LLM's own opinion.
   valid (`create(..., mustBeValid=true)`); imports may be invalid and are repaired in the patch editor.
   Dated entries are inserted newest-first. Highlight form: selected skills get the new highlight as
   evidence; "new skills" are created with it as evidence.
+- **JSON editors** (`textarea.json-editor`: master, patch, job spec) get line numbers, a cursor position and
+  clickable "Line N, column M" links from `static/js/json-editor.js` (no library). Error boxes opt in with
+  `data-json-editor="<textarea id>"`. A failed **Save patch** re-renders the review page with the user's text
+  (no redirect), so edits survive and the line number matches what is on screen.
 - **Import** (`ResumeImportService`): extract text (`documents/TextExtractor`, type from magic bytes) →
-  redact P6 lines → extractor model in two calls (`master-import-profile` v1, then `master-import-entries`
-  v1: the whole schema exceeded the grammar size limit), merged into `master-import.schema.json` (local
+  redact P6 lines → extractor model in two calls (`master-import-profile` v2, then `master-import-entries`
+  v2, both `thinking: disabled`: the whole schema exceeded the grammar size limit, and with thinking a
+  3-page resume's entries hit max-tokens), merged into `master-import.schema.json` (local
   only; `ImportSchemaSplitTest` proves the parts are exact slices of it) → `ImportMapper` (empties dropped,
   YYYY→YYYY-01, SG phone → +65, bare domains → https://, each with a warning) → `EvidenceLinker` (skill
   evidence by highlight skills list or whole-word mention; names under 3 chars only via the list) →
@@ -286,6 +295,19 @@ not the LLM's own opinion.
   "The compiled grammar is too large" (the error text mentions tools, but our requests have none) for a
   schema with 0 optional and 0 union properties: 96 properties once `$ref`s are expanded. Inlining the refs
   or dropping one section did not help; splitting it in two did. Probe new schemas live before relying on them.
+- **`@Transactional` test classes hide `UnexpectedRollbackException`.** A `@Transactional` method that throws
+  (e.g. `validateDocument` → `MasterValidationException`) marks the *caller's* transaction rollback-only even
+  when the caller catches it, so the caller's commit fails. Test transactions never commit, so only a
+  non-transactional test shows it (`ImportNeedingRepairTest`, cleans up after itself). Check-only methods
+  that report "invalid" by throwing use `noRollbackFor` (`MasterResumeService.validate*`).
+- **Browsers send textarea line breaks as CR LF.** A line break typed inside a JSON string in an editor is
+  reported by Jackson as "CTRL-CHAR, code 13". `JsonText` rewords it and quotes the text just before the
+  error ("Search the editor for: ..."), because the editors show no line numbers.
+- **A line-number gutter in a flex row stretches the textarea** to the gutter's full height (nothing left to
+  scroll). `contain: size` on the gutter fixes it; the script then sets its width from the digit count.
+- **Long outputs: measure the real token split.** A 3-page resume's import failed at max-tokens 16,000:
+  JSON ~11,000 tokens + invisible thinking ~6,600 (effort low barely helps). `LongResumeImportLiveTest`
+  (fake 78-bullet resume in `fixtures/import/long-resume.txt`) keeps each call under 85% of the limit.
 
 ## Phases
 
@@ -336,13 +358,14 @@ not the LLM's own opinion.
 
 ## Current phase
 
-**All phases complete (2026-10-17).** 438 tests pass offline; 2 live tests (ping, schema compile) are skipped
-without a key. Smoke-tested end to end in demo mode on a scratch database; screenshots in `docs/screenshots/`,
-sample exports in `docs/samples/`.
+**All phases complete (2026-10-17).** 450 tests pass offline; 3 live test classes (ping, schema compile, long
+resume import) are skipped without a key. Smoke-tested end to end in demo mode on a scratch database;
+screenshots in `docs/screenshots/`, sample exports in `docs/samples/`.
 With a key (2026-10-17): every prompt's schema compiles on the live API (`LlmSchemaCompileLiveTest`), and
-resume import ran live on the sample PDF (2 Haiku calls, $0.0028, applies with no errors) after the
-grammar-size fix. Tailor, fit-advice, cover-letter, master-update and jd-extract have compiled but not yet
-produced a real answer: run one real application through and compare its scorecard with the demo's.
+resume import works live after two fixes (grammar size, then thinking off): the 1-page sample PDF in 19 s
+for $0.0028, a fake 3-page resume in 36 s for $0.008. Tailor, fit-advice, cover-letter, master-update and
+jd-extract have compiled but not yet produced a real answer: run one real application through and compare
+its scorecard with the demo's.
 
 Ideas not built (ask before starting): Skills Framework for ICT import (`skills/sfw_ict.csv`), a form-based
 threshold editor, per-application option editing after creation (page target, summary).

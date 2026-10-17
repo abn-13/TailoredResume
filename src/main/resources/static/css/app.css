@@ -244,6 +244,27 @@ h1 .badge { font-size: 13px; vertical-align: middle; margin-left: 6px; }
 .patch-editor { margin-top: 12px; }
 .patch-editor summary, .result-details summary, details summary { cursor: pointer; font-weight: 600; font-size: 14px; }
 .patch-textarea { min-height: 260px; margin: 8px 0; }
+
+/* JSON editors with line numbers (static/js/json-editor.js). The gutter must match the textarea's font,
+   line height and top padding exactly, or the numbers drift away from their lines. */
+.json-editor-wrap { display: flex; align-items: stretch; margin: 8px 0 2px; }
+.json-editor-wrap .json-editor {
+    margin: 0; white-space: pre; overflow-wrap: normal; overflow: auto;
+    border-top-left-radius: 0; border-bottom-left-radius: 0;
+}
+/* contain: size stops the gutter's 900+ numbers from making the row (and so the textarea) that tall: the
+   gutter takes the textarea's height instead. It also zeroes the natural width, so json-editor.js sets one. */
+.json-gutter {
+    flex: none; contain: size; width: calc(3ch + 16px);
+    margin: 0; padding: 12px 8px 40px; overflow: hidden; text-align: right; user-select: none;
+    font-family: var(--mono); font-size: 13px; line-height: 1.5; color: var(--muted);
+    background: #eef0f3; border: 1px solid var(--line); border-right: 0; border-radius: 6px 0 0 6px;
+}
+.json-editor-pos { margin: 0 0 8px; min-height: 1.4em; }
+.link-button {
+    background: none; border: 0; padding: 0; font: inherit; font-weight: 600; color: inherit;
+    text-decoration: underline; cursor: pointer;
+}
 .result-details { margin-top: 16px; border-top: 1px solid var(--line); padding-top: 12px; }
 .raw-input { white-space: pre-wrap; max-height: 360px; }
 

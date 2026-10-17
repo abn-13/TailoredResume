@@ -105,7 +105,7 @@
         <details class="patch-editor">
             <summary>Edit as JSON</summary>
             <form method="post" th:action="@{/jobs/{id}/json(id=${job.id})}">
-                <textarea name="specJson" class="json-editor patch-textarea" spellcheck="false" th:text="${specJson}"></textarea>
+                <textarea id="spec-json" name="specJson" aria-label="Job spec JSON" class="json-editor patch-textarea" spellcheck="false" th:text="${specJson}"></textarea>
                 <button type="submit" class="btn btn-ghost">Save JSON</button>
             </form>
         </details>

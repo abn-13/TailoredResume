@@ -28,9 +28,12 @@ public interface LlmTransport {
      * @param userBlocks      user-content blocks, sent in order (e.g. MASTER, JOB, OPTIONS, or screenshots)
      * @param apiSchema       JSON Schema already sanitised for the API's structured-output mode
      * @param refusalFallback opt in to the server-side refusal fallback (writer model only)
+     * @param thinkingDisabled send {@code thinking: disabled} instead of the model's default adaptive thinking
+     *                         (Haiku 5.5 only, at effort high or below; Sonnet 5.5 answers 400)
      */
     record LlmRequest(String promptId, String model, String effort, long maxTokens, String system,
-                      List<UserBlock> userBlocks, JsonNode apiSchema, boolean refusalFallback) {}
+                      List<UserBlock> userBlocks, JsonNode apiSchema, boolean refusalFallback,
+                      boolean thinkingDisabled) {}
 
     /** One piece of user content: text, or an image (screenshots of a job posting). */
     sealed interface UserBlock permits TextBlock, ImageBlock {}

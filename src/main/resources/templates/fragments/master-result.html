@@ -5,7 +5,7 @@
 -->
 <th:block xmlns:th="http://www.thymeleaf.org">
 
-<div th:if="${errors != null}" class="result result-fail">
+<div th:if="${errors != null}" class="result result-fail" data-json-editor="master-json">
     <strong th:text="${#lists.size(errors)} + (${#lists.size(errors)} == 1 ? ' problem' : ' problems') + '. Nothing was saved.'">
         2 problems. Nothing was saved.</strong>
     <ul th:replace="~{layout :: errorList(${errors})}"></ul>

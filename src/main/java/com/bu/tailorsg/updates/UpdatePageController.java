@@ -53,7 +53,10 @@ public class UpdatePageController {
 
     @GetMapping("/updates/{id}")
     public String review(@PathVariable long id, Model model) {
-        PendingUpdate update = updates.get(id);
+        return reviewPage(updates.get(id), model);
+    }
+
+    private String reviewPage(PendingUpdate update, Model model) {
         model.addAttribute("active", "master");
         model.addAttribute("tab", "updates");
         model.addAttribute("update", update);
@@ -85,18 +88,31 @@ public class UpdatePageController {
         return "fragments/update-preview :: preview";
     }
 
+    /**
+     * Saves an edited patch. When the text can't be saved, the page is shown again with the user's text still
+     * in the editor and the error just above it. (Redirecting would reload the stored patch: the edits would
+     * be lost, and the error's line number would point into text the user can no longer see.)
+     */
     @PostMapping("/updates/{id}/patch")
     public String savePatch(@PathVariable long id, @RequestParam(defaultValue = "") String patch,
-                            RedirectAttributes redirect) {
+                            Model model, RedirectAttributes redirect) {
+        String error;
         try {
             updates.replacePatch(id, patch);
             redirect.addFlashAttribute("flash", "Patch saved. Review the changes below, then apply.");
+            return "redirect:/updates/" + id;
         } catch (JsonSyntaxException e) {
-            redirect.addFlashAttribute("flashError", "Patch not saved: " + e.describe());
-        } catch (JsonPatchException | IllegalStateException e) {
+            error = e.describe();
+        } catch (JsonPatchException e) {
+            error = e.getMessage();
+        } catch (IllegalStateException e) { // e.g. no longer PROPOSED: nothing to keep editing
             redirect.addFlashAttribute("flashError", "Patch not saved: " + e.getMessage());
+            return "redirect:/updates/" + id;
         }
-        return "redirect:/updates/" + id;
+        String view = reviewPage(updates.get(id), model);
+        model.addAttribute("patchText", patch);
+        model.addAttribute("patchSaveError", error);
+        return view;
     }
 
     @PostMapping("/updates/{id}/apply")

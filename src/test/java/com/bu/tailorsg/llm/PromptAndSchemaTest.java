@@ -40,6 +40,25 @@ class PromptAndSchemaTest {
     }
 
     @Test
+    void thinkingIsAdaptiveUnlessTheFrontMatterDisablesIt() {
+        assertThat(PromptTemplate.parse("x", "---\nversion: 1\nrole: EXTRACTOR\nschema: s.json\n---\nText")
+                .thinkingDisabled()).isFalse();
+        assertThat(PromptTemplate.parse("x", "---\nversion: 1\nrole: EXTRACTOR\nschema: s.json\nthinking: disabled\n---\nText")
+                .thinkingDisabled()).isTrue();
+        assertThatThrownBy(() -> PromptTemplate.parse("x", "---\nversion: 1\nrole: EXTRACTOR\nschema: s.json\nthinking: off\n---\nText"))
+                .hasMessageContaining("expected adaptive or disabled");
+    }
+
+    /** Sonnet 5.5 (the writer) answers 400 to thinking: disabled; Haiku 5.5 accepts it at effort high or below. */
+    @Test
+    void onlyExtractorPromptsDisableThinking() throws java.io.IOException {
+        assertThat(LlmSchemaLimitsTest.allPrompts().map(id -> TestFixtures.prompts().get(id))
+                .filter(PromptTemplate::thinkingDisabled))
+                .isNotEmpty()
+                .allSatisfy(p -> assertThat(p.role()).as(p.id()).isEqualTo(ModelRole.EXTRACTOR));
+    }
+
+    @Test
     void missingPromptFileIsAClearError() {
         assertThatThrownBy(() -> TestFixtures.prompts().get("does-not-exist"))
                 .hasMessageContaining("prompts/does-not-exist.md");

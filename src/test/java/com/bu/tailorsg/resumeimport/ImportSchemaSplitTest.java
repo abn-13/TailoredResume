@@ -59,13 +59,20 @@ class ImportSchemaSplitTest {
         }
     }
 
+    /**
+     * Thinking off is a regression guard (2026-10-17): with adaptive thinking, even at effort low, a
+     * 3-page resume's entries call needed about 17,600 output tokens (11,000 of JSON plus 6,600 of
+     * thinking) and was cut off at the 16,000 limit. Without thinking it needed 11,400, with the same
+     * extraction quality.
+     */
     @Test
-    void bothPromptsUseTheExtractorModelAndTheirOwnPartSchema() {
+    void bothPromptsUseTheExtractorModelTheirOwnPartSchemaAndNoThinking() {
         assertThat(ResumeImportService.PROMPTS).containsExactly("master-import-profile", "master-import-entries");
         for (String id : ResumeImportService.PROMPTS) {
             PromptTemplate prompt = prompts.get(id);
             assertThat(prompt.role()).isEqualTo(ModelRole.EXTRACTOR);
             assertThat(prompt.schemaPath()).isEqualTo("schema/llm/" + id + ".schema.json");
+            assertThat(prompt.thinkingDisabled()).as(id + " thinking: disabled").isTrue();
         }
     }
 

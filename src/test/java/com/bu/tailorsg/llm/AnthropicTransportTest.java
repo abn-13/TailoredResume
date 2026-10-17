@@ -72,7 +72,7 @@ class AnthropicTransportTest {
         JsonNode schema = new ApiSchemaSanitizer().sanitize(
                 TestFixtures.schemas().rawSchema("schema/llm/ping.schema.json"));
         return new LlmRequest("ping", "claude-haiku-5-5", "medium", 8000, "SYSTEM TEXT",
-                LlmTransport.texts(List.of("block one", "block two")), schema, false);
+                LlmTransport.texts(List.of("block one", "block two")), schema, false, false);
     }
 
     @Test
@@ -103,7 +103,8 @@ class AnthropicTransportTest {
     void writerRequestsOptIntoRefusalFallbackAndCacheTheFirstBlock() {
         JsonNode schema = new ApiSchemaSanitizer().sanitize(TestFixtures.schemas().rawSchema("schema/llm/ping.schema.json"));
         transport().send(new LlmRequest("tailor", "claude-sonnet-5-5", "high", 16000, "S",
-                List.of(new LlmTransport.TextBlock("MASTER", true), new LlmTransport.ImageBlock("image/png", "aGk=")), schema, true));
+                List.of(new LlmTransport.TextBlock("MASTER", true), new LlmTransport.ImageBlock("image/png", "aGk=")), schema, true,
+                false));
 
         JsonNode body = TestFixtures.JSON.readTree(requestBody.get());
         assertThat(body.path("fallbacks").stringValue("")).isEqualTo("default");
@@ -111,6 +112,17 @@ class AnthropicTransportTest {
         assertThat(body.at("/messages/0/content/0/cache_control/type").stringValue("")).isEqualTo("ephemeral");
         assertThat(body.at("/messages/0/content/1/type").stringValue("")).isEqualTo("image");
         assertThat(body.at("/messages/0/content/1/source/media_type").stringValue("")).isEqualTo("image/png");
+    }
+
+    @Test
+    void promptsThatDisableThinkingSendThinkingDisabled() {
+        LlmRequest base = pingRequest();
+        transport().send(new LlmRequest("master-import-entries", base.model(), base.effort(), base.maxTokens(),
+                base.system(), base.userBlocks(), base.apiSchema(), false, true));
+
+        JsonNode body = TestFixtures.JSON.readTree(requestBody.get());
+        assertThat(body.at("/thinking/type").stringValue("")).isEqualTo("disabled");
+        assertThat(body.at("/output_config/effort").stringValue("")).isEqualTo("medium"); // effort still applies
     }
 
     @Test

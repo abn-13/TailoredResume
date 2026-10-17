@@ -15,17 +15,24 @@ import java.util.Map;
  * version: 1
  * role: EXTRACTOR
  * schema: schema/llm/ping.schema.json
+ * thinking: disabled        (optional; default: the model's adaptive thinking)
  * ---
  * (system prompt text)
  * </pre>
  *
- * @param id         file name without .md
- * @param version    prompt version from front matter
- * @param role       which configured model runs it
- * @param schemaPath classpath location of the JSON Schema the response must match
- * @param system     the system prompt text (everything after the front matter)
+ * <p>{@code thinking: disabled} is for long, mechanical outputs on the extractor model. Thinking tokens count
+ * toward {@code max-tokens} even when nobody sees them: resume import spent about 6,600 of them per call
+ * at effort low, which pushed a long resume past the limit (measured 2026-10-17).
+ *
+ * @param id               file name without .md
+ * @param version          prompt version from front matter
+ * @param role             which configured model runs it
+ * @param schemaPath       classpath location of the JSON Schema the response must match
+ * @param system           the system prompt text (everything after the front matter)
+ * @param thinkingDisabled true when the front matter says {@code thinking: disabled}
  */
-public record PromptTemplate(String id, int version, ModelRole role, String schemaPath, String system) {
+public record PromptTemplate(String id, int version, ModelRole role, String schemaPath, String system,
+                             boolean thinkingDisabled) {
 
     private static final String FENCE = "---";
 
@@ -61,7 +68,17 @@ public record PromptTemplate(String id, int version, ModelRole role, String sche
                 Integer.parseInt(required(meta, "version", id)),
                 ModelRole.valueOf(required(meta, "role", id).toUpperCase()),
                 required(meta, "schema", id),
-                body);
+                body,
+                thinkingDisabled(meta.getOrDefault("thinking", "adaptive"), id));
+    }
+
+    private static boolean thinkingDisabled(String value, String id) {
+        return switch (value) {
+            case "adaptive" -> false;
+            case "disabled" -> true;
+            default -> throw new IllegalStateException(
+                    "Prompt '" + id + "' has thinking: " + value + " (expected adaptive or disabled)");
+        };
     }
 
     private static String required(Map<String, String> meta, String key, String id) {

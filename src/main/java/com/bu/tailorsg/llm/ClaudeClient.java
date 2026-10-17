@@ -92,7 +92,7 @@ public class ClaudeClient {
         for (int attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
             LlmReply reply = transport.send(new LlmRequest(
                     promptId, model, settings.effort(), settings.maxTokens(), prompt.system(), blocks, apiSchema,
-                    settings.refusalFallback()));
+                    settings.refusalFallback(), prompt.thinkingDisabled()));
             totalUsage = totalUsage.plus(reply.usage());
             totalCost = totalCost.add(meter.record(promptId, prompt.version(), reply.modelUsed(), reply.usage()));
             failOnUnusableStop(promptId, reply, settings, prompt.role());

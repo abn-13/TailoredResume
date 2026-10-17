@@ -103,4 +103,28 @@ class UpdatePagesTest {
                 .contains("Jordan Tan", "Software Engineering Intern", "May 2026 - Present", "Jul 2021 - Dec 2024")
                 .contains("work-1.h1", "35% (p95 latency reduction)", "no evidence", "shown by default");
     }
+
+    /**
+     * Regression (2026-10-17): a patch that failed to save redirected, which reloaded the stored patch. The
+     * user's edits were lost, and the error's line number pointed into text no longer in the editor.
+     */
+    @Test
+    void aPatchThatCannotBeSavedKeepsTheEditedTextAndLinksTheErrorToTheEditor() {
+        master.loadSample();
+        submitWork("Engineer");
+        long id = latestUpdateId();
+        String edited = "[\n  {\"op\": \"add\", \"path\": \"/skills/-\", \"value\": {\"name\": \"Go\",}}\n]";
+
+        assertThat(mvc.post().uri("/updates/" + id + "/patch").param("patch", edited)).hasStatusOk().bodyText()
+                .contains("Patch not saved.", "Line 2, column", "An extra comma before }")
+                .contains("data-json-editor=\"patch\"")
+                .contains("&quot;name&quot;: &quot;Go&quot;,}}");   // the edited text (HTML-escaped), not the stored patch
+        assertThat(mvc.get().uri("/updates/" + id)).bodyText().doesNotContain("&quot;Go&quot;"); // nothing was saved
+    }
+
+    @Test
+    void everyPageLoadsTheJsonEditorScript() {
+        assertThat(mvc.get().uri("/master")).hasStatusOk().bodyText().contains("/js/json-editor.js");
+        assertThat(mvc.get().uri("/js/json-editor.js")).hasStatusOk().bodyText().contains("data-json-editor");
+    }
 }

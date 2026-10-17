@@ -1,0 +1,139 @@
+Casey Ong
+Senior Software Engineer
+casey.ong@example.com | +65 9876 5432 | Singapore
+linkedin.com/in/casey-ong-example | github.com/caseyong-example
+
+SUMMARY
+Backend-focused engineer with ten years of experience building payment, logistics and marketplace systems for Southeast Asian companies. Comfortable owning services end to end, from design reviews to on-call, and mentoring engineers.
+
+EXPERIENCE
+
+Senior Software Engineer, Example Pay Pte Ltd, Singapore
+Mar 2022 - Present
+- Shipped the internal admin dashboard using Docker, Spring Boot, serving 85,149 requests a day, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Rewrote a Kafka event pipeline using TypeScript, Spring Boot, cutting p95 latency by 17%, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Built a PostgreSQL read-replica setup using Spring Boot, Kafka, saving S$180k a year in cloud costs, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Led the fraud-scoring microservice using Terraform, PostgreSQL, shortening release time from 4 days to 11 hours, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Optimised a React Native checkout flow using Spring Boot, Redis, onboarding 49,199 merchants in the first quarter, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Designed the Spring Boot monolith using Terraform, Kafka, onboarding 42,576 merchants in the first quarter, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Rewrote a Kafka event pipeline using GraphQL, Terraform, shortening release time from 10 days to 7 hours, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Led a PostgreSQL read-replica setup using TypeScript, Spring Boot, cutting p95 latency by 44%, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Led a Terraform module library using GraphQL, Kotlin, onboarding 42,448 merchants in the first quarter, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+
+Software Engineer II, Example Logistics Pte Ltd, Singapore
+Jan 2020 - Feb 2022
+- Introduced a React Native checkout flow using GraphQL, Terraform, reducing incident count by 56%, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Reduced the customer onboarding API using Spring Boot, Redis, serving 47,272 requests a day, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Shipped a Terraform module library using GraphQL, React, lifting conversion by 27% across 5 markets, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Designed a Kafka event pipeline using React, Kafka, saving S$130k a year in cloud costs, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Reduced the payments reconciliation service using PostgreSQL, AWS, saving S$79k a year in cloud costs, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Optimised a React Native checkout flow using Datadog, Spring Boot, saving S$156k a year in cloud costs, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Migrated a Kafka event pipeline using React, Spring Boot, shortening release time from 4 days to 9 hours, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Shipped a Kafka event pipeline using Java, Python, saving S$61k a year in cloud costs, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Automated the fraud-scoring microservice using Python, AWS, serving 11,995 requests a day, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+
+Software Engineer, Example Marketplace Pte Ltd, Singapore
+Jul 2018 - Dec 2019
+- Led the customer onboarding API using gRPC, Terraform, serving 16,969 requests a day, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Automated the customer onboarding API using Redis, Datadog, cutting p95 latency by 59%, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Designed the order matching engine using Datadog, Docker, lifting conversion by 46% across 2 markets, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Migrated a feature-flag platform using Kafka, Redis, shortening release time from 8 days to 12 hours, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Optimised a Terraform module library using Java, AWS, lifting conversion by 63% across 5 markets, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Migrated the CI pipeline on GitHub Actions using Kafka, Go, saving S$174k a year in cloud costs, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Led a feature-flag platform using Docker, Kotlin, saving S$72k a year in cloud costs, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Introduced the CI pipeline on GitHub Actions using Kubernetes, Kotlin, shortening release time from 9 days to 12 hours, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Rewrote the fraud-scoring microservice using GraphQL, Python, reducing incident count by 59%, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+
+Software Engineer, Example Bank Singapore, Singapore
+Aug 2017 - Jun 2018
+- Shipped the Spring Boot monolith using Java, Go, reducing incident count by 54%, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Rewrote the order matching engine using Datadog, Kafka, saving S$69k a year in cloud costs, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Shipped the customer onboarding API using Datadog, TypeScript, serving 18,162 requests a day, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Designed the customer onboarding API using Java, Python, onboarding 67,119 merchants in the first quarter, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Shipped the CI pipeline on GitHub Actions using Datadog, Grafana, reducing incident count by 51%, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Shipped the CI pipeline on GitHub Actions using Spring Boot, Go, shortening release time from 6 days to 6 hours, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Reduced the CI pipeline on GitHub Actions using Datadog, Redis, onboarding 10,553 merchants in the first quarter, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Optimised the customer onboarding API using AWS, Redis, onboarding 63,619 merchants in the first quarter, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Migrated a React Native checkout flow using TypeScript, Kotlin, reducing incident count by 19%, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+
+Junior Developer, Example Travel Pte Ltd, Singapore
+Jan 2016 - Jul 2017
+- Migrated the Spring Boot monolith using Python, GraphQL, serving 21,833 requests a day, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Automated a feature-flag platform using Datadog, React, cutting p95 latency by 37%, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Optimised the Spring Boot monolith using Grafana, GraphQL, saving S$101k a year in cloud costs, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Led a Kafka event pipeline using Go, Kafka, cutting p95 latency by 36%, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Designed a PostgreSQL read-replica setup using AWS, React, serving 25,376 requests a day, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Reduced the payments reconciliation service using TypeScript, Kotlin, onboarding 43,191 merchants in the first quarter, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Optimised the payments reconciliation service using AWS, Go, lifting conversion by 17% across 6 markets, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Designed a Terraform module library using Kafka, Go, serving 36,736 requests a day, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Shipped a React Native checkout flow using Terraform, GraphQL, cutting p95 latency by 23%, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+
+Software Engineering Intern, Example Studio LLP, Singapore
+May 2015 - Dec 2015
+- Shipped the CI pipeline on GitHub Actions using Datadog, Redis, saving S$108k a year in cloud costs, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Shipped a Terraform module library using Grafana, React, saving S$47k a year in cloud costs, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Built a Kafka event pipeline using Spring Boot, Python, lifting conversion by 25% across 3 markets, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Reduced the fraud-scoring microservice using React, Datadog, lifting conversion by 59% across 2 markets, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Reduced the order matching engine using GraphQL, Java, saving S$95k a year in cloud costs, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Automated a feature-flag platform using PostgreSQL, Java, serving 33,135 requests a day, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Reduced a Kafka event pipeline using Java, Kotlin, cutting p95 latency by 42%, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Rewrote a PostgreSQL read-replica setup using Kafka, Kotlin, saving S$170k a year in cloud costs, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Reduced the Spring Boot monolith using gRPC, Python, shortening release time from 9 days to 7 hours, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+
+PROJECTS
+
+OpenLedger (open source), 2021
+- Shipped a PostgreSQL read-replica setup using Datadog, Python, onboarding 7,944 merchants in the first quarter, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Built the payments reconciliation service using Kafka, Kotlin, onboarding 4,946 merchants in the first quarter, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Optimised a Terraform module library using Java, Kafka, saving S$112k a year in cloud costs, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Optimised a Terraform module library using Datadog, Kotlin, cutting p95 latency by 41%, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+
+Hawker Queue app, 2021
+- Introduced a Kafka event pipeline using GraphQL, gRPC, shortening release time from 6 days to 12 hours, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Reduced a React Native checkout flow using Python, Kubernetes, reducing incident count by 55%, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Reduced a React Native checkout flow using Spring Boot, gRPC, lifting conversion by 56% across 3 markets, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Optimised the CI pipeline on GitHub Actions using Terraform, GraphQL, cutting p95 latency by 56%, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+
+SG Bus Arrival bot, 2021
+- Led a PostgreSQL read-replica setup using Terraform, GraphQL, shortening release time from 10 days to 2 hours, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Reduced the order matching engine using Python, Datadog, reducing incident count by 29%, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Optimised a feature-flag platform using Kafka, gRPC, saving S$229k a year in cloud costs, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Automated a feature-flag platform using Python, TypeScript, cutting p95 latency by 22%, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+
+EDUCATION
+
+Bachelor of Computing (Computer Science), National University of Singapore, 2011 - 2015
+GPA 4.3 / 5.0
+- Built the Spring Boot monolith using Go, Redis, serving 44,101 requests a day, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Reduced the payments reconciliation service using Docker, TypeScript, serving 10,502 requests a day, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Automated the internal admin dashboard using TypeScript, Datadog, serving 86,392 requests a day, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+
+Diploma in Information Technology, Example Polytechnic, 2008 - 2011
+- Built the Spring Boot monolith using Redis, Kotlin, shortening release time from 11 days to 10 hours, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Designed the CI pipeline on GitHub Actions using Grafana, Python, reducing incident count by 40%, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Optimised a PostgreSQL read-replica setup using Kafka, Terraform, reducing incident count by 33%, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+
+VOLUNTEERING
+
+Code for Example (mentor), 2019 - 2023
+- Shipped the internal admin dashboard using Datadog, gRPC, lifting conversion by 37% across 3 markets, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Designed the order matching engine using Kafka, Kotlin, reducing incident count by 33%, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Introduced a feature-flag platform using Java, TypeScript, onboarding 32,477 merchants in the first quarter, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+
+Example Food Bank (tech volunteer), 2019 - 2023
+- Designed a React Native checkout flow using AWS, Docker, lifting conversion by 45% across 4 markets, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Introduced a Terraform module library using React, GraphQL, onboarding 29,194 merchants in the first quarter, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+- Led a feature-flag platform using gRPC, Java, shortening release time from 14 days to 9 hours, working closely with product, design and operations teams to roll it out safely with staged releases and dashboards.
+
+SKILLS
+Languages: Java, Kotlin, Go, Python, TypeScript, SQL
+Frameworks: Spring Boot, React, GraphQL, gRPC
+Cloud/DevOps: AWS, Terraform, Kubernetes, Docker
+Databases: PostgreSQL, Redis, Kafka
+
+CERTIFICATIONS
+AWS Certified Solutions Architect - Associate, Amazon Web Services, 2023
+Certified Kubernetes Application Developer, CNCF, 2022
+
+LANGUAGES
+English (native), Mandarin (professional)

@@ -54,7 +54,7 @@ class LlmSchemaCompileLiveTest {
         // A tiny max_tokens: we only need the request accepted, not a complete answer.
         LlmReply reply = transport.send(new LlmRequest(promptId, TestFixtures.props().models().extractor(), "low", 16,
                 "Reply with the smallest JSON object that matches the schema.", List.of(TextBlock.of("Go.")),
-                apiSchema, false));
+                apiSchema, false, prompt.thinkingDisabled()));
 
         assertThat(reply.stopReason()).isIn("end_turn", "max_tokens");
     }
