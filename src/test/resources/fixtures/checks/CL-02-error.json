@@ -1,0 +1,33 @@
+{
+ "rule": "CL-02",
+ "expect": "ERROR",
+ "mode": "COVER_LETTER",
+ "pass": {
+  "coverLetter": {
+   "recipientLine": "Dear Hiring Manager,",
+   "subject": "Application for Backend Engineer",
+   "signOff": "Yours sincerely,",
+   "wordCount": 0,
+   "paragraphs": [
+    {
+     "text": "Our team shipped steady improvements to the refund service while keeping every release small and easy to review for the people who depend on it. Our team shipped steady improvements to the refund service while keeping every release small and easy to review for the people who depend on it. Our team shipped steady improvements to the refund service while keeping every release small and easy to review for the people who depend on it. Our team shipped steady improvements to the refund service while keeping every release small and easy to review for the people who depend on it. Our team shipped steady improvements to the refund service while keeping every release small and easy to review for the people who depend on it. Our team shipped steady improvements to the refund service while keeping every release small and easy to review for the people who depend on it. Our team shipped steady improvements to the refund service while keeping every release small and easy to review for the people who depend on it. Our team shipped steady improvements to the refund service while keeping every release small and easy to review for the people who depend on it. Our team shipped steady improvements to the refund service while keeping every release small and easy to review for the people who depend on it. Our team shipped steady improvements to the refund service while keeping every release small and easy to review for the people who depend on it. Our team shipped steady improvements to the refund service while keeping every release small and easy to review for the people who depend on it. Our team shipped steady improvements to the refund service while keeping every release small and easy to review for the people who depend on it. Our team shipped steady improvements to the refund service while keeping every release small and easy to review for the people who depend on it. Our team shipped steady improvements to the refund service while keeping every release small and easy to review for the people who depend on it. ",
+     "sourceIds": []
+    }
+   ]
+  }
+ },
+ "fail": {
+  "coverLetter": {
+   "recipientLine": "Dear Hiring Manager,",
+   "subject": "Application for Backend Engineer",
+   "signOff": "Yours sincerely,",
+   "wordCount": 0,
+   "paragraphs": [
+    {
+     "text": "Our team shipped steady improvements to the refund service while keeping every release small and easy to review for the people who depend on it. Our team shipped steady improvements to the refund service while keeping every release small and easy to review for the people who depend on it. Our team shipped steady improvements to the refund service while keeping every release small and easy to review for the people who depend on it. Our team shipped steady improvements to the refund service while keeping every release small and easy to review for the people who depend on it. Our team shipped steady improvements to the refund service while keeping every release small and easy to review for the people who depend on it. Our team shipped steady improvements to the refund service while keeping every release small and easy to review for the people who depend on it. Our team shipped steady improvements to the refund service while keeping every release small and easy to review for the people who depend on it. Our team shipped steady improvements to the refund service while keeping every release small and easy to review for the people who depend on it. Our team shipped steady improvements to the refund service while keeping every release small and easy to review for the people who depend on it. Our team shipped steady improvements to the refund service while keeping every release small and easy to review for the people who depend on it. Our team shipped steady improvements to the refund service while keeping every release small and easy to review for the people who depend on it. Our team shipped steady improvements to the refund service while keeping every release small and easy to review for the people who depend on it. Our team shipped steady improvements to the refund service while keeping every release small and easy to review for the people who depend on it. Our team shipped steady improvements to the refund service while keeping every release small and easy to review for the people who depend on it. Our team shipped steady improvements to the refund service while keeping every release small and easy to review for the people who depend on it. Our team shipped steady improvements to the refund service while keeping every release small and easy to review for the people who depend on it. Our team shipped steady improvements to the refund service while keeping every release small and easy to review for the people who depend on it. Our team shipped steady improvements to the refund service while keeping every release small and easy to review for the people who depend on it. Our team shipped steady improvements to the refund service while keeping every release small and easy to review for the people who depend on it. Our team shipped steady improvements to the refund service while keeping every release small and easy to review for the people who depend on it. ",
+     "sourceIds": []
+    }
+   ]
+  }
+ }
+}

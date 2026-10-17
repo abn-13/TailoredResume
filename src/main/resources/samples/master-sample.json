@@ -1,0 +1,235 @@
+{
+  "meta": { "version": 1, "updatedAt": "2026-10-15T00:00:00Z", "locale": "en-SG", "spelling": "british" },
+  "basics": {
+    "name": "Jordan Tan",
+    "label": "Software Engineer (Backend, Java)",
+    "email": "jordan.tan@example.com",
+    "phone": "+6590001234",
+    "url": "https://jordantan.example.dev",
+    "location": { "city": "Singapore", "countryCode": "SG" },
+    "profiles": [
+      { "network": "LinkedIn", "username": "jordantan-example", "url": "https://www.linkedin.com/in/jordantan-example" },
+      { "network": "GitHub", "username": "jordantan-example", "url": "https://github.com/jordantan-example" }
+    ],
+    "summaryVariants": [
+      {
+        "id": "sum-1",
+        "text": "Backend-focused software engineering intern with a mechanical engineering background, building Java and Spring Boot services with an emphasis on testing and measurable performance",
+        "targetRoles": ["Backend Engineer", "Software Engineer"]
+      },
+      {
+        "id": "sum-2",
+        "text": "Engineer moving from mechanical design to software, combining simulation and data-analysis experience with full-stack web development in Java and TypeScript",
+        "targetRoles": ["Full-stack Developer", "Data Engineer"]
+      }
+    ],
+    "workAuthorization": {
+      "status": "EP_REQUIRED",
+      "displayText": "Work authorisation: Employment Pass required",
+      "showOnResumeDefault": true
+    }
+  },
+  "work": [
+    {
+      "id": "work-1",
+      "name": "Example Fintech Pte Ltd",
+      "position": "Software Engineering Intern",
+      "location": "Singapore",
+      "employmentType": "Internship",
+      "startDate": "2026-05",
+      "endDate": null,
+      "summary": "Payments platform team",
+      "highlights": [
+        {
+          "id": "work-1.h1",
+          "text": "Reduced p95 latency of the payment status API by 35% by adding a Redis cache in front of the reconciliation query",
+          "metrics": [{ "value": "35", "unit": "%", "label": "p95 latency reduction" }],
+          "skills": ["Java", "Spring Boot", "Redis"],
+          "tags": ["backend", "performance"],
+          "evidence": "Grafana dashboard screenshot, Aug 2026",
+          "priority": 1
+        },
+        {
+          "id": "work-1.h2",
+          "text": "Built REST endpoints for merchant refund requests with Spring Boot and PostgreSQL, covered by 40 integration tests using Testcontainers",
+          "metrics": [{ "value": "40", "label": "integration tests" }],
+          "skills": ["Java", "Spring Boot", "PostgreSQL", "Testcontainers"],
+          "tags": ["backend", "testing"],
+          "priority": 2
+        },
+        {
+          "id": "work-1.h3",
+          "text": "Automated the nightly settlement report with a GitHub Actions workflow, saving the operations team about 3 hours a week",
+          "metrics": [{ "value": "3", "unit": "hours/week", "label": "time saved" }],
+          "skills": ["GitHub Actions", "Python"],
+          "tags": ["automation"],
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "id": "work-2",
+      "name": "Acme Precision Engineering Pte Ltd",
+      "position": "Mechanical Design Engineer",
+      "location": "Singapore",
+      "employmentType": "Full-time",
+      "startDate": "2021-07",
+      "endDate": "2024-12",
+      "highlights": [
+        {
+          "id": "work-2.h1",
+          "text": "Wrote Python scripts to batch-process finite element simulation results, cutting post-processing time from 2 days to 3 hours per design iteration",
+          "metrics": [
+            { "value": "2", "unit": "days", "label": "post-processing time before" },
+            { "value": "3", "unit": "hours", "label": "post-processing time after" }
+          ],
+          "skills": ["Python", "Finite element analysis"],
+          "tags": ["automation", "simulation"],
+          "priority": 1
+        },
+        {
+          "id": "work-2.h2",
+          "text": "Analysed vibration test data from 12 prototype units to identify a bracket resonance, leading to a redesign that passed qualification",
+          "metrics": [{ "value": "12", "unit": "units", "label": "prototypes analysed" }],
+          "skills": ["MATLAB"],
+          "tags": ["analysis"],
+          "priority": 2
+        },
+        {
+          "id": "work-2.h3",
+          "text": "Coordinated design reviews with suppliers in Malaysia and China for a conveyor module",
+          "tags": ["communication"],
+          "priority": 4
+        }
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "id": "proj-1",
+      "name": "TailorSG",
+      "role": "Sole developer",
+      "repo": "https://github.com/jordantan-example/tailorsg",
+      "startDate": "2026-10",
+      "description": "Local resume-tailoring web app with deterministic quality checks",
+      "highlights": [
+        {
+          "id": "proj-1.h1",
+          "text": "Designed a rule-based check engine in Java that validates generated resume bullets against their source data",
+          "skills": ["Java", "Spring Boot"],
+          "tags": ["backend"],
+          "priority": 1
+        },
+        {
+          "id": "proj-1.h2",
+          "text": "Built a Thymeleaf and htmx interface for editing and versioning structured resume data",
+          "skills": ["Thymeleaf", "htmx"],
+          "tags": ["frontend"],
+          "priority": 3
+        }
+      ],
+      "keywords": ["Spring Boot", "JSON Schema", "LLM"]
+    },
+    {
+      "id": "proj-2",
+      "name": "Hawker Queue Estimator",
+      "role": "Team lead",
+      "url": "https://hawker-queue.example.dev",
+      "startDate": "2025-08",
+      "endDate": "2025-11",
+      "description": "Course project estimating hawker-stall queue times",
+      "highlights": [
+        {
+          "id": "proj-2.h1",
+          "text": "Led a team of 4 to build a React and Spring Boot app that estimates hawker-stall queue times from crowd-sourced reports",
+          "metrics": [{ "value": "4", "label": "team members" }],
+          "skills": ["React", "Spring Boot", "TypeScript"],
+          "tags": ["full-stack", "leadership"],
+          "priority": 1
+        },
+        {
+          "id": "proj-2.h2",
+          "text": "Deployed the service on AWS with Docker and a CI pipeline, serving 300 users during a two-week pilot",
+          "metrics": [{ "value": "300", "label": "pilot users" }],
+          "skills": ["AWS", "Docker"],
+          "tags": ["devops"],
+          "priority": 2
+        }
+      ]
+    }
+  ],
+  "education": [
+    {
+      "id": "edu-1",
+      "institution": "Example Institute of Systems Science",
+      "area": "Software Engineering",
+      "studyType": "Graduate Diploma in Systems Analysis",
+      "startDate": "2025-08",
+      "endDate": "2027-01",
+      "courses": ["Object-Oriented Design", "Web Application Development", "Software Testing"]
+    },
+    {
+      "id": "edu-2",
+      "institution": "Example Technological University",
+      "area": "Mechanical Engineering",
+      "studyType": "Master of Engineering",
+      "startDate": "2019-08",
+      "endDate": "2021-06",
+      "score": "4.3",
+      "scoreScale": "5.0"
+    }
+  ],
+  "skills": [
+    { "id": "skill-1", "name": "Java", "category": "Languages", "evidenceIds": ["work-1.h1", "work-1.h2", "proj-1.h1"] },
+    { "id": "skill-2", "name": "Python", "category": "Languages", "evidenceIds": ["work-1.h3", "work-2.h1"] },
+    { "id": "skill-3", "name": "TypeScript", "category": "Languages", "evidenceIds": ["proj-2.h1"] },
+    { "id": "skill-4", "name": "Spring Boot", "category": "Frameworks", "evidenceIds": ["work-1.h1", "work-1.h2", "proj-1.h1", "proj-2.h1"] },
+    { "id": "skill-5", "name": "React", "category": "Frameworks", "evidenceIds": ["proj-2.h1", "vol-1.h1"] },
+    { "id": "skill-6", "name": "PostgreSQL", "category": "Databases", "evidenceIds": ["work-1.h2"] },
+    { "id": "skill-7", "name": "Redis", "category": "Databases", "evidenceIds": ["work-1.h1"] },
+    { "id": "skill-8", "name": "Docker", "category": "Cloud/DevOps", "evidenceIds": ["proj-2.h2"] },
+    { "id": "skill-9", "name": "AWS", "category": "Cloud/DevOps", "evidenceIds": ["proj-2.h2"] },
+    { "id": "skill-10", "name": "GitHub Actions", "category": "Cloud/DevOps", "evidenceIds": ["work-1.h3"] },
+    { "id": "skill-11", "name": "Kubernetes", "category": "Cloud/DevOps" },
+    { "id": "skill-12", "name": "MATLAB", "category": "Tools", "evidenceIds": ["work-2.h2"] },
+    { "id": "skill-13", "name": "Finite element analysis", "category": "Domain", "evidenceIds": ["work-2.h1"] }
+  ],
+  "certificates": [
+    { "id": "cert-1", "name": "AWS Certified Cloud Practitioner", "issuer": "Amazon Web Services", "date": "2026-03" }
+  ],
+  "awards": [
+    {
+      "id": "award-1",
+      "title": "Best Capstone Project",
+      "awarder": "Example Institute of Systems Science",
+      "date": "2025-12",
+      "summary": "Awarded for the Hawker Queue Estimator project"
+    }
+  ],
+  "languages": [
+    { "language": "English", "fluency": "Professional working proficiency" },
+    { "language": "Mandarin", "fluency": "Conversational" }
+  ],
+  "volunteer": [
+    {
+      "id": "vol-1",
+      "name": "Code for Example SG",
+      "position": "Volunteer Developer",
+      "startDate": "2025-01",
+      "endDate": "2025-06",
+      "highlights": [
+        {
+          "id": "vol-1.h1",
+          "text": "Fixed 15 accessibility issues in a community food-bank web app built with React",
+          "metrics": [{ "value": "15", "label": "accessibility issues fixed" }],
+          "skills": ["React"],
+          "tags": ["frontend", "accessibility"],
+          "priority": 3
+        }
+      ]
+    }
+  ],
+  "extras": [
+    { "id": "extra-1", "type": "leadership", "text": "Mentor for first-year engineering students", "date": "2023-01" }
+  ]
+}

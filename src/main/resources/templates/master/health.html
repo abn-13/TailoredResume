@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{layout :: htmlHead('Master Health')}"></head>
+<body>
+<header th:replace="~{layout :: topbar('master')}"></header>
+
+<main class="container">
+    <section class="page-head">
+        <h1>Master Resume</h1>
+        <p class="lede">Bullet quality and Singapore norms across your whole master resume, with no job involved.
+            Fix things here once and every tailored resume benefits.</p>
+    </section>
+    <nav th:replace="~{layout :: masterTabs('health')}"></nav>
+
+    <section class="panel" th:if="${health == null}">
+        <div class="empty"><p>No master resume yet.</p><p class="muted"><a th:href="@{/master/import}">Import</a> or
+            <a th:href="@{/master}">create</a> one first.</p></div>
+    </section>
+
+    <th:block th:if="${health != null}">
+        <div class="editor-layout">
+            <section class="panel">
+                <h2>Checks on <span th:text="${health.bullets()}">11</span> highlights</h2>
+                <section th:replace="~{fragments/scorecard :: scorecard(${report}, '/master/view', true)}"></section>
+            </section>
+            <aside class="panel help-panel">
+                <h2>Unevidenced skills</h2>
+                <p class="small muted">Allowed, but no highlight shows them in use, so tailoring can list them but
+                    never claim them in a bullet.</p>
+                <ul th:unless="${#lists.isEmpty(health.unevidencedSkills())}" class="plain-list small">
+                    <li th:each="s : ${health.unevidencedSkills()}" th:text="${s}">Kubernetes (skill-11)</li>
+                </ul>
+                <p th:if="${#lists.isEmpty(health.unevidencedSkills())}" class="small">None.</p>
+                <p class="small"><a th:href="@{/add-info(type='highlight')}">Add a highlight that shows a skill</a></p>
+            </aside>
+        </div>
+
+        <section class="panel">
+            <h2>Keyword check against a job</h2>
+            <p class="muted small">Paste the skills a job asks for to see how much of it your master can cover. To
+                tailor for a real job, use <a th:href="@{/applications/new}">New Application</a> instead.</p>
+            <form hx-post="/master/health/keywords" hx-target="#keyword-result" hx-swap="outerHTML" class="entry-form">
+                <div class="form-grid">
+                    <div class="field span-2"><label for="title">Job title</label>
+                        <input id="title" type="text" name="title" placeholder="Backend Engineer"></div>
+                    <div class="field"><label for="required">Required skills <span class="muted">(one per line or comma-separated)</span></label>
+                        <textarea id="required" name="required" rows="5" placeholder="Java&#10;Spring Boot&#10;PostgreSQL&#10;Kafka"></textarea></div>
+                    <div class="field"><label for="preferred">Preferred skills</label>
+                        <textarea id="preferred" name="preferred" rows="5" placeholder="Kubernetes&#10;AWS"></textarea></div>
+                </div>
+                <button type="submit" class="btn btn-secondary">Check keywords</button>
+            </form>
+            <div id="keyword-result"></div>
+        </section>
+    </th:block>
+</main>
+
+<footer th:replace="~{layout :: siteFooter}"></footer>
+</body>
+</html>

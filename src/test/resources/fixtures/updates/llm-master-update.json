@@ -1,0 +1,32 @@
+{
+  "patch": [
+    {
+      "op": "add",
+      "path": "/work/0/highlights/-",
+      "from": "",
+      "valueJson": "{\"id\": \"NEW-1\", \"text\": \"Moved the refund service's nightly batch job from cron to a Spring Batch job on Kubernetes, cutting failures from about 4 a month to none\", \"skills\": [\"Spring Batch\", \"Kubernetes\"], \"metrics\": [{\"value\": \"4\", \"unit\": \"failures/month\", \"label\": \"failures before\"}, {\"value\": \"12\", \"unit\": \"jobs\", \"label\": \"jobs migrated\"}]}"
+    },
+    {
+      "op": "add",
+      "path": "/skills/-",
+      "from": "",
+      "valueJson": "{\"id\": \"NEW-2\", \"name\": \"Spring Batch\", \"category\": \"Frameworks\", \"evidenceIds\": [\"NEW-1\"]}"
+    },
+    {
+      "op": "add",
+      "path": "/skills/-",
+      "from": "",
+      "valueJson": "{\"id\": \"NEW-3\", \"name\": \"Terraform\", \"category\": \"Cloud/DevOps\", \"evidenceIds\": [\"NEW-1\"]}"
+    },
+    {
+      "op": "replace",
+      "path": "/meta/version",
+      "from": "",
+      "valueJson": "99"
+    }
+  ],
+  "summary": "Add a highlight about the Spring Batch migration to your internship, and two skills.",
+  "questions": [
+    "Which month did failures drop to none?"
+  ]
+}

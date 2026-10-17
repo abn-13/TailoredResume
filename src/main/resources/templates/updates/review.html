@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{layout :: htmlHead('Review Update')}"></head>
+<body>
+<header th:replace="~{layout :: topbar('master')}"></header>
+
+<main class="container">
+    <section class="page-head">
+        <h1>Update #<span th:text="${update.id}">3</span>
+            <span class="badge" th:classappend="${update.status.name() == 'PROPOSED'} ? 'badge-warn' : (${update.status.name() == 'APPLIED'} ? 'badge-pass' : 'badge-muted')"
+                  th:text="${#strings.toLowerCase(update.status.name())}">proposed</span></h1>
+        <p class="lede" th:text="${update.summary}">Add work: Engineer at New Co</p>
+        <p class="small muted">
+            <span th:text="${source}">Form</span> · proposed <span th:text="${created}">16 Oct 2026, 10:02</span>
+            <th:block th:if="${update.baseVersionNo != null}"> · based on master v<span th:text="${update.baseVersionNo}">3</span></th:block>
+            <th:block th:if="${update.appliedVersionNo != null}"> · applied as
+                <a th:href="@{/master/diff(from=${update.appliedVersionNo - 1}, to=${update.appliedVersionNo})}"
+                   th:text="'v' + ${update.appliedVersionNo}">v4</a></th:block>
+            <th:block th:if="${update.status.name() == 'REJECTED'}"> · rejected <span th:text="${resolved}"></span></th:block>
+        </p>
+    </section>
+    <nav th:replace="~{layout :: masterTabs('updates')}"></nav>
+    <div th:replace="~{layout :: flash}"></div>
+
+    <section class="panel" th:if="${update.sourceType.name() == 'FREE_TEXT'}">
+        <h2>What you wrote</h2>
+        <p class="free-text-quote" th:text="${update.rawInput}">In my internship I...</p>
+    </section>
+
+    <section class="panel notes-panel" th:unless="${#lists.isEmpty(notes)}">
+        <h2>Check these (<span th:text="${#lists.size(notes)}">3</span>)</h2>
+        <ul class="warn-list">
+            <li th:each="n : ${notes}" th:text="${n}">Phone had no country code; assumed +65.</li>
+        </ul>
+        <form th:if="${update.sourceType.name() == 'FREE_TEXT' and update.status.name() == 'PROPOSED'}" method="post"
+              th:action="@{/updates/{id}/answer(id=${update.id})}" class="answer-form">
+            <label for="answers"><strong>Answer the questions</strong> <span class="muted small">(a new proposal is made from
+                what you wrote plus your answers; this one is replaced)</span></label>
+            <textarea id="answers" name="answers" rows="3" placeholder="e.g. Failures went from about 4 a month to 0 in August 2026."></textarea>
+            <button type="submit" class="btn btn-secondary btn-small">Update the proposal</button>
+        </form>
+    </section>
+
+    <th:block th:if="${preview != null}">
+        <section class="panel">
+            <div th:replace="~{fragments/update-preview :: preview}"></div>
+        </section>
+
+        <section class="panel">
+            <div class="actions">
+                <form method="post" th:action="@{/updates/{id}/apply(id=${update.id})}">
+                    <button type="submit" class="btn" th:disabled="${!preview.canApply()}">Apply to master resume</button>
+                </form>
+                <form method="post" th:action="@{/updates/{id}/reject(id=${update.id})}">
+                    <button type="submit" class="btn btn-ghost">Reject</button>
+                </form>
+                <span th:if="${preview.blockedReason() != null}" class="small muted" th:text="${preview.blockedReason()}">
+                    Fix the problems first.</span>
+            </div>
+
+            <details class="patch-editor" th:open="${!preview.canApply() and preview.changes().size() > 0}">
+                <summary>Edit the patch (RFC 6902 JSON Patch)</summary>
+                <p class="small muted">Each operation is <code>add</code>, <code>remove</code>, <code>replace</code>,
+                    <code>move</code>, <code>copy</code> or <code>test</code> at a JSON Pointer path.
+                    <code>test</code> operations guard against the master having changed. New items may use
+                    <code>"NEW-1"</code> placeholder IDs.</p>
+                <form method="post" th:action="@{/updates/{id}/patch(id=${update.id})}">
+                    <label for="patch" class="visually-hidden">Patch</label>
+                    <textarea id="patch" name="patch" class="json-editor patch-textarea" spellcheck="false"
+                              th:text="${patchText}"></textarea>
+                    <div class="actions">
+                        <button type="button" class="btn btn-secondary"
+                                th:attr="hx-post=@{/updates/{id}/preview(id=${update.id})}"
+                                hx-include="#patch" hx-target="#update-preview" hx-swap="outerHTML">Preview changes</button>
+                        <button type="submit" class="btn btn-ghost">Save patch</button>
+                    </div>
+                </form>
+            </details>
+        </section>
+    </th:block>
+
+    <section class="panel" th:if="${preview == null}">
+        <h2>Patch</h2>
+        <pre class="json-view" th:text="${patchText}">[]</pre>
+    </section>
+
+    <section class="panel" th:if="${update.rawInput != null}">
+        <details>
+            <summary th:text="${update.sourceType.name() == 'IMPORT'} ? 'Text read from the file (after removing personal data)' : 'What you entered'">Raw input</summary>
+            <pre class="json-view raw-input" th:text="${update.rawInput}">raw</pre>
+        </details>
+    </section>
+</main>
+
+<footer th:replace="~{layout :: siteFooter}"></footer>
+</body>
+</html>

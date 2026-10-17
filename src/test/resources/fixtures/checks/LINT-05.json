@@ -1,0 +1,3 @@
+{ "rule": "LINT-05", "expect": "WARN",
+  "pass": { "bullets": [ {"text": "Build and maintain the refund service in Spring Boot for 2 million monthly payments", "current": true} ] },
+  "fail": { "bullets": [ {"text": "Build and maintain the refund service in Spring Boot for 2 million monthly payments", "current": false} ] } }

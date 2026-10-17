@@ -1,0 +1,11 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="result" id="keyword-result">
+    <p th:if="${report == null}" class="muted">No master resume yet.</p>
+    <th:block th:if="${report != null}">
+        <section th:replace="~{fragments/scorecard :: keywordPanel(${report.keywords()}, null)}"></section>
+        <section th:replace="~{fragments/scorecard :: scorecard(${report}, '/master/view', false)}"></section>
+    </th:block>
+</div>
+</body>
+</html>

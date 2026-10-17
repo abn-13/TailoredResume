@@ -1,0 +1,3 @@
+{ "rule": "KW-03", "expect": "INFO", "expectMessage": "is not in",
+  "pass": { "titleLine": "Backend Engineer (Java)", "job": { "title": "Backend Engineer", "required": [] } },
+  "fail": { "titleLine": "Mechanical Engineer", "job": { "title": "Backend Engineer", "required": [] } } }

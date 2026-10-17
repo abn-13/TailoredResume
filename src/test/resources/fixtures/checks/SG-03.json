@@ -1,0 +1,3 @@
+{ "rule": "SG-03", "expect": "ERROR",
+  "pass": { "text": "Built a single-page app", "headerText": "Jordan Tan\njordan@example.com" },
+  "fail": { "text": "Marital status: Single", "headerText": "Jordan Tan, married\njordan@example.com" } }

@@ -1,0 +1,3 @@
+{ "rule": "SG-02", "expect": "ERROR",
+  "pass": { "text": "Cut storage 20 GB by compressing logs; Adobe Photoshop" },
+  "fail": { "text": "Date of birth: 1 January 1995" } }

@@ -1,0 +1,87 @@
+<!--
+  The scorecard (spec 6): one panel per category with a PASS/WARN/FAIL badge, a 0-100 sub-score, counts, and
+  findings with "jump to" and a suggested fix. No overall score, on purpose.
+  Parameters: report (CheckReport); jumpBase (URL prefix for bullet anchors, "" for this page);
+  metricLinks (true on the master health page: LINT-02 findings link to the Add metric form).
+  Optional model attribute metricTargets (bullet anchor -> cited highlight ID) does the same on the application page.
+-->
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<section th:fragment="scorecard(report, jumpBase, metricLinks)" class="scorecard">
+    <p class="score-banner">Scores are heuristics from published guidance, not a real employer's ATS.</p>
+    <div class="score-summary">
+        <a th:each="c : ${report.categories()}" class="score-chip" th:href="'#cat-' + ${c.category().name()}"
+           th:classappend="'status-' + ${#strings.toLowerCase(c.status().name())}">
+            <span th:text="${c.category().label()}">Bullet quality</span>
+            <strong th:text="${c.status()}">PASS</strong>
+            <span class="score-num" th:text="${c.subScore()}">92</span>
+        </a>
+    </div>
+    <details th:each="c : ${report.categories()}" th:id="'cat-' + ${c.category().name()}" class="cat-panel"
+             th:open="${c.status().name() != 'PASS'}">
+        <summary>
+            <span class="cat-name" th:text="${c.category().label()}">Bullet quality</span>
+            <span class="badge" th:classappend="${c.status().name() == 'PASS'} ? 'badge-pass' : (${c.status().name() == 'WARN'} ? 'badge-warn' : 'badge-fail')"
+                  th:text="${c.status()}">PASS</span>
+            <span class="muted small" th:text="${c.subScore()} + '/100 · ' + ${c.errors()} + ' error' + (${c.errors()} == 1 ? '' : 's') + ', ' + ${c.warnings()} + ' warning' + (${c.warnings()} == 1 ? '' : 's') + ', ' + ${c.infos()} + ' note' + (${c.infos()} == 1 ? '' : 's')">
+                92/100</span>
+        </summary>
+        <p th:if="${#lists.isEmpty(c.findings())}" class="muted small">Nothing to report.</p>
+        <ul class="findings">
+            <li th:each="f : ${c.findings()}" th:classappend="'sev-' + ${#strings.toLowerCase(f.severity().name())}">
+                <span class="sev" th:text="${f.severity()}">WARN</span>
+                <code th:text="${f.checkId()}">LINT-01</code>
+                <span th:text="${f.message()}">message</span>
+                <a th:if="${#strings.startsWith(f.location(), 'b-')}" class="jump"
+                   th:href="${jumpBase} + '#' + ${f.location()}" th:attr="data-anchor=${f.location()}">jump to</a>
+                <a th:if="${metricLinks and f.checkId() == 'LINT-02' and #strings.startsWith(f.location(), 'b-')}" class="jump"
+                   th:href="@{/add-info(type='metric', highlightId=${#strings.substring(f.location(), 2)})}">add metric</a>
+                <!-- Application page: the bullet's first cited highlight gets the metric (the "add metric" loop, Phase 8) -->
+                <th:block th:if="${!metricLinks and metricTargets != null and f.checkId() == 'LINT-02' and metricTargets[f.location()] != null}"
+                          th:with="hid=${metricTargets[f.location()]}">
+                    <a class="jump" th:href="@{/add-info(type='metric', highlightId=${hid})}">add a metric to your master</a>
+                </th:block>
+                <div th:if="${!#strings.isEmpty(f.evidence())}" class="evidence" th:text="${f.evidence()}">evidence</div>
+                <div th:if="${!#strings.isEmpty(f.suggestedFix())}" class="fix" th:text="'→ ' + ${f.suggestedFix()}">fix</div>
+            </li>
+        </ul>
+    </details>
+</section>
+
+<!--
+  Keyword panel (spec 7): matched (green), in your master but not used (amber), gaps (grey).
+  Parameters: analysis (KeywordAnalysis); applicationId (null on the master page; enables "Add to resume").
+-->
+<section th:fragment="keywordPanel(analysis, applicationId)" class="keyword-panel" th:if="${analysis != null}">
+    <h3>Keywords <span class="muted small" th:text="'required ' + ${analysis.requiredPercent()} + '% · preferred ' + ${analysis.preferredPercent()} + '%'">required 80%</span></h3>
+    <div class="kw-group">
+        <span class="kw-label">Matched</span>
+        <span th:each="t : ${analysis.all()}" th:if="${t.match().name() == 'MATCHED'}" class="kw kw-matched"
+              th:classappend="${t.required()} ? 'kw-req'" th:text="${t.term()}">Java</span>
+    </div>
+    <div class="kw-group kw-evidenced-group">
+        <span class="kw-label">In your master, not used</span>
+        <div th:each="t : ${analysis.all()}" th:if="${t.match().name() == 'EVIDENCED_NOT_USED'}" class="kw-evidenced">
+            <span class="kw kw-amber" th:classappend="${t.required()} ? 'kw-req'" th:text="${t.term()}">Docker</span>
+            <span class="small"><code th:if="${t.sourceId() != null}" th:text="${t.sourceId()}">proj-2.h2</code>
+                <span th:text="${t.sourceText()}">Deployed the service on AWS with Docker</span></span>
+            <form th:if="${applicationId != null and t.itemId() != null and t.sourceId() != null and #strings.contains(t.sourceId(), '.h')}"
+                  method="post" th:action="@{/applications/{id}/bullets/add(id=${applicationId})}" class="kw-add-form">
+                <input type="hidden" name="itemId" th:value="${t.itemId()}">
+                <input type="hidden" name="sourceId" th:value="${t.sourceId()}">
+                <label class="visually-hidden" th:for="'add-' + ${t.sourceId()}">Bullet text</label>
+                <textarea th:id="'add-' + ${t.sourceId()}" name="text" rows="2" th:text="${t.sourceText()}"></textarea>
+                <button type="submit" class="btn btn-secondary btn-small">Add this bullet</button>
+            </form>
+        </div>
+    </div>
+    <div class="kw-group">
+        <span class="kw-label">Gaps (not in your master)</span>
+        <span th:each="t : ${analysis.all()}" th:if="${t.match().name() == 'GAP'}" class="kw kw-gap"
+              th:classappend="${t.required()} ? 'kw-req'" th:text="${t.term()}">Kafka</span>
+    </div>
+    <p class="muted small">Bold terms are required. Never add a gap to the resume; address it in the cover letter
+        or add it to your master only if it is true.</p>
+</section>
+</body>
+</html>

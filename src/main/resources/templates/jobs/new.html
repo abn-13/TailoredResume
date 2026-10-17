@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{layout :: htmlHead('New Application')}"></head>
+<body>
+<header th:replace="~{layout :: topbar('new-application')}"></header>
+
+<main class="container">
+    <section class="page-head">
+        <h1>New Application</h1>
+        <p class="lede">Step 1 of 3: bring in the job description. Next you check what was extracted, then
+            TailorSG tailors your resume to it.</p>
+    </section>
+    <div th:replace="~{layout :: flash}"></div>
+    <div th:unless="${hasMaster}" class="callout"><strong>No master resume yet.</strong> You can read job postings
+        now, but tailoring needs your <a th:href="@{/master/import}">master resume</a>.</div>
+    <div th:unless="${llmConfigured}" class="flash flash-fail">Reading job descriptions uses the extractor model, and
+        ANTHROPIC_API_KEY is not set. Export it and restart (or run in demo mode, see README).</div>
+
+    <nav class="tabs" aria-label="Job description source">
+        <a th:href="@{/applications/new(tab='link')}" th:classappend="${tab == 'link'} ? 'active'">Link</a>
+        <a th:href="@{/applications/new(tab='screenshots')}" th:classappend="${tab == 'screenshots'} ? 'active'">Screenshot(s)</a>
+        <a th:href="@{/applications/new(tab='paste')}" th:classappend="${tab == 'paste'} ? 'active'">Paste</a>
+    </nav>
+
+    <section class="panel" th:if="${tab == 'link'}">
+        <form method="post" th:action="@{/jobs/from-url}" class="entry-form">
+            <div class="field"><label for="url">Job posting link</label>
+                <input id="url" type="text" name="url" placeholder="https://www.mycareersfuture.gov.sg/job/..." required></div>
+            <p class="small muted">Works best with MyCareersFuture, Greenhouse and Lever links, and with pages that publish
+                structured job data. LinkedIn and sites that need a login are never scraped: paste or screenshot those.</p>
+            <button type="submit" class="btn" th:disabled="${!llmConfigured}" onclick="this.textContent='Reading the posting…'">Read the posting</button>
+        </form>
+    </section>
+
+    <section class="panel" th:if="${tab == 'screenshots'}">
+        <form method="post" th:action="@{/jobs/from-image}" enctype="multipart/form-data" class="entry-form upload-form">
+            <label for="files">1 to 5 screenshots, in order (PNG, JPEG or WebP)</label>
+            <input id="files" type="file" name="files" multiple accept="image/png,image/jpeg,image/webp" required>
+            <p class="small muted">Images are scaled so the long edge is at most 1568 px. Anything cut off or unreadable
+                is reported as a warning.</p>
+            <button type="submit" class="btn" th:disabled="${!llmConfigured}" onclick="this.textContent='Reading the screenshots…'">Read the screenshots</button>
+        </form>
+    </section>
+
+    <section class="panel" th:if="${tab == 'paste'}">
+        <form method="post" th:action="@{/jobs/from-text}" class="entry-form">
+            <div class="field"><label for="text">Job description text</label>
+                <textarea id="text" name="text" rows="16" required placeholder="Paste the whole posting: title, company, responsibilities, requirements..."></textarea></div>
+            <button type="submit" class="btn" th:disabled="${!llmConfigured}" onclick="this.textContent='Reading the posting…'">Read the posting</button>
+        </form>
+    </section>
+
+    <section class="panel" th:unless="${#lists.isEmpty(recent)}">
+        <h2>Recent job postings</h2>
+        <ul class="plain-list">
+            <li th:each="j : ${recent}"><a th:href="@{/jobs/{id}(id=${j.id})}" th:text="${j.title} + (${j.company} != null ? ' · ' + ${j.company} : '')">Backend Engineer · Acme</a>
+                <span class="muted small" th:text="${j.fetchNote}">Pasted text</span></li>
+        </ul>
+        <p class="small"><a th:href="@{/jobs}">All job postings</a></p>
+    </section>
+</main>
+
+<footer th:replace="~{layout :: siteFooter}"></footer>
+</body>
+</html>

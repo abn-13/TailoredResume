@@ -1,0 +1,3 @@
+{ "rule": "LINT-06", "expect": "WARN",
+  "pass": { "bullets": [ {"text": "Delivered the refund API two weeks early by splitting work into 3 parallel streams"} ] },
+  "fail": { "bullets": [ {"text": "Successfully delivered the refund API as a team player in a fast-paced environment"} ] } }

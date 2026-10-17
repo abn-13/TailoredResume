@@ -1,0 +1,265 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tailorsg.local/schema/master-resume.schema.json",
+  "title": "MasterResume",
+  "description": "The single source of truth for every application (P1). A superset of the JSON Resume idea with stable IDs, metrics and evidence links. Every object forbids unknown keys, so typos are caught instead of silently stored. Patterns are used instead of 'format' because the validator treats 'format' as an annotation only. 'errorMessage' (a networknt extension) gives readable messages instead of raw regexes; it is stripped before the schema is ever sent to the Claude API.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["meta", "basics"],
+  "properties": {
+    "meta": {
+      "description": "version and updatedAt are set by the server on every save.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["version", "updatedAt", "locale", "spelling"],
+      "properties": {
+        "version": { "type": "integer", "minimum": 1 },
+        "updatedAt": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?(Z|[+-][0-9]{2}:[0-9]{2})$", "errorMessage": { "pattern": "must be an ISO 8601 timestamp, e.g. 2026-10-15T09:30:00Z" } },
+        "locale": { "type": "string", "pattern": "^[a-z]{2}-[A-Z]{2}$", "errorMessage": { "pattern": "use a locale like en-SG" } },
+        "spelling": { "enum": ["british", "american"] }
+      }
+    },
+    "basics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "email"],
+      "properties": {
+        "name": { "$ref": "#/$defs/text" },
+        "label": { "$ref": "#/$defs/text" },
+        "email": { "type": "string", "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$", "errorMessage": { "pattern": "must be an email address, e.g. name@example.com" } },
+        "phone": { "description": "E.164, e.g. +6591234567", "type": "string", "pattern": "^\\+[1-9][0-9]{7,14}$", "errorMessage": { "pattern": "use E.164: + then country code and number, no spaces, e.g. +6591234567" } },
+        "url": { "$ref": "#/$defs/url" },
+        "location": {
+          "description": "City and country only. A residential address must never be stored (P6).",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["city", "countryCode"],
+          "properties": {
+            "city": { "$ref": "#/$defs/text" },
+            "countryCode": { "type": "string", "pattern": "^[A-Z]{2}$", "errorMessage": { "pattern": "use a two-letter uppercase country code, e.g. SG" } }
+          }
+        },
+        "profiles": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["network", "url"],
+            "properties": {
+              "network": { "enum": ["LinkedIn", "GitHub", "Portfolio", "Other"] },
+              "username": { "type": "string" },
+              "url": { "$ref": "#/$defs/url" }
+            }
+          }
+        },
+        "summaryVariants": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "text"],
+            "properties": {
+              "id": { "$ref": "#/$defs/itemId" },
+              "text": { "$ref": "#/$defs/text" },
+              "targetRoles": { "$ref": "#/$defs/stringList" }
+            }
+          }
+        },
+        "workAuthorization": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "displayText", "showOnResumeDefault"],
+          "properties": {
+            "status": { "enum": ["EP_REQUIRED", "EP_HOLDER", "PR", "CITIZEN", "OTHER"] },
+            "displayText": { "$ref": "#/$defs/text" },
+            "showOnResumeDefault": { "type": "boolean" }
+          }
+        }
+      }
+    },
+    "work": { "type": "array", "items": { "$ref": "#/$defs/experience" } },
+    "volunteer": { "type": "array", "items": { "$ref": "#/$defs/experience" } },
+    "projects": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "name"],
+        "properties": {
+          "id": { "$ref": "#/$defs/itemId" },
+          "name": { "$ref": "#/$defs/text" },
+          "role": { "$ref": "#/$defs/text" },
+          "url": { "$ref": "#/$defs/url" },
+          "repo": { "$ref": "#/$defs/url" },
+          "startDate": { "$ref": "#/$defs/yearMonth" },
+          "endDate": { "$ref": "#/$defs/endDate" },
+          "description": { "type": "string" },
+          "highlights": { "type": "array", "items": { "$ref": "#/$defs/highlight" } },
+          "keywords": { "$ref": "#/$defs/stringList" }
+        }
+      }
+    },
+    "education": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "institution", "studyType"],
+        "properties": {
+          "id": { "$ref": "#/$defs/itemId" },
+          "institution": { "$ref": "#/$defs/text" },
+          "area": { "$ref": "#/$defs/text" },
+          "studyType": { "$ref": "#/$defs/text" },
+          "startDate": { "$ref": "#/$defs/yearMonth" },
+          "endDate": { "$ref": "#/$defs/endDate" },
+          "score": { "type": "string" },
+          "scoreScale": { "type": "string" },
+          "courses": { "$ref": "#/$defs/stringList" },
+          "highlights": { "type": "array", "items": { "$ref": "#/$defs/highlight" } }
+        }
+      }
+    },
+    "skills": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "name", "category"],
+        "properties": {
+          "id": { "$ref": "#/$defs/itemId" },
+          "name": { "$ref": "#/$defs/text" },
+          "category": { "enum": ["Languages", "Frameworks", "Cloud/DevOps", "Databases", "Tools", "Domain", "Soft"] },
+          "level": { "type": "string" },
+          "evidenceIds": {
+            "description": "Highlight IDs that prove this skill. Empty is allowed but flagged as unevidenced.",
+            "type": "array",
+            "uniqueItems": true,
+            "items": { "$ref": "#/$defs/highlightId" }
+          }
+        }
+      }
+    },
+    "certificates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "name", "issuer"],
+        "properties": {
+          "id": { "$ref": "#/$defs/itemId" },
+          "name": { "$ref": "#/$defs/text" },
+          "issuer": { "$ref": "#/$defs/text" },
+          "date": { "$ref": "#/$defs/yearMonth" },
+          "url": { "$ref": "#/$defs/url" }
+        }
+      }
+    },
+    "awards": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "title"],
+        "properties": {
+          "id": { "$ref": "#/$defs/itemId" },
+          "title": { "$ref": "#/$defs/text" },
+          "awarder": { "$ref": "#/$defs/text" },
+          "date": { "$ref": "#/$defs/yearMonth" },
+          "summary": { "type": "string" }
+        }
+      }
+    },
+    "languages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["language"],
+        "properties": {
+          "language": { "$ref": "#/$defs/text" },
+          "fluency": { "type": "string" }
+        }
+      }
+    },
+    "extras": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "type", "text"],
+        "properties": {
+          "id": { "$ref": "#/$defs/itemId" },
+          "type": { "enum": ["publication", "leadership", "cca", "other"] },
+          "text": { "$ref": "#/$defs/text" },
+          "date": { "$ref": "#/$defs/yearMonth" }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "text": { "type": "string", "pattern": "\\S", "errorMessage": { "pattern": "must not be blank" } },
+    "stringList": { "type": "array", "items": { "$ref": "#/$defs/text" } },
+    "url": { "type": "string", "pattern": "^https?://\\S+$", "errorMessage": { "pattern": "must be a full URL starting with https://" } },
+    "yearMonth": { "type": "string", "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])$", "errorMessage": { "pattern": "use YYYY-MM, e.g. 2024-05" } },
+    "endDate": {
+      "description": "YYYY-MM, or null / absent for a current role.",
+      "type": ["string", "null"],
+      "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])$",
+      "errorMessage": { "pattern": "use YYYY-MM, e.g. 2024-05, or null for a current role" }
+    },
+    "itemId": {
+      "description": "Server-assigned: section prefix + counter, e.g. work-3. The section prefix is checked in code.",
+      "type": "string",
+      "pattern": "^[a-z]+-[1-9][0-9]*$",
+      "errorMessage": { "pattern": "must look like work-3 (section prefix and number); leave it out on new items" }
+    },
+    "highlightId": {
+      "description": "Parent item ID + .h + counter, e.g. work-3.h2.",
+      "type": "string",
+      "pattern": "^[a-z]+-[1-9][0-9]*\\.h[1-9][0-9]*$",
+      "errorMessage": { "pattern": "must be a highlight id like work-3.h2" }
+    },
+    "metric": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "label"],
+      "properties": {
+        "value": { "description": "As written, e.g. \"35\" or \"1,200\".", "type": "string", "pattern": "\\S", "errorMessage": { "pattern": "must not be blank" } },
+        "unit": { "type": "string" },
+        "label": { "$ref": "#/$defs/text" }
+      }
+    },
+    "highlight": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "text"],
+      "properties": {
+        "id": { "$ref": "#/$defs/highlightId" },
+        "text": { "$ref": "#/$defs/text" },
+        "metrics": { "type": "array", "items": { "$ref": "#/$defs/metric" } },
+        "skills": { "$ref": "#/$defs/stringList" },
+        "tags": { "$ref": "#/$defs/stringList" },
+        "evidence": { "description": "Private note, never rendered.", "type": "string" },
+        "priority": { "description": "1 = most important.", "type": "integer", "minimum": 1, "maximum": 5 }
+      }
+    },
+    "experience": {
+      "description": "Shape shared by work and volunteer entries. 'name' is the employer or organisation.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "position", "startDate"],
+      "properties": {
+        "id": { "$ref": "#/$defs/itemId" },
+        "name": { "$ref": "#/$defs/text" },
+        "position": { "$ref": "#/$defs/text" },
+        "location": { "$ref": "#/$defs/text" },
+        "employmentType": { "enum": ["Internship", "Full-time", "Contract", "Part-time"] },
+        "url": { "$ref": "#/$defs/url" },
+        "startDate": { "$ref": "#/$defs/yearMonth" },
+        "endDate": { "$ref": "#/$defs/endDate" },
+        "summary": { "type": "string" },
+        "highlights": { "type": "array", "items": { "$ref": "#/$defs/highlight" } }
+      }
+    }
+  }
+}

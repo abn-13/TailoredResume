@@ -1,0 +1,5 @@
+{ "rule": "LINT-09", "expect": "WARN",
+  "pass": { "bullets": [ {"text": "Built A", "itemId": "work-1"}, {"text": "Built B", "itemId": "work-1"}, {"text": "Built C", "itemId": "work-1"},
+                         {"text": "Wrote D", "itemId": "work-2"} ] },
+  "fail": { "bullets": [ {"text": "Built A.", "itemId": "work-1"}, {"text": "Built B", "itemId": "work-1"}, {"text": "Built C", "itemId": "work-1"},
+                         {"text": "Wrote D", "itemId": "work-2"} ] } }

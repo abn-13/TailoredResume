@@ -1,0 +1,239 @@
+{
+ "uuid": "d79c61fae9edc00c420cec7caf2c7087",
+ "sourceCode": "ATS",
+ "title": "Senior Software Engineer",
+ "description": "<p><strong >Together, We Can Make A Significant Impact \u2013 Position Overview</strong></p><p><span >As a Senior Software Engineer, you will be part of an Agile, cross-functional product delivery team responsible for designing, developing, testing, and maintaining mission-critical digital solutions. You will deliver the full scope of Software Engineer responsibilities while taking on greater ownership in technical design, code quality, testing strategy, estimation, delivery risk management, and technical guidance for assigned modules or workstreams.</span></p><p><span >Working under the guidance of the Solution Architect and Software Architects, you will analyse existing software codes and processes, recommend scalable and secure software solutions, and collaborate with the Engineering Team and HTX work units to make informed decisions on tools, technologies, and design patterns. This role is suitable for engineers with a minimum of 4 years of relevant software development experience who are ready to contribute as a technical lead within an Agile delivery environment.</span></p><p><br></p><p><strong>Key Responsibilities</strong></p><p>Core Software Engineering</p><ul><li>Deliver functional, tested, secure, and scalable software features based on the product backlog and agreed sprint priorities.</li><li>Work in cross-functional Agile teams and contribute to sprint planning, backlog refinement, development, reviews, retrospectives, and continuous improvement.</li><li>Collaborate with QA engineers, Product Designers, DevOps engineers, Business Analysts, Product Owners, and stakeholders to ensure solutions meet both technical and user requirements.</li><li>Clarify requirements where required and translate business or user needs into technical specifications, implementation tasks, and acceptance considerations.</li><li>Develop front-end applications, backend services, APIs, and software modules using the project\u2019s approved technology stack.</li><li>Support development for Proof of Concept (POC) and/or Initial Operations Capability (IOC) initiatives, enabling safe experimentation and incremental delivery.</li><li>Write and maintain unit and integration tests to support automated testing, quality gates, and continuous integration pipelines.</li><li>Design, implement, and maintain CI/CD pipeline templates for automated build, testing, security scanning, and deployment in alignment with the Authority\u2019s toolchain.</li><li>Set up, maintain, and troubleshoot development environments to support productive development, testing, and experimentation.</li><li>Apply DevSecOps practices, Infrastructure as Code (IaC) principles, secure coding standards, and software maintenance best practices where applicable.</li><li>Investigate, troubleshoot, and resolve software defects, technical issues, and post-deployment support matters in a timely manner.</li><li>Participate in code reviews, technical documentation, technical evaluation, benchmarking, and quality assurance activities.</li><li>Work with minimal supervision on assigned modules and, where required, coordinate small tasks or workstreams while contributing to team delivery and technical discussions.</li></ul><p>Senior Engineering and Technical Leadership</p><ul><li>Analyse existing software codes and processes and provide technical recommendation in designing scalable software solutions that meet business requirements under the guidance of Solution Architect and Software Architects.</li><li>Collaborate closely with the Engineering Team and other HTX\u2019s work units to make informed decisions on tools, technologies, and design patterns to address complex problems.</li><li>Lead the establishment and upholding of testing strategies, including unit, integration, and end-to-end tests, to ensure software reliability and performance.</li><li>Oversee code quality through regular reviews, ensuring adherence to coding standards and best practices.</li><li>Collaborate with cross-functional teams, including product managers and designers, to define and implement software requirements.</li><li>Collaborate with the product managers to estimate the timelines, resources, and technical risks, ensuring timely delivery of software projects.</li><li>Establish and uphold testing strategies, including unit, integration, and end-to-end tests, to ensure software reliability and performance.</li></ul><p><br></p>\n      <p><b>Requirements</b></p>\n       <ul><li>Degree in Information Technology, Computer Science, Software Engineering, or a related discipline, with a minimum of 4 years of relevant software development experience.</li><li>Professional experience and demonstrated skills in Software Architecture, Systems Design, or related areas may be considered in lieu of formal education.</li><li>Proficiency in one or more relevant languages or frameworks, such as TypeScript with Angular, React, or Next.js; C#; Java; or other languages depending on project needs.</li><li>Familiarity with one or more database technologies, such as MSSQL, PostgreSQL, or Oracle.</li><li>Good understanding of SDLC practices, object-oriented programming, RESTful API design, microservices architecture, software maintenance, secure coding practices, and DevOps principles.</li><li>Proven experience leading or guiding a technical team, module, or workstream in Agile/Scrum environments.</li><li>Experience in code reviews, technical design discussions, software troubleshooting, technical evaluation, and implementation of engineering best practices.</li><li>Familiarity with CI/CD pipelines, automated testing, code quality practices, version control tools such as Git and GitHub or equivalent platforms, and collaboration tools used in Agile delivery.</li><li>Knowledge of containerisation and orchestration technologies such as Docker and Kubernetes will be advantageous. Exposure to cloud environments, Infrastructure as Code, or DevSecOps toolchains will be an added advantage.</li><li>Able to establish and uphold testing approaches across unit, integration, and end-to-end testing to improve software reliability and performance.</li><li>Able to apply industry best practices in quality assurance, technical evaluation, and benchmarking, and adapt approaches based on project requirements.</li><li>Excellent analytical and problem-solving skills, with the ability to investigate complex issues, evaluate options, and propose practical technical solutions.</li><li>Strong leadership, communication, and interpersonal skills to effectively collaborate with cross-functional teams, engage stakeholders, and mentor engineers.</li><li>Responsible, adaptable, and comfortable working in a mission-driven environment where quality, security, reliability, and impact matter.</li></ul><p><br></p><p><strong>What We Offer</strong></p><ul><li>Opportunity to work on meaningful public sector digital initiatives.</li><li>A supportive, purpose-driven team culture.</li><li>Structured career development and technical upskilling.</li><li>Access to modern tools, cloud technologies, and secure DevSecOps environments.</li></ul><p><br></p><p><strong>Additional Information</strong></p><ul><li>Shortlisted applicants may be involved in classified or sensitive projects that require handling of restricted information. As such, selected candidates will be required to undergo a security clearance process as part of the employment consideration.</li></ul>\n      ",
+ "minimumYearsExperience": 4,
+ "shiftPattern": null,
+ "schemes": [],
+ "skills": [
+  {
+   "skill": "Object-Oriented Programming",
+   "uuid": "00f9d583d42fe665e70963350164f527",
+   "confidence": null,
+   "isKeySkill": false
+  },
+  {
+   "skill": "Writing Technical Specifications",
+   "uuid": "07299d2df92d44fb374b95a06cfae4df",
+   "confidence": null,
+   "isKeySkill": false
+  },
+  {
+   "skill": "Collaborate With Engineers",
+   "uuid": "15c0089c32f4b9a57247cd0187822118",
+   "confidence": null,
+   "isKeySkill": false
+  },
+  {
+   "skill": "guiding team members",
+   "uuid": "2d633c37b340b0c72aa88fb7e839e19d",
+   "confidence": null,
+   "isKeySkill": false
+  },
+  {
+   "skill": "Kubernetes",
+   "uuid": "30136395f01879792198317c11831ea4",
+   "confidence": null,
+   "isKeySkill": false
+  },
+  {
+   "skill": "Experimentation",
+   "uuid": "45071f255ad41e414e8f5404497caf0c",
+   "confidence": null,
+   "isKeySkill": false
+  },
+  {
+   "skill": "Implementation of Best Practices",
+   "uuid": "4999c12fe00523f2e098db2f30723d65",
+   "confidence": null,
+   "isKeySkill": false
+  },
+  {
+   "skill": "C Language",
+   "uuid": "6cd2d0166ffc431918845dd27c3da4d7",
+   "confidence": null,
+   "isKeySkill": false
+  },
+  {
+   "skill": "Microsoft SQL Server",
+   "uuid": "78898e52fcbdc5337204a384f2456d4f",
+   "confidence": null,
+   "isKeySkill": false
+  },
+  {
+   "skill": "Cross Functional Team Building",
+   "uuid": "87c609c58caffee206311061beb20cf8",
+   "confidence": null,
+   "isKeySkill": false
+  },
+  {
+   "skill": "Agile Delivery",
+   "uuid": "a4f1aadc89967ee925050dbb3f97a8fd",
+   "confidence": null,
+   "isKeySkill": false
+  },
+  {
+   "skill": "Foreign Languages",
+   "uuid": "ac25e9bc594a1e96f2621a6c941ab7b5",
+   "confidence": null,
+   "isKeySkill": false
+  },
+  {
+   "skill": "Sprint (scrum)",
+   "uuid": "c29af4aa39035aabfd4e83247cda0b1a",
+   "confidence": null,
+   "isKeySkill": false
+  },
+  {
+   "skill": "Informal Education",
+   "uuid": "c38b9178cd622fe394953186112bf876",
+   "confidence": null,
+   "isKeySkill": false
+  },
+  {
+   "skill": "Software Modules",
+   "uuid": "c695ca9cc3a4c25af021d3a61ac34737",
+   "confidence": null,
+   "isKeySkill": false
+  },
+  {
+   "skill": "Software Integration Testing",
+   "uuid": "d2953442a8bdb51a8faf926b73edb9e2",
+   "confidence": null,
+   "isKeySkill": false
+  }
+ ],
+ "flexibleWorkArrangements": [],
+ "otherRequirements": null,
+ "ssocCode": "21522",
+ "occupationId": "OCC002120",
+ "ssocVersion": "2020v3",
+ "workingHours": null,
+ "numberOfVacancies": 2,
+ "psdUrl": null,
+ "categories": [
+  {
+   "id": 11,
+   "category": "Engineering"
+  },
+  {
+   "id": 21,
+   "category": "Information Technology"
+  }
+ ],
+ "employmentTypes": [
+  {
+   "id": 7,
+   "employmentType": "Permanent"
+  }
+ ],
+ "positionLevels": [
+  {
+   "id": 8,
+   "position": "Senior Executive"
+  }
+ ],
+ "status": {
+  "id": 102,
+  "jobStatus": "Open"
+ },
+ "ssecEqa": "70",
+ "ssecFos": "1140",
+ "postedCompany": {
+  "uen": "202513114E",
+  "description": "<p>A joint venture company by ST Engineering and HTX (Home Team Science and Technology Agency), Codex Solutions is set up to be a dynamic and forward-looking technology company established to develop cutting-edge software solutions that support and strengthen Singapore\u2019s homeland security efforts. As a mission-driven organisation, we are focused on building strong in-house capabilities that directly address the complex challenges faced by the Home Team.<br>\n<br>\nWith a strong emphasis on innovation, product excellence, and impact at scale, Codex Solutions offers a unique environment where purpose meets technology. We are assembling a diverse and talented team of technologists and problem solvers who are passionate about making a real difference. If you're looking to shape meaningful solutions and be part of something bigger \u2014 Codex Solutions is where you\u2019ll want to be.<br>\n</p>",
+  "name": "CODEX SOLUTIONS PTE. LTD.",
+  "ssicCode": null,
+  "employeeCount": null,
+  "companyUrl": null,
+  "lastSyncDate": "2026-08-12T04:06:57.000Z",
+  "ssicCode2020": "62011",
+  "badges": [],
+  "_links": {
+   "self": {
+    "href": "https://api.mycareersfuture.gov.sg/v2/companies/202513114E"
+   },
+   "jobs": {
+    "href": "https://api.mycareersfuture.gov.sg/v2/companies/202513114E/jobs"
+   },
+   "addresses": {
+    "href": "https://api.mycareersfuture.gov.sg/v2/companies/202513114E/addresses"
+   },
+   "schemes": {
+    "href": "https://api.mycareersfuture.gov.sg/v2/companies/202513114E/schemes"
+   }
+  },
+  "ssicDescription2020": null,
+  "logoFileName": "16559e7ec3c92a1c98982dd941cf76a2/codex-solutions.png",
+  "logoUploadPath": "https://static.mycareersfuture.gov.sg/images/company/logos/16559e7ec3c92a1c98982dd941cf76a2/codex-solutions.png",
+  "responsiveEmployer": {
+   "isResponsive": false
+  }
+ },
+ "hiringCompany": null,
+ "screeningQuestions": [],
+ "address": {
+  "overseasCountry": null,
+  "foreignAddress1": null,
+  "foreignAddress2": null,
+  "block": "1",
+  "street": "1 Fusionopolis View",
+  "floor": null,
+  "unit": null,
+  "building": null,
+  "postalCode": "138577",
+  "isOverseas": false,
+  "districts": [
+   {
+    "id": 5,
+    "location": "D05 Pasir Panjang, Hong Leong Garden, Clementi New Town",
+    "region": "West",
+    "sectors": [
+     "11",
+     "12",
+     "13"
+    ],
+    "regionId": "West"
+   }
+  ],
+  "lat": 1.2999417970753,
+  "lng": 103.789404349716
+ },
+ "metadata": {
+  "jobPostId": "ATS-2026-1774329",
+  "deletedAt": null,
+  "createdAt": "2026-10-07T10:37:23.000Z",
+  "updatedAt": "2026-10-07T10:37:23.000Z",
+  "editCount": 0,
+  "repostCount": 0,
+  "totalNumberOfView": 109,
+  "newPostingDate": "2026-10-07",
+  "originalPostingDate": "2026-10-07",
+  "expiryDate": "2026-11-06",
+  "totalNumberJobApplication": 0,
+  "isJdEnhanced": false,
+  "isPostedOnBehalf": false,
+  "isHideSalary": false,
+  "isHideCompanyAddress": false,
+  "isHideHiringEmployerName": false,
+  "isHideEmployerName": false,
+  "jobDetailsUrl": "https://www.mycareersfuture.gov.sg/job/engineering/senior-software-engineer-codex-solutions-d79c61fae9edc00c420cec7caf2c7087"
+ },
+ "salary": {
+  "maximum": 7500,
+  "minimum": 6000,
+  "type": {
+   "id": 4,
+   "salaryType": "Monthly"
+  }
+ },
+ "_links": {
+  "self": {
+   "href": "https://api.mycareersfuture.gov.sg/v2/jobs/d79c61fae9edc00c420cec7caf2c7087"
+  },
+  "screeningQuestions": {
+   "href": "https://api.mycareersfuture.gov.sg/v2/jobs/d79c61fae9edc00c420cec7caf2c7087/screening-questions"
+  }
+ }
+}

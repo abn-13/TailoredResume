@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{layout :: htmlHead('Applications')}"></head>
+<body>
+<header th:replace="~{layout :: topbar('applications')}"></header>
+<main class="container">
+    <section class="page-head"><h1>Applications</h1>
+        <p class="lede">Every job you have tailored for, and where it stands. <a th:href="@{/applications/new}">Start a new one</a>.</p></section>
+    <div th:replace="~{layout :: flash}"></div>
+    <section class="panel">
+        <div th:replace="~{applications/list :: tracker(${applications}, 'list')}"></div>
+    </section>
+</main>
+<footer th:replace="~{layout :: siteFooter}"></footer>
+</body>
+</html>
+
+<!-- The tracker table, shared with the dashboard. returnTo: where the status form goes back to. -->
+<div th:fragment="tracker(rows, returnTo)">
+    <div th:if="${#lists.isEmpty(rows)}" class="empty">
+        <p>No applications yet.</p>
+        <p class="muted"><a th:href="@{/applications/new}">Add a job posting</a> to tailor your first resume.</p>
+    </div>
+    <div class="table-wrap" th:unless="${#lists.isEmpty(rows)}">
+        <table class="tracker">
+            <thead><tr><th>Job</th><th>Company</th><th>Checks</th><th>Status</th><th>Updated</th></tr></thead>
+            <tbody>
+            <tr th:each="r : ${rows}">
+                <td class="wrap"><a th:href="@{/applications/{id}(id=${r.id()})}" th:text="${r.title()} ?: '(untitled)'">Backend Engineer</a></td>
+                <td class="wrap" th:text="${r.company()}">Acme</td>
+                <td>
+                    <span th:unless="${r.tailored()}" class="badge badge-muted">not tailored</span>
+                    <span th:if="${r.tailored() and r.errors() > 0}" class="badge badge-fail" th:text="${r.errors()} + ' error' + (${r.errors()} == 1 ? '' : 's')">2 errors</span>
+                    <span th:if="${r.tailored() and r.errors() == 0}" class="badge badge-pass">no errors</span>
+                    <span th:if="${r.tailored() and r.warnings() > 0}" class="muted small" th:text="${r.warnings()} + ' warn'">3 warn</span>
+                </td>
+                <td>
+                    <form method="post" th:action="@{/applications/{id}/status(id=${r.id()})}" class="inline-form">
+                        <input type="hidden" name="returnTo" th:value="${returnTo}">
+                        <label class="visually-hidden" th:for="'status-' + ${r.id()}">Status</label>
+                        <select th:id="'status-' + ${r.id()}" name="status" onchange="this.form.submit()">
+                            <option th:each="s : ${statuses}" th:value="${s}" th:text="${s}" th:selected="${s == r.status()}">DRAFT</option>
+                        </select>
+                    </form>
+                </td>
+                <td th:text="${@resumeView.when(r.updatedAt())}">17 Oct 2026</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,0 +1,5 @@
+{ "rule": "CL-01", "expect": "ERROR", "mode": "COVER_LETTER",
+  "pass": { "coverLetter": { "recipientLine": "Dear Hiring Manager,", "subject": "Application for Backend Engineer", "signOff": "Yours sincerely,", "wordCount": 0,
+            "paragraphs": [ {"text": "The change was small, one cache in front of one query, but it mattered.", "sourceIds": []} ] } },
+  "fail": { "coverLetter": { "recipientLine": "Dear Hiring Manager,", "subject": "Application for Backend Engineer", "signOff": "Yours sincerely,", "wordCount": 0,
+            "paragraphs": [ {"text": "The change was small — one cache in front of one query — but it mattered.", "sourceIds": []} ] } } }

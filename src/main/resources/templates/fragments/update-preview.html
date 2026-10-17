@@ -1,0 +1,58 @@
+<!--
+  What applying an update would do to the current master resume. Rendered inside the review page and
+  returned alone to htmx when the user previews an edited patch (it then replaces #update-preview).
+-->
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div id="update-preview" th:fragment="preview">
+    <div th:if="${edited}" class="callout small">Preview of your edited patch. It is <strong>not saved</strong> until
+        you click Save patch.</div>
+
+    <div th:if="${preview.patchError() != null}" class="result result-fail">
+        <strong>This patch does not apply to the current master resume.</strong>
+        <div th:text="${preview.patchError()}">Operation 1 (test /work/0/id): expected "work-1" but found "work-2".</div>
+    </div>
+
+    <div th:if="${!#lists.isEmpty(preview.errors())}" class="result result-fail">
+        <strong th:text="'The result would be rejected: ' + ${#lists.size(preview.errors())} + (${#lists.size(preview.errors())} == 1 ? ' problem.' : ' problems.')">
+            2 problems.</strong>
+        <ul th:replace="~{layout :: errorList(${preview.errors()})}"></ul>
+    </div>
+
+    <th:block th:if="${preview.patchError() == null}">
+        <h2 class="section-title">Changes
+            <span class="muted small" th:if="${preview.baseVersionNo() != null}"
+                  th:text="'compared with master version ' + ${preview.baseVersionNo()}">compared with master version 3</span>
+            <span class="muted small" th:if="${preview.baseVersionNo() == null}">(creates your master resume)</span>
+        </h2>
+        <div th:if="${#lists.isEmpty(changes)}" class="empty"><p>No changes.</p></div>
+        <div class="table-wrap" th:unless="${#lists.isEmpty(changes)}">
+            <table>
+                <thead><tr><th>Change</th><th>Where</th><th>Before</th><th>After</th></tr></thead>
+                <tbody>
+                <tr th:each="c : ${changes}">
+                    <td><span class="change" th:classappend="'change-' + ${#strings.toLowerCase(c.type())}"
+                              th:text="${#strings.toLowerCase(c.type())}">added</span></td>
+                    <td class="wrap mono small" th:text="${c.path()}">work › work-3</td>
+                    <td class="wrap diff-before" th:text="${c.before()}"></td>
+                    <td class="wrap diff-after" th:text="${c.after()}">{"name": "New Co"}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <p th:unless="${#lists.isEmpty(preview.assignedIds())}" class="small">
+            <span th:text="${#lists.size(preview.assignedIds())} + ' new ID' + (${#lists.size(preview.assignedIds())} == 1 ? '' : 's') + ' on apply:'">2 new IDs:</span>
+            <code th:text="${#lists.size(preview.assignedIds())} > 12 ? ${#strings.listJoin(preview.assignedIds().subList(0, 12), ', ')} + ', …' : ${#strings.listJoin(preview.assignedIds(), ', ')}">work-3, work-3.h1</code>
+        </p>
+        <ul th:unless="${#lists.isEmpty(preview.newNotes())}" class="note-list small">
+            <li th:each="n : ${preview.newNotes()}" th:text="${n}">Skill 'Kubernetes' is unevidenced.</li>
+        </ul>
+    </th:block>
+
+    <details th:if="${resultResume != null}" class="result-details" th:open="${resultOpen}">
+        <summary>Resulting master resume</summary>
+        <th:block th:replace="~{fragments/resume-view :: resume(${resultResume})}"></th:block>
+    </details>
+</div>
+</body>
+</html>

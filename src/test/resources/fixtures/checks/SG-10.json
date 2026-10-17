@@ -1,0 +1,3 @@
+{ "rule": "SG-10", "expect": "WARN",
+  "pass": { "text": "Engineer, Acme    May 2024 - Present\nIntern, Beta    Jan 2023 - Sep 2023" },
+  "fail": { "text": "Engineer, Acme    May 2024 - Present\nIntern, Beta    January 2023 - 09/2023" } }

@@ -1,0 +1,3 @@
+{ "rule": "TRUTH-06", "expect": "WARN", "expectMessage": "not in the source",
+  "pass": { "bullets": [ {"itemId": "proj-2", "kind": "PROJECT", "sourceIds": ["proj-2.h1"], "text": "Led a team of 4 to build a React and Spring Boot app estimating hawker-stall queue times"} ] },
+  "fail": { "bullets": [ {"itemId": "work-2", "sourceIds": ["work-2.h2"], "text": "Led the analysis of vibration test data from 12 prototype units, identifying a bracket resonance"} ] } }

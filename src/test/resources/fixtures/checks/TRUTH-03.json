@@ -1,0 +1,3 @@
+{ "rule": "TRUTH-03", "expect": "ERROR", "expectMessage": "Kafka",
+  "pass": { "bullets": [ {"itemId": "work-1", "sourceIds": ["work-1.h2"], "text": "Built RESTful APIs for merchant refund requests with Spring Boot and PostgreSQL, covered by 40 integration tests"} ] },
+  "fail": { "bullets": [ {"itemId": "work-1", "sourceIds": ["work-1.h2"], "text": "Built RESTful APIs for merchant refund requests with Spring Boot and Kafka, covered by 40 integration tests"} ] } }

@@ -1,0 +1,3 @@
+{ "rule": "TRUTH-01", "expect": "ERROR", "expectMessage": "Cites no source",
+  "pass": { "bullets": [ {"itemId": "work-1", "sourceIds": ["work-1.h1"], "text": "Reduced p95 latency of the payment status API by 35% with a Redis cache"} ] },
+  "fail": { "bullets": [ {"itemId": "work-1", "sourceIds": [], "text": "Reduced p95 latency of the payment status API by 35% with a Redis cache"} ] } }

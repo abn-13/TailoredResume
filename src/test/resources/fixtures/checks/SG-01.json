@@ -1,0 +1,3 @@
+{ "rule": "SG-01", "expect": "ERROR",
+  "pass": { "text": "Jordan Tan\n+6590001234 | jordan@example.com | Singapore\nBuilt REST APIs in Java" },
+  "fail": { "text": "Jordan Tan\nNRIC: S1234567D\nBuilt REST APIs in Java" } }

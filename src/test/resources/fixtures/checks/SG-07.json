@@ -1,0 +1,3 @@
+{ "rule": "SG-07", "expect": "WARN",
+  "pass": { "text": "Mentored two junior developers on code reviews" },
+  "fail": { "text": "References available upon request" } }

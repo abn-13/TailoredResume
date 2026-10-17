@@ -1,0 +1,3 @@
+{ "rule": "SG-08", "expect": "WARN",
+  "pass": { "text": "Work authorisation: Employment Pass required" },
+  "fail": { "text": "Nationality: Pakistani" } }

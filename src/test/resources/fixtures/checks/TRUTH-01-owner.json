@@ -1,0 +1,3 @@
+{ "rule": "TRUTH-01", "expect": "ERROR", "expectMessage": "but sits under",
+  "pass": { "bullets": [ {"itemId": "proj-2", "kind": "PROJECT", "sourceIds": ["proj-2.h2"], "text": "Deployed the service on AWS with Docker and a CI pipeline for a 300-user pilot"} ] },
+  "fail": { "bullets": [ {"itemId": "work-1", "sourceIds": ["proj-2.h2"], "text": "Deployed the service on AWS with Docker and a CI pipeline for a 300-user pilot"} ] } }

@@ -1,0 +1,27 @@
+{
+  "targetTitleLine": "Backend Engineer",
+  "summary": { "text": "Backend-focused software engineering intern with a mechanical engineering background, building Java and Spring Boot services with an emphasis on testing", "sourceIds": ["sum-1"] },
+  "sectionOrder": ["summary", "education", "experience", "projects", "skills"],
+  "experience": [
+    { "workId": "work-2", "bullets": [
+      { "text": "Wrote Python scripts to batch-process finite element simulation results, cutting post-processing time from 2 days to 3 hours per design iteration", "sourceIds": ["work-2.h1"] } ] },
+    { "workId": "work-1", "bullets": [
+      { "text": "Built RESTful APIs for merchant refund requests with Spring Boot and PostgreSQL, covered by 40 integration tests using Testcontainers", "sourceIds": ["work-1.h2"] },
+      { "text": "Reduced p95 latency of the payment status API by 35% by adding a Redis cache in front of the reconciliation query", "sourceIds": ["work-1.h1"] },
+      { "text": "Automated the nightly settlement report with a GitHub Actions workflow, saving the operations team about 3 hours a week.", "sourceIds": ["work-1.h3"] } ] }
+  ],
+  "projects": [
+    { "projectId": "proj-2", "bullets": [
+      { "text": "Deployed the service on AWS with Docker and a CI pipeline, serving 300 users during a two-week pilot", "sourceIds": ["proj-2.h2"] },
+      { "text": "Led a team of 4 to build a React and Spring Boot app that estimates hawker-stall queue times from crowd-sourced reports", "sourceIds": ["proj-2.h1"] } ] },
+    { "projectId": "proj-1", "bullets": [
+      { "text": "Designed a rule-based check engine in Java that validates generated resume bullets against their source data", "sourceIds": ["proj-1.h1"] } ] }
+  ],
+  "skillsLines": [
+    { "category": "Languages", "items": [ { "name": "Java", "skillId": "skill-1" }, { "name": "Python", "skillId": "skill-2" } ] },
+    { "category": "Frameworks and databases", "items": [ { "name": "Spring Boot", "skillId": "skill-4" }, { "name": "PostgreSQL", "skillId": "skill-6" }, { "name": "Redis", "skillId": "skill-7" } ] },
+    { "category": "Cloud and DevOps", "items": [ { "name": "Docker", "skillId": "skill-8" }, { "name": "AWS", "skillId": "skill-9" }, { "name": "GitHub Actions", "skillId": "skill-10" } ] }
+  ],
+  "omitted": [ { "id": "work-2.h3", "reason": "Supplier coordination is less relevant to a backend role" }, { "id": "vol-1", "reason": "Space on one page" } ],
+  "gapsNotAddressed": ["Kafka", "Kubernetes"]
+}

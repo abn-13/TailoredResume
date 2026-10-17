@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{layout :: htmlHead('Import Resume')}"></head>
+<body>
+<header th:replace="~{layout :: topbar('master')}"></header>
+
+<main class="container">
+    <section class="page-head">
+        <h1>Master Resume</h1>
+        <p class="lede">Turn your existing resume into a master resume. You review everything before it is saved.</p>
+    </section>
+    <nav th:replace="~{layout :: masterTabs('import')}"></nav>
+    <div th:replace="~{layout :: flash}"></div>
+
+    <div class="editor-layout">
+        <section class="panel">
+            <h2>Import a PDF or DOCX</h2>
+            <div th:if="${hasMaster}" class="callout">
+                <strong>You already have a master resume.</strong> An import proposes replacing the whole thing,
+                and new entries get new IDs. To add a few items, use <a th:href="@{/add-info}">Add Info</a> instead.
+            </div>
+            <div th:unless="${llmConfigured}" class="flash flash-fail">
+                Importing uses the extractor model, and ANTHROPIC_API_KEY is not set. Export it and restart the app.
+            </div>
+            <!-- A normal multipart form post: the page reloads into the review page when done -->
+            <form method="post" th:action="@{/master/import}" enctype="multipart/form-data" class="upload-form">
+                <label for="file">Resume file (PDF or DOCX, up to 5 MB)</label>
+                <input id="file" type="file" name="file" accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" required>
+                <div class="actions">
+                    <button type="submit" class="btn" th:disabled="${!llmConfigured}"
+                            onclick="this.textContent='Reading your resume…'">Import for review</button>
+                </div>
+            </form>
+        </section>
+
+        <aside class="panel help-panel">
+            <h2>What happens</h2>
+            <ol class="steps">
+                <li>Text is extracted from the file. Scanned or image-only files cannot be read (no OCR).</li>
+                <li>Lines that look like an NRIC, date of birth, marital status or home address are removed
+                    before anything is stored or sent (P6).</li>
+                <li>The extractor model maps the text to the master resume format, copying wording as written.</li>
+                <li>Code then checks that every name, title, bullet and number appears in your file, and lists
+                    anything that does not.</li>
+                <li>You review the result, fix anything in the patch editor, and apply it.</li>
+            </ol>
+        </aside>
+    </div>
+</main>
+
+<footer th:replace="~{layout :: siteFooter}"></footer>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{layout :: htmlHead('Master Resume')}"></head>
+<body>
+<header th:replace="~{layout :: topbar('master')}"></header>
+
+<main class="container">
+    <section class="page-head">
+        <h1>Master Resume</h1>
+        <p class="lede">The single source of truth. Tailored resumes may select, order and reword what is here,
+            never add to it.</p>
+    </section>
+    <nav th:replace="~{layout :: masterTabs('editor')}"></nav>
+    <div th:replace="~{layout :: flash}"></div>
+
+    <div class="editor-layout">
+        <section class="panel">
+            <p id="master-version" class="muted" th:insert="~{layout :: masterVersionText}"></p>
+
+            <div th:if="${current == null}" class="callout">
+                <p><strong>Start here.</strong> <a th:href="@{/master/import}">Import your resume</a> from a PDF
+                    or DOCX, paste master resume JSON below, or load a sample (a fake person) to explore.</p>
+                <form method="post" th:action="@{/master/sample}">
+                    <button type="submit" class="btn btn-secondary">Load sample (fake data)</button>
+                </form>
+            </div>
+
+            <!--
+              The form itself posts to /master/save via htmx (also when Enter is pressed in the note field).
+              The Validate button overrides that with its own hx-post. Results land in #master-result.
+            -->
+            <form id="master-form" hx-post="/master/save" hx-target="#master-result">
+                <label for="master-json" class="visually-hidden">Master resume JSON</label>
+                <textarea id="master-json" name="json" class="json-editor" spellcheck="false"
+                          th:text="${json}"></textarea>
+                <div class="form-row">
+                    <label for="note" class="visually-hidden">Change note</label>
+                    <input id="note" type="text" name="note" maxlength="200"
+                           placeholder="Change note (optional), e.g. Added metrics to internship highlights">
+                </div>
+                <div class="actions">
+                    <button type="submit" class="btn">Save new version</button>
+                    <button type="button" class="btn btn-secondary" hx-post="/master/validate"
+                            hx-target="#master-result" hx-include="#master-form">Validate only</button>
+                    <button type="button" class="btn btn-ghost" onclick="formatJson()">Format JSON</button>
+                    <a th:if="${current != null}" th:href="@{/api/master}" class="small" target="_blank">Raw JSON</a>
+                </div>
+            </form>
+            <div id="master-result" aria-live="polite"></div>
+        </section>
+
+        <aside class="panel help-panel">
+            <h2>Rules</h2>
+            <ul>
+                <li><strong>IDs.</strong> Leave out <code>"id"</code> (or write <code>"NEW-1"</code>,
+                    <code>"NEW-2"</code>) on new items and highlights; the server assigns them. IDs never change,
+                    and a deleted ID is never reused.</li>
+                <li><strong>Evidence.</strong> <code>skills[].evidenceIds</code> lists the highlights that prove a
+                    skill. A <code>"NEW-n"</code> placeholder works within the same save.</li>
+                <li><strong>Dates.</strong> <code>YYYY-MM</code>. For a current role, use <code>"endDate": null</code>
+                    or leave it out.</li>
+                <li><strong>Phone.</strong> E.164, e.g. <code>+6591234567</code>.</li>
+                <li><strong>Never stored (P6).</strong> NRIC/FIN, date of birth, age, photo, gender, race,
+                    religion, marital status, children, residential address, salary, referees.</li>
+                <li><strong>Server-owned.</strong> <code>meta.version</code> and <code>meta.updatedAt</code> are set
+                    on every save.</li>
+            </ul>
+        </aside>
+    </div>
+</main>
+
+<footer th:replace="~{layout :: siteFooter}"></footer>
+
+<script>
+    // Re-indents the textarea in place. Only cosmetic: the server never depends on formatting.
+    function formatJson() {
+        const editor = document.getElementById('master-json');
+        const result = document.getElementById('master-result');
+        try {
+            editor.value = JSON.stringify(JSON.parse(editor.value), null, 2);
+            result.innerHTML = '';
+        } catch (e) {
+            result.innerHTML = '<div class="result result-fail"></div>';
+            result.firstChild.textContent = 'Not valid JSON yet: ' + e.message;
+        }
+    }
+</script>
+</body>
+</html>

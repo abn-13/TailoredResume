@@ -1,0 +1,47 @@
+{
+ "rule": "CL-04",
+ "expect": "WARN",
+ "mode": "COVER_LETTER",
+ "pass": {
+  "job": {
+   "title": "Backend Engineer",
+   "company": "Example Payments Pte Ltd",
+   "companyFacts": [
+    "Processes payments for 2,000 merchants in Southeast Asia"
+   ]
+  },
+  "coverLetter": {
+   "recipientLine": "Dear Hiring Manager,",
+   "subject": "Application for Backend Engineer",
+   "signOff": "Yours sincerely,",
+   "wordCount": 0,
+   "paragraphs": [
+    {
+     "text": "Example Payments processes payments for 2,000 merchants in Southeast Asia, which is why this role appeals to me.",
+     "sourceIds": []
+    }
+   ]
+  }
+ },
+ "fail": {
+  "job": {
+   "title": "Backend Engineer",
+   "company": "Example Payments Pte Ltd",
+   "companyFacts": [
+    "Processes payments for 2,000 merchants in Southeast Asia"
+   ]
+  },
+  "coverLetter": {
+   "recipientLine": "Dear Hiring Manager,",
+   "subject": "Application for Backend Engineer",
+   "signOff": "Yours sincerely,",
+   "wordCount": 0,
+   "paragraphs": [
+    {
+     "text": "Your company is a leader in its field, which is why this role appeals to me.",
+     "sourceIds": []
+    }
+   ]
+  }
+ }
+}

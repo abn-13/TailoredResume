@@ -1,0 +1,14 @@
+# Active for every test (set by maven-surefire-plugin in pom.xml).
+spring:
+  datasource:
+    # In-memory DB: tests never read or write ./data. DB_CLOSE_DELAY=-1 keeps it alive for the whole context.
+    url: jdbc:h2:mem:tailorsg-test;DB_CLOSE_DELAY=-1
+  h2:
+    console:
+      enabled: false
+
+tailorsg:
+  storage:
+    exports-dir: ${java.io.tmpdir}/tailorsg-test-exports-${random.uuid}   # never ./data; a fresh folder per test context
+  jobs:
+    allow-private-hosts: true      # tests serve job pages from a local HTTP server

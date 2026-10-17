@@ -1,0 +1,3 @@
+{ "rule": "SG-06", "expect": "WARN",
+  "pass": { "text": "Built a payroll service", "headerText": "Jordan Tan\njordan@example.com" },
+  "fail": { "text": "Expected salary: negotiable", "headerText": "Jordan Tan" } }

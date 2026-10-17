@@ -1,0 +1,40 @@
+{
+ "rule": "CL-06",
+ "expect": "ERROR",
+ "mode": "COVER_LETTER",
+ "expectMessage": "did not ask",
+ "pass": {
+  "userNotes": {
+   "mentionWorkPass": "true"
+  },
+  "coverLetter": {
+   "recipientLine": "Dear Hiring Manager,",
+   "subject": "Application for Backend Engineer",
+   "signOff": "Yours sincerely,",
+   "wordCount": 0,
+   "paragraphs": [
+    {
+     "text": "I will need an Employment Pass, and I am available from January 2027.",
+     "sourceIds": []
+    }
+   ]
+  }
+ },
+ "fail": {
+  "userNotes": {
+   "mentionWorkPass": "false"
+  },
+  "coverLetter": {
+   "recipientLine": "Dear Hiring Manager,",
+   "subject": "Application for Backend Engineer",
+   "signOff": "Yours sincerely,",
+   "wordCount": 0,
+   "paragraphs": [
+    {
+     "text": "I will need an Employment Pass, and I am available from January 2027.",
+     "sourceIds": []
+    }
+   ]
+  }
+ }
+}

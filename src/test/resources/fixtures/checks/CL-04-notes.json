@@ -1,0 +1,39 @@
+{
+ "rule": "CL-04",
+ "expect": "WARN",
+ "mode": "COVER_LETTER",
+ "pass": {
+  "userNotes": {
+   "whyCompany": "I use their app every week to split bills with flatmates"
+  },
+  "coverLetter": {
+   "recipientLine": "Dear Hiring Manager,",
+   "subject": "Application for Backend Engineer",
+   "signOff": "Yours sincerely,",
+   "wordCount": 0,
+   "paragraphs": [
+    {
+     "text": "I use your app every week to split bills with my flatmates, so I know the product as a customer.",
+     "sourceIds": []
+    }
+   ]
+  }
+ },
+ "fail": {
+  "userNotes": {
+   "whyCompany": "I use their app every week to split bills with flatmates"
+  },
+  "coverLetter": {
+   "recipientLine": "Dear Hiring Manager,",
+   "subject": "Application for Backend Engineer",
+   "signOff": "Yours sincerely,",
+   "wordCount": 0,
+   "paragraphs": [
+    {
+     "text": "Your company is a leader in its field, which is why this role appeals to me.",
+     "sourceIds": []
+    }
+   ]
+  }
+ }
+}

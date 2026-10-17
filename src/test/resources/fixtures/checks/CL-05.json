@@ -1,0 +1,33 @@
+{
+ "rule": "CL-05",
+ "expect": "WARN",
+ "mode": "COVER_LETTER",
+ "pass": {
+  "coverLetter": {
+   "recipientLine": "Dear Hiring Manager,",
+   "subject": "Application for Backend Engineer",
+   "signOff": "Yours sincerely,",
+   "wordCount": 0,
+   "paragraphs": [
+    {
+     "text": "The role fits my work.",
+     "sourceIds": []
+    }
+   ]
+  }
+ },
+ "fail": {
+  "coverLetter": {
+   "recipientLine": "To Whom It May Concern,",
+   "subject": "Application for Backend Engineer",
+   "signOff": "Yours sincerely,",
+   "wordCount": 0,
+   "paragraphs": [
+    {
+     "text": "The role fits my work.",
+     "sourceIds": []
+    }
+   ]
+  }
+ }
+}

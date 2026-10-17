@@ -1,0 +1,24 @@
+Alex Lim
+Backend Developer
+alex.lim@example.com | 9123 4567 | github.com/alexlim-example | Singapore
+NRIC: S1234567D
+Date of birth: 1 January 1995
+
+SUMMARY
+Backend developer moving from civil engineering to software, focused on Java services and data pipelines.
+
+EXPERIENCE
+Software Engineer Intern, Example Logistics Pte Ltd, Singapore    Jun 2025 - Present
+Built a Spring Boot service that tracks 1,200 parcels a day, replacing a manual spreadsheet process
+Cut report generation time by 40% by rewriting SQL queries in PostgreSQL
+
+Civil Engineer, Example Builders Pte Ltd, Singapore    Jul 2019 - Dec 2024
+Automated site survey calculations with Python scripts, saving 6 hours a week
+
+EDUCATION
+Bachelor of Engineering (Civil), Example University    2015 - 2019
+
+SKILLS
+Languages: Java, Python, SQL
+Frameworks: Spring Boot
+Databases: PostgreSQL

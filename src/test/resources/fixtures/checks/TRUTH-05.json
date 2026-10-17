@@ -1,0 +1,9 @@
+{ "rule": "TRUTH-05", "expect": "ERROR", "expectMessage": "differs from the master",
+  "pass": { "document": { "header": {"name": "Jordan Tan", "contacts": [], "workAuthLine": null}, "sections": [
+      {"kind": "EXPERIENCE", "heading": "Experience", "entries": [ {"id": "work-1", "title": "Software Engineering Intern",
+        "organisation": "Example Fintech Pte Ltd", "location": "Singapore", "startDate": "2026-05", "endDate": null,
+        "dates": "May 2026 - Present", "details": [], "bullets": []} ]} ] } },
+  "fail": { "document": { "header": {"name": "Jordan Tan", "contacts": [], "workAuthLine": null}, "sections": [
+      {"kind": "EXPERIENCE", "heading": "Experience", "entries": [ {"id": "work-1", "title": "Senior Software Engineer",
+        "organisation": "Example Fintech Pte Ltd", "location": "Singapore", "startDate": "2026-05", "endDate": null,
+        "dates": "May 2026 - Present", "details": [], "bullets": []} ]} ] } } }

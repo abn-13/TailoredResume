@@ -1,0 +1,105 @@
+<!--
+  Cover letter tab (Phase 7). Left: the letter as it will be exported, with paragraphs editable in place
+  (htmx re-checks after each edit). Right: CL + TRUTH scorecard, the dash auto-fix (before/after), export.
+-->
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="coverTab">
+    <section class="panel">
+        <h2 th:text="${letter == null} ? 'Write the cover letter' : 'Notes for the letter'">Write the cover letter</h2>
+        <p class="muted small">The letter may only use facts from your master and the job, plus what you write here (spec 5.4).</p>
+        <form method="post" th:action="@{/applications/{id}/cover-letter(id=${app.id})}" class="entry-form">
+            <div class="form-grid">
+                <div class="field span-2"><label for="whyCompany">Why this company, in your own words</label>
+                    <textarea id="whyCompany" name="whyCompany" rows="3" th:text="${options.whyCompany()}"
+                              placeholder="e.g. I use their app to split bills and like that their team publishes engineering posts on reliability"></textarea></div>
+                <div class="field"><label for="availability">Availability</label>
+                    <input id="availability" type="text" name="availability" th:value="${options.availability()}" placeholder="available from January 2027"></div>
+                <div class="field"><label for="tone">Tone</label>
+                    <select id="tone" name="tone">
+                        <option th:each="t : ${ {'warm and direct', 'formal', 'concise'} }" th:value="${t}" th:text="${t}" th:selected="${t == options.tone()}">warm</option>
+                    </select></div>
+                <div class="field span-2"><label class="check"><input type="checkbox" name="mentionWorkPass" value="true" th:checked="${options.mentionWorkPass()}">
+                    Mention work authorisation (one neutral sentence)</label></div>
+            </div>
+            <button type="submit" class="btn" th:disabled="${!llmConfigured or tailored == null}"
+                    th:text="${letter == null} ? 'Write cover letter' : 'Save notes and rewrite'">Write</button>
+            <span th:if="${tailored == null}" class="muted small">Tailor the resume first.</span>
+            <span th:unless="${llmConfigured}" class="muted small">Needs ANTHROPIC_API_KEY (or demo mode).</span>
+        </form>
+    </section>
+
+    <div th:replace="~{applications/cover :: letterWorkspace}"></div>
+</div>
+
+<div id="letter-workspace" th:fragment="letterWorkspace">
+    <th:block th:if="${letter != null and letterDoc != null}">
+        <div th:if="${letterMessage}" class="flash flash-ok" role="status" th:text="${letterMessage}">Saved.</div>
+        <div th:if="${letterError}" class="flash flash-fail" role="alert" th:text="${letterError}">Error.</div>
+        <div class="workspace-grid">
+            <section class="panel">
+                <h2>Letter <span class="muted small" th:text="${letter.wordCount()} + ' words'">320 words</span></h2>
+                <article class="doc-preview letter-preview">
+                    <div class="letter-block"><strong th:text="${letterDoc.name()}">Jordan Tan</strong><br>
+                        <span th:text="${letterDoc.contactLine()}">email | phone</span></div>
+                    <div class="letter-block" th:text="${letterDoc.date()}">17 October 2026</div>
+                    <div class="letter-block"><div th:each="l : ${letterDoc.recipientBlock()}" th:text="${l}">Hiring Manager</div></div>
+                    <div class="letter-block"><strong th:text="${letterDoc.subject()}">Application for Backend Engineer</strong></div>
+                    <p th:text="${letterDoc.salutation()}">Dear Hiring Manager,</p>
+                    <div th:each="p, st : ${letter.paragraphs()}" th:id="'p-' + ${st.index}" class="doc-bullet letter-para">
+                        <p th:text="${p.text()}">paragraph</p>
+                        <div class="b-sources">
+                            <span class="muted">Sources:</span>
+                            <span th:if="${#lists.isEmpty(p.sourceIds())}" class="muted">job facts and your notes only</span>
+                            <span th:each="sid : ${p.sourceIds()}" class="b-source"><code th:text="${sid}">work-1.h2</code>
+                                <span th:text="${letterSources[sid]} ?: '(not in your master)'">text</span></span>
+                        </div>
+                        <details class="b-edit">
+                            <summary>Edit</summary>
+                            <form th:attr="hx-post=@{/applications/{id}/cover-letter/paragraphs/edit(id=${app.id})}"
+                                  hx-target="#letter-workspace" hx-swap="outerHTML">
+                                <input type="hidden" name="index" th:value="${st.index}">
+                                <label class="visually-hidden" th:for="'para-' + ${st.index}">Paragraph</label>
+                                <textarea th:id="'para-' + ${st.index}" name="text" rows="5" th:text="${p.text()}"></textarea>
+                                <div class="b-edit-actions"><button type="submit" class="btn btn-small">Save and re-check</button></div>
+                            </form>
+                        </details>
+                    </div>
+                    <div class="letter-block"><span th:text="${letterDoc.signOff()}">Yours sincerely,</span><br>
+                        <span th:text="${letterDoc.name()}">Jordan Tan</span></div>
+                </article>
+            </section>
+
+            <aside class="panel score-panel">
+                <th:block th:if="${!#lists.isEmpty(dashChanges)}">
+                    <h2>Fix dashes <span class="badge badge-fail">CL-01</span></h2>
+                    <p class="muted small">Each dash becomes a comma (or "to" between numbers). Check the result, then apply.</p>
+                    <div th:each="c : ${dashChanges}" class="dash-change">
+                        <div class="small muted" th:text="'Paragraph ' + (${c.index()} + 1)">Paragraph 1</div>
+                        <div class="diff-before" th:text="${c.before()}">before</div>
+                        <div class="diff-after" th:text="${c.after()}">after</div>
+                    </div>
+                    <form method="post" th:action="@{/applications/{id}/cover-letter/fix-dashes(id=${app.id})}">
+                        <button type="submit" class="btn btn-small">Apply the fix</button></form>
+                </th:block>
+
+                <h2>Checks</h2>
+                <th:block th:if="${letterReport != null}">
+                    <section th:replace="~{fragments/scorecard :: scorecard(${letterReport}, '', false)}"></section>
+                </th:block>
+
+                <h2>Export</h2>
+                <form method="post" th:action="@{/applications/{id}/cover-letter/export(id=${app.id})}" class="entry-form">
+                    <label class="check"><input type="radio" name="type" value="PDF" checked> PDF</label>
+                    <label class="check"><input type="radio" name="type" value="DOCX"> Word (DOCX)</label>
+                    <div class="field" th:if="${letterReport != null and letterReport.hasErrors()}">
+                        <label for="letterReason">Reason to export despite errors <span class="muted">(at least 10 characters)</span></label>
+                        <textarea id="letterReason" name="overrideReason" rows="2"></textarea></div>
+                    <button type="submit" class="btn btn-small">Export letter</button>
+                </form>
+            </aside>
+        </div>
+    </th:block>
+</div>
+</body>
+</html>

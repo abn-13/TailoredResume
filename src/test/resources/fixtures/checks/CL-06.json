@@ -1,0 +1,34 @@
+{
+ "rule": "CL-06",
+ "expect": "ERROR",
+ "mode": "COVER_LETTER",
+ "expectMessage": "personal data",
+ "pass": {
+  "coverLetter": {
+   "recipientLine": "Dear Hiring Manager,",
+   "subject": "Application for Backend Engineer",
+   "signOff": "Yours sincerely,",
+   "wordCount": 0,
+   "paragraphs": [
+    {
+     "text": "I built a single service that handles refunds for a national bank partner.",
+     "sourceIds": []
+    }
+   ]
+  }
+ },
+ "fail": {
+  "coverLetter": {
+   "recipientLine": "Dear Hiring Manager,",
+   "subject": "Application for Backend Engineer",
+   "signOff": "Yours sincerely,",
+   "wordCount": 0,
+   "paragraphs": [
+    {
+     "text": "As a Pakistani national, my expected salary is S$6,000 a month.",
+     "sourceIds": []
+    }
+   ]
+  }
+ }
+}

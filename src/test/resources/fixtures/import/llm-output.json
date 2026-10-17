@@ -1,0 +1,54 @@
+{
+  "basics": {
+    "name": "Alex Lim", "label": "Backend Developer", "email": "alex.lim@example.com", "phone": "9123 4567",
+    "url": "github.com/alexlim-example", "city": "Singapore", "countryCode": "SG", "profiles": [],
+    "summary": "Backend developer moving from civil engineering to software, focused on Java services and data pipelines.",
+    "workAuthorization": ""
+  },
+  "work": [
+    {
+      "name": "Example Logistics Pte Ltd", "position": "Software Engineer Intern", "location": "Singapore",
+      "employmentType": "Internship", "startDate": "2025-06", "endDate": "", "summary": "",
+      "highlights": [
+        {
+          "text": "Built a Spring Boot service that tracks 1,200 parcels a day, replacing a manual spreadsheet process",
+          "metrics": [{ "value": "1,200", "unit": "parcels/day", "label": "parcels tracked" }],
+          "skills": ["Spring Boot"]
+        },
+        {
+          "text": "Cut report generation time by 40% by rewriting SQL queries in PostgreSQL",
+          "metrics": [{ "value": "40", "unit": "%", "label": "report time reduction" }],
+          "skills": ["SQL", "PostgreSQL"]
+        }
+      ]
+    },
+    {
+      "name": "Example Builders Pte Ltd", "position": "Civil Engineer", "location": "Singapore",
+      "employmentType": "", "startDate": "2019-07", "endDate": "2024-12", "summary": "",
+      "highlights": [
+        {
+          "text": "Automated site survey calculations with Python scripts, saving 6 hours a week",
+          "metrics": [{ "value": "6", "unit": "hours/week", "label": "time saved" }],
+          "skills": ["Python"]
+        }
+      ]
+    }
+  ],
+  "projects": [],
+  "education": [
+    {
+      "institution": "Example University", "area": "Civil Engineering", "studyType": "Bachelor of Engineering",
+      "startDate": "2015", "endDate": "2019", "score": "", "scoreScale": "", "courses": [], "highlights": []
+    }
+  ],
+  "skills": [
+    { "name": "Java", "category": "Languages" },
+    { "name": "Python", "category": "Languages" },
+    { "name": "SQL", "category": "Languages" },
+    { "name": "Spring Boot", "category": "Frameworks" },
+    { "name": "PostgreSQL", "category": "Databases" },
+    { "name": "Kubernetes", "category": "Cloud/DevOps" }
+  ],
+  "certificates": [], "awards": [], "languages": [], "volunteer": [], "extras": [],
+  "warnings": ["Education dates give only years"]
+}

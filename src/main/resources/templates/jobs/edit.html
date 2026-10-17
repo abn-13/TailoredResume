@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{layout :: htmlHead('Job Spec')}"></head>
+<body>
+<header th:replace="~{layout :: topbar('new-application')}"></header>
+
+<main class="container">
+    <section class="page-head">
+        <h1><span th:text="${spec.title()} ?: '(no title)'">Backend Engineer</span>
+            <span class="muted" th:if="${spec.company() != null}" th:text="'· ' + ${spec.company()}">· Acme</span></h1>
+        <p class="lede">Step 2 of 3: check what was extracted. Move skills between Required and Preferred, fix
+            anything wrong, then set up the application below.</p>
+        <p class="small muted"><span th:text="${job.fetchNote}">MyCareersFuture</span> · added <span th:text="${created}">today</span>
+            <th:block th:if="${job.sourceUrl != null}"> · <a th:href="${job.sourceUrl}" target="_blank" rel="noopener noreferrer">original posting</a></th:block></p>
+    </section>
+    <div th:replace="~{layout :: flash}"></div>
+
+    <section class="panel notes-panel" th:unless="${#lists.isEmpty(spec.warnings())}">
+        <h2>Check these</h2>
+        <ul class="warn-list"><li th:each="w : ${spec.warnings()}" th:text="${w}">Screenshot 2 looks cut off.</li></ul>
+    </section>
+
+    <section class="panel" th:if="${coverage != null}">
+        <h2>How much of this your master can cover</h2>
+        <section th:replace="~{fragments/scorecard :: keywordPanel(${coverage}, null)}"></section>
+    </section>
+
+    <section class="panel" th:fragment="skills" id="job-skills">
+        <h2>Skills</h2>
+        <div class="skills-columns">
+            <div>
+                <h3>Required <span class="muted small" th:text="'(' + ${#lists.size(spec.requiredSkills())} + ')'">(5)</span></h3>
+                <div class="skill-pill" th:each="k : ${spec.requiredSkills()}">
+                    <span><strong th:text="${k.term()}">Java</strong>
+                        <small th:unless="${#lists.isEmpty(k.aliases())}" class="muted" th:text="${#strings.listJoin(k.aliases(), ', ')}">JS</small></span>
+                    <span class="pill-actions">
+                        <form th:attr="hx-post=@{/jobs/{id}/skills/move(id=${job.id})}" hx-target="#job-skills" hx-swap="outerHTML">
+                            <input type="hidden" name="term" th:value="${k.term()}"><input type="hidden" name="to" value="preferred">
+                            <button type="submit" class="link-btn" title="Move to preferred">to preferred →</button></form>
+                        <form th:attr="hx-post=@{/jobs/{id}/skills/remove(id=${job.id})}" hx-target="#job-skills" hx-swap="outerHTML">
+                            <input type="hidden" name="term" th:value="${k.term()}">
+                            <button type="submit" class="link-btn" title="Remove" aria-label="Remove">×</button></form>
+                    </span>
+                </div>
+                <form class="add-skill" th:attr="hx-post=@{/jobs/{id}/skills/add(id=${job.id})}" hx-target="#job-skills" hx-swap="outerHTML">
+                    <input type="hidden" name="list" value="required">
+                    <input type="text" name="term" placeholder="Add required skill" aria-label="Add required skill">
+                    <input type="text" name="aliases" placeholder="aliases, comma-separated" aria-label="Aliases">
+                    <button type="submit" class="btn btn-secondary btn-small">Add</button>
+                </form>
+            </div>
+            <div>
+                <h3>Preferred <span class="muted small" th:text="'(' + ${#lists.size(spec.preferredSkills())} + ')'">(3)</span></h3>
+                <div class="skill-pill" th:each="k : ${spec.preferredSkills()}">
+                    <span><strong th:text="${k.term()}">Kafka</strong>
+                        <small th:unless="${#lists.isEmpty(k.aliases())}" class="muted" th:text="${#strings.listJoin(k.aliases(), ', ')}"></small></span>
+                    <span class="pill-actions">
+                        <form th:attr="hx-post=@{/jobs/{id}/skills/move(id=${job.id})}" hx-target="#job-skills" hx-swap="outerHTML">
+                            <input type="hidden" name="term" th:value="${k.term()}"><input type="hidden" name="to" value="required">
+                            <button type="submit" class="link-btn" title="Move to required">← to required</button></form>
+                        <form th:attr="hx-post=@{/jobs/{id}/skills/remove(id=${job.id})}" hx-target="#job-skills" hx-swap="outerHTML">
+                            <input type="hidden" name="term" th:value="${k.term()}">
+                            <button type="submit" class="link-btn" title="Remove" aria-label="Remove">×</button></form>
+                    </span>
+                </div>
+                <form class="add-skill" th:attr="hx-post=@{/jobs/{id}/skills/add(id=${job.id})}" hx-target="#job-skills" hx-swap="outerHTML">
+                    <input type="hidden" name="list" value="preferred">
+                    <input type="text" name="term" placeholder="Add preferred skill" aria-label="Add preferred skill">
+                    <input type="text" name="aliases" placeholder="aliases, comma-separated" aria-label="Aliases">
+                    <button type="submit" class="btn btn-secondary btn-small">Add</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <section class="panel">
+        <h2>Details</h2>
+        <form method="post" th:action="@{/jobs/{id}(id=${job.id})}" class="entry-form">
+            <div class="form-grid">
+                <div class="field"><label for="title">Job title (exactly as posted)</label><input id="title" type="text" name="title" th:value="${spec.title()}"></div>
+                <div class="field"><label for="company">Company</label><input id="company" type="text" name="company" th:value="${spec.company()}"></div>
+                <div class="field"><label for="location">Location</label><input id="location" type="text" name="location" th:value="${spec.location()}"></div>
+                <div class="field"><label for="seniority">Seniority</label><input id="seniority" type="text" name="seniority" th:value="${spec.seniority()}"></div>
+                <div class="field"><label for="employmentType">Employment type</label><input id="employmentType" type="text" name="employmentType" th:value="${spec.employmentType()}"></div>
+                <div class="field"><label>Salary (as posted)</label>
+                    <div class="metric-row">
+                        <input type="text" name="salaryMin" aria-label="Minimum" placeholder="min" th:value="${spec.salaryRange() != null and spec.salaryRange().min() != null} ? ${#numbers.formatDecimal(spec.salaryRange().min(), 1, 0)} : ''">
+                        <input type="text" name="salaryMax" aria-label="Maximum" placeholder="max" th:value="${spec.salaryRange() != null and spec.salaryRange().max() != null} ? ${#numbers.formatDecimal(spec.salaryRange().max(), 1, 0)} : ''">
+                        <input type="text" name="salaryCurrency" aria-label="Currency" placeholder="SGD (monthly)" th:value="${spec.salaryRange() != null} ? ${spec.salaryRange().currency()} : ''">
+                    </div></div>
+                <div class="field span-2"><label for="companyFacts">Company facts stated in the posting <span class="muted">(one per line; the cover letter may cite these)</span></label>
+                    <textarea id="companyFacts" name="companyFacts" rows="4" th:text="${#strings.listJoin(spec.companyFacts(), '&#10;')}"></textarea></div>
+                <div class="field span-2"><label for="responsibilities">Responsibilities <span class="muted">(one per line)</span></label>
+                    <textarea id="responsibilities" name="responsibilities" rows="6" th:text="${#strings.listJoin(spec.responsibilities(), '&#10;')}"></textarea></div>
+                <div class="field span-2"><label for="qualifications">Qualifications <span class="muted">(one per line)</span></label>
+                    <textarea id="qualifications" name="qualifications" rows="6" th:text="${#strings.listJoin(spec.qualifications(), '&#10;')}"></textarea></div>
+                <div class="field span-2"><label for="keywordsRaw">Other keywords <span class="muted">(comma-separated)</span></label>
+                    <input id="keywordsRaw" type="text" name="keywordsRaw" th:value="${#strings.listJoin(spec.keywordsRaw(), ', ')}"></div>
+                <div class="field span-2"><label for="applyInstructions">How to apply</label>
+                    <input id="applyInstructions" type="text" name="applyInstructions" th:value="${spec.applyInstructions()}"></div>
+                <div class="field span-2"><label class="check"><input type="checkbox" name="coverLetterRequested" value="true" th:checked="${spec.coverLetterRequested()}"> The posting asks for a cover letter</label></div>
+            </div>
+            <button type="submit" class="btn btn-secondary">Save details</button>
+        </form>
+        <details class="patch-editor">
+            <summary>Edit as JSON</summary>
+            <form method="post" th:action="@{/jobs/{id}/json(id=${job.id})}">
+                <textarea name="specJson" class="json-editor patch-textarea" spellcheck="false" th:text="${specJson}"></textarea>
+                <button type="submit" class="btn btn-ghost">Save JSON</button>
+            </form>
+        </details>
+        <details th:if="${job.rawText != null}">
+            <summary>Posting text as read</summary>
+            <pre class="json-view raw-input" th:text="${job.rawText}">text</pre>
+        </details>
+    </section>
+
+    <section class="panel" id="options">
+        <h2>Step 3 of 3: set up the application</h2>
+        <div th:unless="${hasMaster}" class="callout">Tailoring needs a <a th:href="@{/master/import}">master resume</a>.</div>
+        <form method="post" th:action="@{/applications}" class="entry-form">
+            <input type="hidden" name="jobId" th:value="${job.id}">
+            <div class="form-grid">
+                <div class="field"><label>Length</label>
+                    <label class="check"><input type="radio" name="pageTarget" value="1" checked> 1 page</label>
+                    <label class="check"><input type="radio" name="pageTarget" value="2"> 2 pages</label></div>
+                <div class="field"><label>Include</label>
+                    <label class="check"><input type="checkbox" name="includeSummary" value="true" checked> Summary (2-3 lines)</label>
+                    <label class="check"><input type="checkbox" name="showWorkAuth" value="true" th:checked="${defaultShowWorkAuth}"> Work-authorisation line</label>
+                    <label class="check"><input type="checkbox" name="coverLetter" value="true" th:checked="${spec.coverLetterRequested()}"> Cover letter</label></div>
+                <div class="field"><label for="tone">Cover letter tone</label>
+                    <select id="tone" name="tone"><option value="warm and direct">Warm and direct</option>
+                        <option value="formal">Formal</option><option value="concise">Concise</option></select></div>
+                <div class="field"><label for="availability">Availability <span class="muted">(for the cover letter)</span></label>
+                    <input id="availability" type="text" name="availability" placeholder="available from January 2027"></div>
+                <div class="field span-2"><label for="whyCompany">Why this company, in your own words <span class="muted">(cover letter only uses what you write)</span></label>
+                    <textarea id="whyCompany" name="whyCompany" rows="3"></textarea></div>
+                <div class="field span-2"><label class="check"><input type="checkbox" name="mentionWorkPass" value="true"> Mention work authorisation in the cover letter (one neutral sentence)</label></div>
+            </div>
+            <button type="submit" class="btn" th:disabled="${!hasMaster}">Create application and tailor</button>
+        </form>
+    </section>
+</main>
+
+<footer th:replace="~{layout :: siteFooter}"></footer>
+</body>
+</html>

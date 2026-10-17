@@ -1,0 +1,34 @@
+{
+ "rule": "CL-03",
+ "expect": "WARN",
+ "mode": "COVER_LETTER",
+ "expectMessage": "in a row",
+ "pass": {
+  "coverLetter": {
+   "recipientLine": "Dear Hiring Manager,",
+   "subject": "Application for Backend Engineer",
+   "signOff": "Yours sincerely,",
+   "wordCount": 0,
+   "paragraphs": [
+    {
+     "text": "I built the API. I tested it. Then I shipped it. I measured it.",
+     "sourceIds": []
+    }
+   ]
+  }
+ },
+ "fail": {
+  "coverLetter": {
+   "recipientLine": "Dear Hiring Manager,",
+   "subject": "Application for Backend Engineer",
+   "signOff": "Yours sincerely,",
+   "wordCount": 0,
+   "paragraphs": [
+    {
+     "text": "I built the API. I tested it. I shipped it. I measured it.",
+     "sourceIds": []
+    }
+   ]
+  }
+ }
+}

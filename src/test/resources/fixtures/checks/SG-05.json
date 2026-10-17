@@ -1,0 +1,3 @@
+{ "rule": "SG-05", "expect": "WARN",
+  "pass": { "text": "Jordan Tan | Singapore\nProcessed 120000 records a night" },
+  "fail": { "text": "Blk 123 Ang Mo Kio Avenue 3 #05-123 Singapore 560123" } }

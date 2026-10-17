@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "LLM output for prompts/jd-extract.md (spec 2.3 JobSpec). Every property is required and there are no unions, to stay within the structured-output limits. JobSpecMapper turns \"\" and 0 into absent values.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["title", "company", "location", "seniority", "employmentType", "salaryRange", "requiredSkills",
+               "preferredSkills", "responsibilities", "qualifications", "keywordsRaw", "companyFacts",
+               "applyInstructions", "coverLetterRequested", "warnings"],
+  "properties": {
+    "title": { "type": "string" },
+    "company": { "type": "string" },
+    "location": { "type": "string" },
+    "seniority": { "type": "string", "description": "e.g. Intern, Junior, Mid, Senior, as stated or implied by the title" },
+    "employmentType": { "type": "string", "description": "e.g. Full-time, Contract, Internship" },
+    "salaryRange": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["min", "max", "currency"],
+      "properties": {
+        "min": { "type": "number" },
+        "max": { "type": "number" },
+        "currency": { "type": "string" }
+      }
+    },
+    "requiredSkills": { "type": "array", "items": { "$ref": "#/$defs/skill" } },
+    "preferredSkills": { "type": "array", "items": { "$ref": "#/$defs/skill" } },
+    "responsibilities": { "$ref": "#/$defs/strings" },
+    "qualifications": { "$ref": "#/$defs/strings" },
+    "keywordsRaw": { "$ref": "#/$defs/strings" },
+    "companyFacts": { "$ref": "#/$defs/strings" },
+    "applyInstructions": { "type": "string" },
+    "coverLetterRequested": { "type": "boolean" },
+    "warnings": { "$ref": "#/$defs/strings" }
+  },
+  "$defs": {
+    "strings": { "type": "array", "items": { "type": "string" } },
+    "skill": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["term", "aliases"],
+      "properties": {
+        "term": { "type": "string" },
+        "aliases": { "$ref": "#/$defs/strings" }
+      }
+    }
+  }
+}

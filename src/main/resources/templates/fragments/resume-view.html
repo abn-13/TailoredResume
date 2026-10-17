@@ -1,0 +1,143 @@
+<!--
+  Readable rendering of a MasterResume record, used by /master/view and the update review page.
+  Shows IDs next to every entry and highlight, because generated bullets will cite them (P3).
+  Fragment names deliberately avoid HTML element names (see CLAUDE.md gotchas).
+-->
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<article th:fragment="resume(r)" class="resume">
+    <div class="resume-head">
+        <h2 th:text="${r.basics().name()}">Jordan Tan</h2>
+        <p class="resume-label" th:if="${r.basics().label() != null}" th:text="${r.basics().label()}">Software Engineer</p>
+        <p class="resume-contact">
+            <span th:if="${r.basics().phone() != null}" th:text="${r.basics().phone()}">+6590001234</span>
+            <span th:text="${r.basics().email()}">jordan@example.com</span>
+            <span th:if="${r.basics().location() != null}" th:text="${r.basics().location().city()}">Singapore</span>
+            <!-- th:href runs in Thymeleaf's restricted mode (no bean calls), so the safe URL is computed in th:with first -->
+            <th:block th:with="site=${@resumeView.safeUrl(r.basics().url())}">
+                <a th:if="${site != null}" th:href="${site}" th:text="${r.basics().url()}" rel="noopener noreferrer" target="_blank">site</a>
+            </th:block>
+            <th:block th:each="p : ${r.basics().profiles()}" th:with="link=${@resumeView.safeUrl(p.url())}">
+                <a th:if="${link != null}" th:href="${link}" th:text="${p.network()}" rel="noopener noreferrer" target="_blank">GitHub</a>
+            </th:block>
+        </p>
+        <p th:if="${r.basics().workAuthorization() != null}" class="small">
+            <span th:text="${r.basics().workAuthorization().displayText()}">Work authorisation</span>
+            <span class="badge" th:classappend="${r.basics().workAuthorization().showOnResumeDefault()} ? 'badge-pass' : 'badge-muted'"
+                  th:text="${r.basics().workAuthorization().showOnResumeDefault()} ? 'shown by default' : 'hidden by default'">shown</span>
+        </p>
+    </div>
+
+    <div class="resume-section" th:if="${!#lists.isEmpty(r.basics().summaryVariants())}">
+        <h3>Summary variants</h3>
+        <ul class="highlights">
+            <li th:each="s : ${r.basics().summaryVariants()}">
+                <span th:text="${s.text()}">summary</span>
+                <span class="hl-meta"><code th:text="${s.id()}">sum-1</code>
+                    <span th:unless="${#lists.isEmpty(s.targetRoles())}" class="muted"
+                          th:text="'for ' + ${#strings.listJoin(s.targetRoles(), ', ')}">for Backend Engineer</span></span>
+            </li>
+        </ul>
+    </div>
+
+    <div th:replace="~{fragments/resume-view :: experienceList(${r.work()}, 'Experience')}"></div>
+
+    <div class="resume-section" th:if="${!#lists.isEmpty(r.projects())}">
+        <h3>Projects</h3>
+        <div class="entry" th:each="p : ${r.projects()}">
+            <div class="entry-head">
+                <span><strong th:text="${p.name()}">Project</strong><span th:if="${p.role() != null}" th:text="', ' + ${p.role()}"></span></span>
+                <span class="entry-dates" th:text="${@resumeView.dates(p.startDate(), p.endDate())}">Aug 2025 - Nov 2025</span>
+            </div>
+            <div class="entry-meta" th:with="repo=${@resumeView.safeUrl(p.repo())}, live=${@resumeView.safeUrl(p.url())}"><code th:text="${p.id()}">proj-1</code>
+                <th:block th:if="${repo != null}"> · <a th:href="${repo}" th:text="${p.repo()}" target="_blank" rel="noopener noreferrer">repo</a></th:block>
+                <th:block th:if="${live != null}"> · <a th:href="${live}" th:text="${p.url()}" target="_blank" rel="noopener noreferrer">url</a></th:block>
+            </div>
+            <p th:if="${p.description() != null}" class="entry-summary" th:text="${p.description()}">description</p>
+            <ul th:replace="~{fragments/resume-view :: highlightList(${p.highlights()})}"></ul>
+            <p th:unless="${#lists.isEmpty(p.keywords())}" class="small muted" th:text="'Keywords: ' + ${#strings.listJoin(p.keywords(), ', ')}">Keywords</p>
+        </div>
+    </div>
+
+    <div class="resume-section" th:if="${!#lists.isEmpty(r.education())}">
+        <h3>Education</h3>
+        <div class="entry" th:each="e : ${r.education()}">
+            <div class="entry-head">
+                <span><strong th:text="${e.studyType()}">Master of Engineering</strong><span th:if="${e.area() != null}" th:text="' (' + ${e.area()} + ')'"></span>,
+                    <span th:text="${e.institution()}">University</span></span>
+                <span class="entry-dates" th:text="${@resumeView.dates(e.startDate(), e.endDate())}">2019 - 2021</span>
+            </div>
+            <div class="entry-meta"><code th:text="${e.id()}">edu-1</code>
+                <th:block th:if="${e.score() != null}" th:text="' · Score ' + ${e.score()} + (${e.scoreScale() != null} ? ' / ' + ${e.scoreScale()} : '')"></th:block>
+            </div>
+            <p th:unless="${#lists.isEmpty(e.courses())}" class="small" th:text="'Courses: ' + ${#strings.listJoin(e.courses(), ', ')}">Courses</p>
+            <ul th:replace="~{fragments/resume-view :: highlightList(${e.highlights()})}"></ul>
+        </div>
+    </div>
+
+    <div class="resume-section" th:if="${!#lists.isEmpty(r.skills())}">
+        <h3>Skills</h3>
+        <div class="skill-group" th:each="g : ${@resumeView.skillsByCategory(r)}">
+            <span class="skill-category" th:text="${g.key}">Languages</span>
+            <span class="skill-chip" th:each="s : ${g.value}" th:classappend="${#lists.isEmpty(s.evidenceIds())} ? 'unevidenced'"
+                  th:title="${#lists.isEmpty(s.evidenceIds())} ? 'Unevidenced: no highlight shows this skill' : 'Evidence: ' + ${#strings.listJoin(s.evidenceIds(), ', ')}">
+                <span th:text="${s.name()}">Java</span>
+                <small th:text="${#lists.isEmpty(s.evidenceIds())} ? 'no evidence' : ${#lists.size(s.evidenceIds())} + ' evidence'">3 evidence</small>
+            </span>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/resume-view :: experienceList(${r.volunteer()}, 'Volunteering')}"></div>
+
+    <div class="resume-section" th:if="${!#lists.isEmpty(r.certificates()) or !#lists.isEmpty(r.awards())}">
+        <h3>Certifications and awards</h3>
+        <ul class="plain-list">
+            <li th:each="c : ${r.certificates()}"><strong th:text="${c.name()}">AWS CCP</strong>, <span th:text="${c.issuer()}">AWS</span>
+                <span class="muted" th:if="${c.date() != null}" th:text="'(' + ${@resumeView.monthYear(c.date())} + ')'">(Mar 2026)</span>
+                <code th:text="${c.id()}">cert-1</code></li>
+            <li th:each="a : ${r.awards()}"><strong th:text="${a.title()}">Award</strong><span th:if="${a.awarder() != null}" th:text="', ' + ${a.awarder()}"></span>
+                <span class="muted" th:if="${a.date() != null}" th:text="'(' + ${@resumeView.monthYear(a.date())} + ')'">(Dec 2025)</span>
+                <code th:text="${a.id()}">award-1</code></li>
+        </ul>
+    </div>
+
+    <div class="resume-section" th:if="${!#lists.isEmpty(r.languages()) or !#lists.isEmpty(r.extras())}">
+        <h3>Languages and other</h3>
+        <ul class="plain-list">
+            <li th:each="l : ${r.languages()}"><strong th:text="${l.language()}">English</strong><span th:if="${l.fluency() != null}" th:text="': ' + ${l.fluency()}"></span></li>
+            <li th:each="x : ${r.extras()}"><span class="muted" th:text="${x.type()} + ':'">leadership:</span> <span th:text="${x.text()}">text</span>
+                <code th:text="${x.id()}">extra-1</code></li>
+        </ul>
+    </div>
+</article>
+
+<div th:fragment="experienceList(items, title)" class="resume-section" th:if="${!#lists.isEmpty(items)}">
+    <h3 th:text="${title}">Experience</h3>
+    <div class="entry" th:each="w : ${items}">
+        <div class="entry-head">
+            <span><strong th:text="${w.position()}">Position</strong>, <span th:text="${w.name()}">Employer</span><span
+                    th:if="${w.location() != null}" th:text="', ' + ${w.location()}"></span></span>
+            <span class="entry-dates" th:text="${@resumeView.dates(w.startDate(), w.endDate())}">May 2026 - Present</span>
+        </div>
+        <div class="entry-meta"><code th:text="${w.id()}">work-1</code><span th:if="${w.employmentType() != null}"
+                                                                          th:text="' · ' + ${w.employmentType()}"></span></div>
+        <p th:if="${w.summary() != null}" class="entry-summary" th:text="${w.summary()}">summary</p>
+        <ul th:replace="~{fragments/resume-view :: highlightList(${w.highlights()})}"></ul>
+    </div>
+</div>
+
+<ul th:fragment="highlightList(list)" class="highlights" th:if="${!#lists.isEmpty(list)}">
+    <li th:each="h : ${list}" th:id="'b-' + ${h.id()}">
+        <span th:text="${h.text()}">Reduced latency by 35%</span>
+        <span class="hl-meta">
+            <code th:text="${h.id()}">work-1.h1</code>
+            <span th:each="m : ${h.metrics()}" class="metric" th:text="${@resumeView.metric(m)}">35% (latency)</span>
+            <span th:unless="${#lists.isEmpty(h.skills())}" class="muted" th:text="${#strings.listJoin(h.skills(), ', ')}">Java</span>
+            <span th:if="${h.priority() != null}" class="muted" th:text="'priority ' + ${h.priority()}">priority 1</span>
+        </span>
+    </li>
+</ul>
+
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<!--
+  Shared layout fragments. Pages pull them in with th:replace, e.g.
+    <head th:replace="~{layout :: htmlHead('Dashboard')}"></head>
+  Plain fragments instead of the Thymeleaf Layout Dialect: one less dependency, and it is obvious
+  where every piece of markup comes from.
+-->
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head th:fragment="htmlHead(title)">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${title} + ' · TailorSG'">TailorSG</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <!-- Served from the htmx WebJar; webjars-locator-lite fills in the version from pom.xml -->
+    <script th:src="@{/webjars/htmx.org/dist/htmx.min.js}" defer></script>
+</head>
+
+<body>
+
+<header th:fragment="topbar(active)" class="topbar">
+    <div class="topbar-inner">
+        <a class="brand" th:href="@{/}">Tailor<span>SG</span></a>
+        <nav class="nav" aria-label="Main">
+            <a th:href="@{/}" th:classappend="${active == 'dashboard'} ? 'active'">Dashboard</a>
+            <a th:href="@{/master}" th:classappend="${active == 'master'} ? 'active'">Master Resume</a>
+            <a th:href="@{/add-info}" th:classappend="${active == 'add-info'} ? 'active'">Add Info</a>
+            <a th:href="@{/applications/new}" th:classappend="${active == 'new-application'} ? 'active'">New Application</a>
+            <a th:href="@{/applications}" th:classappend="${active == 'applications'} ? 'active'">Applications</a>
+            <a th:href="@{/settings}" th:classappend="${active == 'settings'} ? 'active'">Settings</a>
+        </nav>
+    </div>
+    <div th:if="${demoMode}" class="demo-banner" role="status">
+        <strong>DEMO MODE</strong>: model answers are generated locally by simple rules from your own data, not by Claude.
+        Nothing is sent to Anthropic and nothing costs money. The checks are real.
+    </div>
+</header>
+
+<footer th:fragment="siteFooter" class="site-footer">
+    <div class="footer-inner">
+        <!-- id="llm-cost" is the htmx out-of-band swap target that refreshes the total after an LLM call -->
+        <span id="llm-cost" th:insert="~{layout :: llmCostText}"></span>
+        <span class="muted">Estimate from prices in application.yml, not billing data</span>
+    </div>
+</footer>
+
+<!-- One-off messages after a redirect (RedirectAttributes flash attributes) -->
+<th:block th:fragment="flash">
+    <div th:if="${flash}" class="flash flash-ok" role="status" th:text="${flash}">Saved.</div>
+    <div th:if="${flashError}" class="flash flash-fail" role="alert" th:text="${flashError}">Failed.</div>
+</th:block>
+
+<nav th:fragment="masterTabs(tab)" class="tabs" aria-label="Master resume">
+    <a th:href="@{/master}" th:classappend="${tab == 'editor'} ? 'active'">Editor</a>
+    <a th:href="@{/master/view}" th:classappend="${tab == 'view'} ? 'active'">View</a>
+    <a th:href="@{/master/health}" th:classappend="${tab == 'health'} ? 'active'">Health</a>
+    <a th:href="@{/master/import}" th:classappend="${tab == 'import'} ? 'active'">Import</a>
+    <a th:href="@{/updates}" th:classappend="${tab == 'updates'} ? 'active'">Updates</a>
+    <a th:href="@{/master/history}" th:classappend="${tab == 'history'} ? 'active'">History</a>
+</nav>
+
+<!-- The same error list markup for every ValidationError list (editor, add-info, update review) -->
+<ul th:fragment="errorList(errors)" class="error-list">
+    <li th:each="e : ${errors}">
+        <span class="kind" th:classappend="'kind-' + ${#strings.toLowerCase(e.kind().name())}" th:text="${e.kind()}">SCHEMA</span>
+        <code th:text="${e.displayPath()}">/work/0/startDate</code>
+        <span th:text="${e.message()}">message</span>
+    </li>
+</ul>
+
+<!-- Inner text of #master-version; reused by the editor page and the htmx save response -->
+<th:block th:fragment="masterVersionText">
+    <th:block th:if="${current != null}">
+        <strong>Version <span th:text="${current.versionNo()}">3</span></strong>
+        · saved <span th:text="${current.savedAt()}">15 Oct 2026, 17:02</span>
+        <th:block th:if="${current.note() != null}">· “<span th:text="${current.note()}">note</span>”</th:block>
+    </th:block>
+    <th:block th:if="${current == null}">No master resume yet.</th:block>
+</th:block>
+
+<th:block th:fragment="llmCostText">LLM spend this session:
+    <strong th:text="${llmUsage.costDisplay()}">$0.0000</strong>
+    across <span th:text="${llmUsage.calls()}">0</span> call<span th:if="${llmUsage.calls() != 1}">s</span><span
+            th:if="${llmUsage.anyUnpriced()}" class="muted"> (some calls unpriced)</span>
+    · all time <strong th:text="${llmUsage.allTimeDisplay()}">$0.0000</strong>
+    (<span th:text="${llmUsage.allTimeCalls()}">0</span>)
+</th:block>
+
+</body>
+</html>

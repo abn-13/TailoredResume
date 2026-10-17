@@ -1,0 +1,3 @@
+{ "rule": "TRUTH-02", "expect": "ERROR", "expectMessage": "45",
+  "pass": { "bullets": [ {"itemId": "work-1", "sourceIds": ["work-1.h1"], "text": "Cut p95 latency of the payment status API by 35 % by adding a Redis cache with Java 21"} ] },
+  "fail": { "bullets": [ {"itemId": "work-1", "sourceIds": ["work-1.h1"], "text": "Cut p95 latency of the payment status API by 45% by adding a Redis cache in front of the query"} ] } }

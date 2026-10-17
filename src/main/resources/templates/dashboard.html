@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{layout :: htmlHead('Dashboard')}"></head>
+<body>
+<header th:replace="~{layout :: topbar('dashboard')}"></header>
+
+<main class="container">
+    <section class="page-head">
+        <h1>Dashboard</h1>
+        <p class="lede">Tailor your master resume to Singapore job posts, then check the result with rules, not opinions.</p>
+    </section>
+
+    <section class="grid status-grid" aria-label="System status">
+        <div class="card">
+            <div class="card-label">Master resume</div>
+            <div class="card-value">
+                <span class="dot" th:classappend="${status.masterVersion() != null} ? 'dot-ok' : 'dot-warn'"></span>
+                <span th:text="${status.masterVersion() != null} ? 'Version ' + ${status.masterVersion()} : 'Not created'">Version 3</span>
+            </div>
+            <div class="card-note" th:if="${status.masterVersion() != null}">
+                Saved <span th:text="${status.masterSavedAt()}">15 Oct 2026</span> · <a th:href="@{/master}">Edit</a>
+            </div>
+            <div class="card-note" th:unless="${status.masterVersion() != null}"><a th:href="@{/master/import}">Import</a>
+                or <a th:href="@{/master}">create it</a></div>
+            <div class="card-note" th:if="${status.pendingUpdates() > 0}">
+                <a th:href="@{/updates(status='PROPOSED')}" th:text="${status.pendingUpdates()} + ' update' + (${status.pendingUpdates()} == 1 ? '' : 's') + ' to review'">2 updates to review</a></div>
+        </div>
+        <div class="card">
+            <div class="card-label">Database</div>
+            <div class="card-value">
+                <span class="dot" th:classappend="${status.databaseUp()} ? 'dot-ok' : 'dot-fail'"></span>
+                <span th:text="${status.databaseUp()} ? 'Connected' : 'Unavailable'">Connected</span>
+            </div>
+            <div class="card-note">H2 file at ./data/tailorsg</div>
+        </div>
+        <div class="card">
+            <div class="card-label">Claude API key</div>
+            <div class="card-value">
+                <span class="dot" th:classappend="${status.apiKeyConfigured()} ? 'dot-ok' : 'dot-warn'"></span>
+                <span th:text="${status.apiKeyConfigured()} ? 'Configured' : 'Not set'">Configured</span>
+            </div>
+            <div class="card-note" th:unless="${status.apiKeyConfigured()}">Export ANTHROPIC_API_KEY and restart.</div>
+            <div class="card-note" th:if="${status.demoMode()}"><strong>Demo mode is on</strong>: answers are local.</div>
+            <div class="card-note" th:if="${status.apiKeyConfigured()}"><a th:href="@{/settings}">Test the connection</a></div>
+        </div>
+        <div class="card">
+            <div class="card-label">Writer model</div>
+            <div class="card-value mono" th:text="${status.writerModel()}">claude-sonnet-5-5</div>
+            <div class="card-note">Tailoring, cover letters</div>
+        </div>
+        <div class="card">
+            <div class="card-label">Extractor model</div>
+            <div class="card-value mono" th:text="${status.extractorModel()}">claude-haiku-5-5</div>
+            <div class="card-note">JD extraction, free-text parsing</div>
+        </div>
+    </section>
+
+    <section class="panel">
+        <h2>Applications <a class="small" th:href="@{/applications}" th:unless="${#lists.isEmpty(applications)}">all</a></h2>
+        <div th:replace="~{applications/list :: tracker(${applications}, 'dashboard')}"></div>
+    </section>
+
+    <section class="panel">
+        <h2>Build progress</h2>
+        <!-- Update at the end of each phase (see CLAUDE.md): done / current (in progress) / next (up next) -->
+        <ol class="phases">
+            <li class="done"><strong>Phase 0</strong> Scaffolding, health check, Claude client</li>
+            <li class="done"><strong>Phase 1</strong> Master resume data model, versioning, JSON editor</li>
+            <li class="done"><strong>Phase 2</strong> Form updates, JSON Patch diffs, resume import</li>
+            <li class="done"><strong>Phase 3</strong> CheckEngine v1: SG norms, bullet lint, keyword match</li>
+            <li class="done"><strong>Phase 4</strong> Job description ingestion (link, screenshots, paste)</li>
+            <li class="done"><strong>Phase 5</strong> Tailoring, provenance checks, preview and scorecard</li>
+            <li class="done"><strong>Phase 5b</strong> Job-fit recommendation (advisory)</li>
+            <li class="done"><strong>Phase 6</strong> PDF / DOCX export with ATS round-trip checks</li>
+            <li class="done"><strong>Phase 7</strong> Cover letter</li>
+            <li class="done"><strong>Phase 8</strong> Free-text master updates</li>
+            <li class="done"><strong>Phase 9</strong> Tracker, cost footer, prompt versions, settings</li>
+        </ol>
+    </section>
+</main>
+
+<footer th:replace="~{layout :: siteFooter}"></footer>
+</body>
+</html>

@@ -1,0 +1,32 @@
+{
+  "recipientLine": "Dear Hiring Manager,",
+  "subject": "Application for Backend Engineer",
+  "paragraphs": [
+    {
+      "text": "Example Payments processes payments for 2,000 merchants in Southeast Asia, and the Backend Engineer role is the kind of work I want to do next. This year I have been building and testing payment services at Example Fintech in Java and Spring Boot on PostgreSQL, and keeping money movements correct and fast for that many merchants is the problem I enjoy most.",
+      "sourceIds": [
+        "work-1.h2"
+      ]
+    },
+    {
+      "text": "At Example Fintech I reduced the p95 latency of our payment status API by 35% by adding a Redis cache in front of a slow reconciliation query. The change was small — one cache in front of one query — but measuring before and after taught me to treat performance as evidence, not opinion. I also built the REST endpoints for merchant refund requests with Spring Boot and PostgreSQL, and covered them with 40 integration tests using Testcontainers, so that each change could ship without manual checks.",
+      "sourceIds": [
+        "work-1.h1",
+        "work-1.h2"
+      ]
+    },
+    {
+      "text": "My first career was in mechanical engineering. At Acme Precision Engineering I wrote Python scripts to batch-process finite element simulation results, which cut post-processing from 2 days to 3 hours per design iteration. That habit of automating repetitive work carried over: at Example Fintech I automated the nightly settlement report with a GitHub Actions workflow, saving the operations team about 3 hours a week. I have not used Kafka in production yet, but I learn new tools by building with them, and event streaming is next on my list.",
+      "sourceIds": [
+        "work-2.h1",
+        "work-1.h3"
+      ]
+    },
+    {
+      "text": "Reliable, well-tested backend work is what I would bring to Example Payments. I am available from January 2027, and I would welcome the chance to discuss how I could contribute to your payments platform.",
+      "sourceIds": []
+    }
+  ],
+  "signOff": "Yours sincerely,\nJordan Tan",
+  "wordCount": 0
+}

@@ -1,0 +1,95 @@
+<!--
+  Fit tab (Phase 5b, the user's add-on). Facts first (deterministic, from code), then the model's advice,
+  clearly labelled ADVISORY: it never changes a check result (P4).
+-->
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="fitTab" class="fit-tab">
+    <section class="panel" th:if="${fitFacts == null}"><p>Create your master resume first.</p></section>
+
+    <th:block th:if="${fitFacts != null}">
+        <section class="panel">
+            <h2>Facts <span class="badge badge-pass">from code</span></h2>
+            <div class="fit-numbers">
+                <div class="card"><div class="card-label">Required skills with evidence</div>
+                    <div class="card-value" th:text="${#numbers.formatDecimal(fitFacts.requiredCoverage() * 100, 1, 0)} + '%'">60%</div>
+                    <div class="card-note" th:text="${#lists.size(fitFacts.required())} + ' required terms'">5 required terms</div></div>
+                <div class="card"><div class="card-label">Preferred skills with evidence</div>
+                    <div class="card-value" th:text="${#numbers.formatDecimal(fitFacts.preferredCoverage() * 100, 1, 0)} + '%'">50%</div>
+                    <div class="card-note" th:text="${#lists.size(fitFacts.preferred())} + ' preferred terms'">2</div></div>
+                <div class="card"><div class="card-label">Experience</div>
+                    <div class="card-value" th:text="${fitFacts.softwareYears()} + ' yrs software'">0.4 yrs</div>
+                    <div class="card-note" th:text="${fitFacts.totalYears()} + ' yrs of work in total · posting asks ' + (${fitFacts.yearsAsked()} != null ? ${fitFacts.yearsAsked()} + '+ yrs' : 'no minimum')">3.9 yrs total</div></div>
+                <div class="card"><div class="card-label">Earliest start</div>
+                    <div class="card-value" th:text="${fitFacts.startDate()}">Jan 2027</div>
+                    <div class="card-note">from your education end date</div></div>
+            </div>
+            <ul class="findings" th:unless="${#lists.isEmpty(fitFacts.flags())}">
+                <li th:each="f : ${fitFacts.flags()}" th:classappend="'sev-' + ${#strings.toLowerCase(f.severity().name())}">
+                    <span class="sev" th:text="${f.severity()}">WARN</span> <code th:text="${f.code()}">FIT-YEARS</code>
+                    <span th:text="${f.message()}">message</span></li>
+            </ul>
+            <div class="table-wrap">
+                <table class="fit-terms">
+                    <thead><tr><th>Job asks for</th><th></th><th>Your master</th><th>Shown by</th></tr></thead>
+                    <tbody>
+                    <tr th:each="t : ${fitFacts.allTerms()}">
+                        <td th:text="${t.term()}" th:classappend="${t.required()} ? 'strong'">Java</td>
+                        <td class="muted small" th:text="${t.required()} ? 'required' : 'preferred'">required</td>
+                        <td><span class="badge" th:classappend="${t.evidence().name() == 'GAP'} ? 'badge-fail' : (${t.evidence().name() == 'UNEVIDENCED' or t.evidence().name() == 'MENTIONED'} ? 'badge-warn' : 'badge-pass')"
+                                  th:text="${t.evidence()}">EVIDENCED</span></td>
+                        <td class="wrap small"><code th:if="${t.sourceId() != null}" th:text="${t.sourceId()}">work-1.h2</code>
+                            <span th:text="${t.sourceText()}" class="muted">text</span></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="panel advisory">
+            <h2>Should you apply? <span class="badge badge-warn">ADVISORY</span></h2>
+            <p class="muted small">Written by the model from the facts above, then checked by code: anything it could not back up was removed.
+                It never changes a check result.</p>
+            <form method="post" th:action="@{/applications/{id}/fit/advice(id=${app.id})}" class="actions">
+                <button type="submit" class="btn" th:classappend="${fitAdvice != null} ? 'btn-secondary'" th:disabled="${!llmConfigured}"
+                        th:text="${fitAdvice == null} ? 'Get advice' : 'Refresh advice'">Get advice</button>
+                <span th:unless="${llmConfigured}" class="muted small">Needs ANTHROPIC_API_KEY (or demo mode).</span>
+            </form>
+
+            <th:block th:if="${fitAdvice != null}" th:with="adv=${fitAdvice.advice()}">
+                <div class="recommendation" th:classappend="'rec-' + ${#strings.toLowerCase(adv.recommendation().name())}">
+                    <strong th:text="${adv.recommendation().label()}">Apply, and address the gap</strong>
+                    <p th:text="${adv.headline()}">headline</p>
+                </div>
+                <h3>Why</h3>
+                <ul><li th:each="r : ${adv.reasons()}" th:text="${r}">reason</li></ul>
+                <th:block th:unless="${#lists.isEmpty(adv.strengths())}">
+                    <h3>Strengths for this job</h3>
+                    <ul><li th:each="s : ${adv.strengths()}"><span th:text="${s.point()}">point</span>
+                        <code th:each="sid : ${s.sourceIds()}" th:text="${sid}" class="small">work-1.h2</code></li></ul>
+                </th:block>
+                <th:block th:unless="${#lists.isEmpty(adv.gapsToAddress())}">
+                    <h3>Gaps, and how to address them honestly</h3>
+                    <ul><li th:each="g : ${adv.gapsToAddress()}"><span class="kw kw-gap" th:text="${g.term()}">Kafka</span>
+                        <span th:text="${g.howToAddress()}">how</span></li></ul>
+                </th:block>
+                <div class="project-card" th:if="${adv.projectSuggestion().isPresent()}" th:with="p=${adv.projectSuggestion()}">
+                    <h3 th:text="'Project idea: ' + ${p.title()}">Project idea</h3>
+                    <p><span class="muted">Targets:</span> <span th:each="t : ${p.targetsGaps()}" class="kw kw-gap" th:text="${t}">Kafka</span>
+                        <span class="muted" th:text="' · about ' + ${p.estimatedDays()} + ' days'">about 10 days</span></p>
+                    <p th:text="${p.description()}">description</p>
+                    <ol><li th:each="s : ${p.scope()}" th:text="${s}">deliverable</li></ol>
+                    <p class="small" th:text="'Show it: ' + ${p.showcase()}">showcase</p>
+                    <p class="muted small">Add it to your master (Add Info, Project) only once it exists.</p>
+                </div>
+                <details th:unless="${#lists.isEmpty(fitAdvice.notes())}" class="result-details" open>
+                    <summary th:text="'What code removed or flagged (' + ${#lists.size(fitAdvice.notes())} + ')'">Removed</summary>
+                    <ul class="warn-list"><li th:each="n : ${fitAdvice.notes()}" th:text="${n}">note</li></ul>
+                </details>
+                <p class="muted small" th:text="${fitAdvice.model()} + ' · fit-advice prompt v' + ${fitAdvice.promptVersion()} + ' · master v' + ${fitAdvice.masterVersionNo()} + ' · ' + ${@resumeView.when(fitAdvice.createdAt())}">model</p>
+            </th:block>
+        </section>
+    </th:block>
+</div>
+</body>
+</html>

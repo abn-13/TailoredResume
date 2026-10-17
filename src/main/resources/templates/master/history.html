@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{layout :: htmlHead('Master Resume History')}"></head>
+<body>
+<header th:replace="~{layout :: topbar('master')}"></header>
+
+<main class="container">
+    <section class="page-head">
+        <h1>Master Resume</h1>
+        <p class="lede">Every save is kept. Open any version, compare two, or restore an old one as a new version.</p>
+    </section>
+    <nav th:replace="~{layout :: masterTabs('history')}"></nav>
+
+    <section class="panel" th:if="${#lists.isEmpty(versions)}">
+        <div class="empty"><p>No versions yet.</p>
+            <p class="muted">Save your master resume in the <a th:href="@{/master}">editor</a> first.</p></div>
+    </section>
+
+    <th:block th:unless="${#lists.isEmpty(versions)}">
+        <section class="panel">
+            <h2>Compare</h2>
+            <form class="inline-form" method="get" th:action="@{/master/diff}">
+                <label for="from">From</label>
+                <select id="from" name="from">
+                    <option th:each="v, it : ${versions}" th:value="${v.versionNo()}" th:text="'v' + ${v.versionNo()}"
+                            th:selected="${it.index == 1}">v1</option>
+                </select>
+                <label for="to">to</label>
+                <select id="to" name="to">
+                    <option th:each="v : ${versions}" th:value="${v.versionNo()}" th:text="'v' + ${v.versionNo()}">v2</option>
+                </select>
+                <button type="submit" class="btn btn-secondary">Show changes</button>
+            </form>
+        </section>
+
+        <section class="panel">
+            <h2>Versions</h2>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Version</th><th>Saved</th><th>Note</th><th></th></tr></thead>
+                    <tbody>
+                    <tr th:each="v, it : ${versions}">
+                        <td>
+                            <strong th:text="'v' + ${v.versionNo()}">v3</strong>
+                            <span th:if="${it.first}" class="badge badge-pass">current</span>
+                        </td>
+                        <td th:text="${v.savedAt()}">15 Oct 2026, 17:02</td>
+                        <td class="wrap" th:text="${v.note()}">Added metrics</td>
+                        <td class="row-actions">
+                            <a th:href="@{/master/versions/{n}(n=${v.versionNo()})}">View</a>
+                            <a th:if="${v.versionNo() > 1}"
+                               th:href="@{/master/diff(from=${v.versionNo() - 1}, to=${v.versionNo()})}">Changes</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </th:block>
+</main>
+
+<footer th:replace="~{layout :: siteFooter}"></footer>
+</body>
+</html>

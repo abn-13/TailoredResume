@@ -1,0 +1,3 @@
+{ "rule": "SG-09", "expect": "ERROR",
+  "pass": { "pageCount": 2, "pageTarget": 2 },
+  "fail": { "pageCount": 3, "pageTarget": 2 } }

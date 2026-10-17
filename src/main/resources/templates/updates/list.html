@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{layout :: htmlHead('Updates')}"></head>
+<body>
+<header th:replace="~{layout :: topbar('master')}"></header>
+
+<main class="container">
+    <section class="page-head">
+        <h1>Master Resume</h1>
+        <p class="lede">Proposed changes wait here until you apply or reject them. Nothing changes your master
+            resume without your review.</p>
+    </section>
+    <nav th:replace="~{layout :: masterTabs('updates')}"></nav>
+    <div th:replace="~{layout :: flash}"></div>
+
+    <section class="panel">
+        <div class="actions">
+            <a th:href="@{/updates}" th:classappend="${filter == null} ? 'chip-active'" class="chip">All</a>
+            <a th:href="@{/updates(status='PROPOSED')}" th:classappend="${filter?.name() == 'PROPOSED'} ? 'chip-active'" class="chip">Proposed</a>
+            <a th:href="@{/updates(status='APPLIED')}" th:classappend="${filter?.name() == 'APPLIED'} ? 'chip-active'" class="chip">Applied</a>
+            <a th:href="@{/updates(status='REJECTED')}" th:classappend="${filter?.name() == 'REJECTED'} ? 'chip-active'" class="chip">Rejected</a>
+            <a th:href="@{/add-info}" class="btn btn-secondary">Add info</a>
+            <a th:href="@{/master/import}" class="btn btn-ghost">Import a file</a>
+        </div>
+        <div th:if="${#lists.isEmpty(rows)}" class="empty"><p>No updates here.</p></div>
+        <div class="table-wrap" th:unless="${#lists.isEmpty(rows)}">
+            <table>
+                <thead><tr><th>#</th><th>Proposed</th><th>Source</th><th>Summary</th><th>Status</th></tr></thead>
+                <tbody>
+                <tr th:each="r : ${rows}">
+                    <td><a th:href="@{/updates/{id}(id=${r.id()})}" th:text="'#' + ${r.id()}">#3</a></td>
+                    <td th:text="${r.created()}">16 Oct 2026, 10:02</td>
+                    <td th:text="${r.source()}">Form</td>
+                    <td class="wrap"><a th:href="@{/updates/{id}(id=${r.id()})}" th:text="${r.summary()}">Add work</a></td>
+                    <td>
+                        <span class="badge" th:classappend="${r.status() == 'PROPOSED'} ? 'badge-warn' : (${r.status() == 'APPLIED'} ? 'badge-pass' : 'badge-muted')"
+                              th:text="${#strings.toLowerCase(r.status())}">proposed</span>
+                        <span th:if="${r.appliedVersionNo() != null}" class="small muted" th:text="'as v' + ${r.appliedVersionNo()}">as v3</span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+
+<footer th:replace="~{layout :: siteFooter}"></footer>
+</body>
+</html>

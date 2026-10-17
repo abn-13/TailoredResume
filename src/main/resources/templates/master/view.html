@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{layout :: htmlHead('Master Resume')}"></head>
+<body>
+<header th:replace="~{layout :: topbar('master')}"></header>
+
+<main class="container">
+    <section class="page-head">
+        <h1>Master Resume</h1>
+        <p class="lede">Everything you have, in reading order. IDs are shown because tailored resumes cite them.</p>
+    </section>
+    <nav th:replace="~{layout :: masterTabs('view')}"></nav>
+
+    <section class="panel" th:if="${resume == null}">
+        <div class="empty"><p>No master resume yet.</p>
+            <p class="muted"><a th:href="@{/master/import}">Import a PDF or DOCX</a> or use the
+                <a th:href="@{/master}">editor</a>.</p></div>
+    </section>
+
+    <section class="panel" th:if="${resume != null}">
+        <p id="master-version" class="muted" th:insert="~{layout :: masterVersionText}"></p>
+        <th:block th:replace="~{fragments/resume-view :: resume(${resume})}"></th:block>
+    </section>
+</main>
+
+<footer th:replace="~{layout :: siteFooter}"></footer>
+</body>
+</html>

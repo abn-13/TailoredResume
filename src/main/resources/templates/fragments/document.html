@@ -1,0 +1,83 @@
+<!--
+  A rendered ResumeDocument (the tailored resume) in the same order and structure as the PDF template
+  (spec 4), so what you see here is what gets exported. Each bullet shows its cited master sources on
+  hover (spec 7) and, when appId is set, has an inline editor that saves through htmx and re-runs the checks.
+  Parameters: doc (ResumeDocument), sources (Map id -> master text), appId (Long or null for read-only).
+-->
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<article th:fragment="document(doc, sources, appId)" class="doc-preview" aria-label="Resume preview">
+    <div class="doc-head">
+        <div class="doc-name" th:text="${doc.header().name()}">Jordan Tan</div>
+        <div class="doc-contact" th:text="${doc.contactLine()}">+65 9000 1234 | jordan@example.com | github.com/jordan</div>
+        <div class="doc-auth" th:if="${doc.header().workAuthLine() != null}" th:text="${doc.header().workAuthLine()}">Work authorisation</div>
+    </div>
+
+    <section th:each="s : ${doc.sections()}" class="doc-section">
+        <h3 th:text="${s.heading()}">Experience</h3>
+
+        <th:block th:if="${s.kind().name() == 'SUMMARY'}">
+            <div th:each="line : ${s.lines()}" id="summary" class="doc-bullet doc-summary">
+                <p th:text="${line}">Summary</p>
+                <div class="b-sources" th:if="${tailored != null}">
+                    <span class="muted">Sources:</span>
+                    <span th:each="sid : ${tailored.summary().sourceIds()}" class="b-source"><code th:text="${sid}">sum-1</code>
+                        <span th:text="${sources[sid]} ?: '(not in your master)'">master text</span></span>
+                </div>
+                <th:block th:if="${appId != null}">
+                    <details th:replace="~{fragments/document :: editor(${appId}, 'summary', 0, ${line})}"></details>
+                </th:block>
+            </div>
+        </th:block>
+        <th:block th:unless="${s.kind().name() == 'SUMMARY'}">
+            <p th:each="line : ${s.lines()}" class="doc-line" th:text="${line}">AWS Certified Cloud Practitioner, 2025</p>
+        </th:block>
+
+        <div th:each="e : ${s.entries()}" class="doc-entry">
+            <div class="doc-entry-head">
+                <span class="doc-dates" th:text="${e.dates()}">May 2024 - Present</span>
+                <strong th:text="${e.headline()}">Software Engineering Intern, Acme, Singapore</strong>
+            </div>
+            <div th:each="d : ${e.details()}" class="doc-detail" th:text="${d}">Grade: 4.5 / 5</div>
+            <ul class="doc-bullets" th:unless="${#lists.isEmpty(e.bullets())}">
+                <li th:each="b, st : ${e.bullets()}" th:id="${b.anchor()}" class="doc-bullet">
+                    <span class="b-text" th:text="${b.text()}">Built a REST API</span>
+                    <div class="b-sources">
+                        <span class="muted">Sources:</span>
+                        <span th:if="${#lists.isEmpty(b.sourceIds())}" class="sev-error">none cited</span>
+                        <span th:each="sid : ${b.sourceIds()}" class="b-source"><code th:text="${sid}">work-1.h2</code>
+                            <span th:text="${sources[sid]} ?: '(not in your master)'">master text</span></span>
+                    </div>
+                    <th:block th:if="${appId != null}">
+                        <details th:replace="~{fragments/document :: editor(${appId}, ${e.id()}, ${st.index}, ${b.text()})}"></details>
+                    </th:block>
+                </li>
+            </ul>
+        </div>
+
+        <p th:each="sl : ${s.skillLines()}" class="doc-line">
+            <strong th:text="${sl.category()} + ':'">Languages:</strong>
+            <span th:text="${#strings.listJoin(sl.items(), ', ')}">Java, Python</span>
+        </p>
+    </section>
+</article>
+
+<!-- Inline editor for one bullet (or the summary). Both buttons post the form's fields through htmx. -->
+<details th:fragment="editor(appId, itemId, index, text)" class="b-edit">
+    <summary>Edit</summary>
+    <form th:attr="hx-post=@{/applications/{id}/bullets/edit(id=${appId})}" hx-target="#workspace" hx-swap="outerHTML">
+        <input type="hidden" name="itemId" th:value="${itemId}">
+        <input type="hidden" name="index" th:value="${index}">
+        <label class="visually-hidden" th:for="'edit-' + ${itemId} + '-' + ${index}">Text</label>
+        <textarea th:id="'edit-' + ${itemId} + '-' + ${index}" name="text" rows="3" th:text="${text}"></textarea>
+        <div class="b-edit-actions">
+            <button type="submit" class="btn btn-small">Save and re-check</button>
+            <button type="button" class="btn btn-ghost btn-small" hx-confirm="Remove this from the resume?"
+                    th:attr="hx-post=@{/applications/{id}/bullets/remove(id=${appId})}">Remove</button>
+        </div>
+        <p class="muted small">Keep to what the cited sources say: the TRUTH checks compare your edit with them.</p>
+    </form>
+</details>
+</body>
+</html>

@@ -1,0 +1,5 @@
+{ "rule": "KW-01", "expect": "WARN",
+  "pass": { "text": "Built REST APIs with Java, Spring Boot and Postgres on k8s",
+            "job": { "title": "Backend Engineer", "required": ["Java", "Spring Boot", "PostgreSQL", "Kubernetes"] } },
+  "fail": { "text": "Built dashboards in React",
+            "job": { "title": "Backend Engineer", "required": ["Java", "Spring Boot", "PostgreSQL", "Kafka"] } } }

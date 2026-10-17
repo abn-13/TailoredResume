@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{layout :: htmlHead('Master Resume Version')}"></head>
+<body>
+<header th:replace="~{layout :: topbar('master')}"></header>
+
+<main class="container">
+    <section class="page-head">
+        <h1>Version <span th:text="${version.versionNo()}">2</span></h1>
+        <p class="lede">
+            Saved <span th:text="${version.savedAt()}">15 Oct 2026, 17:02</span>
+            <th:block th:if="${version.note() != null}">· “<span th:text="${version.note()}">note</span>”</th:block>
+        </p>
+    </section>
+    <nav th:replace="~{layout :: masterTabs('history')}"></nav>
+
+    <section class="panel">
+        <div class="actions">
+            <span th:if="${isCurrent}" class="badge badge-pass">current version</span>
+            <form th:unless="${isCurrent}" method="post"
+                  th:action="@{/master/versions/{n}/restore(n=${version.versionNo()})}">
+                <button type="submit" class="btn btn-secondary">Restore as a new version</button>
+            </form>
+            <a th:if="${version.versionNo() > 1}"
+               th:href="@{/master/diff(from=${version.versionNo() - 1}, to=${version.versionNo()})}">Changes from previous</a>
+            <a th:unless="${isCurrent}" th:href="@{/master/diff(from=${version.versionNo()})}">Changes up to current</a>
+            <a th:href="@{/api/master/versions/{n}(n=${version.versionNo()})}" target="_blank" class="small">Raw JSON</a>
+        </div>
+        <pre class="json-view" th:text="${json}">{ }</pre>
+    </section>
+</main>
+
+<footer th:replace="~{layout :: siteFooter}"></footer>
+</body>
+</html>

@@ -1,0 +1,34 @@
+{
+ "rule": "CL-03",
+ "expect": "WARN",
+ "mode": "COVER_LETTER",
+ "expectMessage": "Avoid",
+ "pass": {
+  "coverLetter": {
+   "recipientLine": "Dear Hiring Manager,",
+   "subject": "Application for Backend Engineer",
+   "signOff": "Yours sincerely,",
+   "wordCount": 0,
+   "paragraphs": [
+    {
+     "text": "The Backend Engineer role at Example Payments fits the work I have done this year.",
+     "sourceIds": []
+    }
+   ]
+  }
+ },
+ "fail": {
+  "coverLetter": {
+   "recipientLine": "Dear Hiring Manager,",
+   "subject": "Application for Backend Engineer",
+   "signOff": "Yours sincerely,",
+   "wordCount": 0,
+   "paragraphs": [
+    {
+     "text": "I am writing to apply for the Backend Engineer role, and I am thrilled to leverage my skills.",
+     "sourceIds": []
+    }
+   ]
+  }
+ }
+}

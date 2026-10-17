@@ -1,0 +1,25 @@
+{
+  "recommendation": "APPLY_AND_ADDRESS_GAP",
+  "headline": "A good match on Java, Spring Boot and PostgreSQL; Kafka is the one required gap.",
+  "reasons": [
+    "Four of the five required skills are shown by your internship work.",
+    "No salary is stated, and you will need an Employment Pass, so confirm the range early."
+  ],
+  "strengths": [
+    { "point": "Built and tested refund endpoints with Spring Boot and PostgreSQL", "sourceIds": ["work-1.h2"] },
+    { "point": "Strong Kafka experience from payment work", "sourceIds": ["work-1.h1"] },
+    { "point": "Led a large engineering organisation", "sourceIds": ["work-9.h1"] }
+  ],
+  "gapsToAddress": [
+    { "term": "Kafka", "howToAddress": "Say in the cover letter that you have not used it in production and are building a small event-driven demo." },
+    { "term": "Java", "howToAddress": "Take a course." }
+  ],
+  "projectSuggestion": {
+    "title": "Refund events with Kafka",
+    "targetsGaps": ["Kafka", "GraphQL"],
+    "description": "Publish refund status changes from a small Spring Boot service to Kafka and consume them in a second service.",
+    "scope": ["Docker Compose with Kafka", "Producer service", "Consumer with retries", "Integration test with Testcontainers", "README with a diagram"],
+    "estimatedDays": 20,
+    "showcase": "Public GitHub repository with a README and a two-minute demo video."
+  }
+}

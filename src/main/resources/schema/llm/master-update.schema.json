@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "LLM output for prompts/master-update.md (spec 5.2). Patch values travel as JSON strings (valueJson) so the schema stays typed; code parses them into an RFC 6902 patch.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["patch", "summary", "questions"],
+  "properties": {
+    "patch": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["op", "path", "from", "valueJson"],
+        "properties": {
+          "op": { "enum": ["add", "remove", "replace", "move", "copy", "test"] },
+          "path": { "type": "string" },
+          "from": { "type": "string" },
+          "valueJson": { "type": "string" }
+        }
+      }
+    },
+    "summary": { "type": "string" },
+    "questions": { "type": "array", "items": { "type": "string" } }
+  }
+}

@@ -1,0 +1,38 @@
+<!--
+  htmx response for POST /master/validate and /master/save. The first block is swapped into
+  #master-result. After a successful save, two out-of-band swaps also replace the textarea
+  (so new server-assigned IDs appear) and the version line.
+-->
+<th:block xmlns:th="http://www.thymeleaf.org">
+
+<div th:if="${errors != null}" class="result result-fail">
+    <strong th:text="${#lists.size(errors)} + (${#lists.size(errors)} == 1 ? ' problem' : ' problems') + '. Nothing was saved.'">
+        2 problems. Nothing was saved.</strong>
+    <ul th:replace="~{layout :: errorList(${errors})}"></ul>
+</div>
+
+<div th:if="${result != null}" class="result result-ok">
+    <th:block th:if="${mode == 'validate'}">
+        <strong th:if="${result.unchanged()}">Valid, and identical to the current version.</strong>
+        <strong th:unless="${result.unchanged()}">Valid. Saving would create version
+            <span th:text="${result.versionNo()}">2</span>.</strong>
+    </th:block>
+    <th:block th:if="${mode == 'save'}">
+        <strong th:if="${result.unchanged()}">No changes, so still version <span th:text="${result.versionNo()}">2</span>.</strong>
+        <strong th:unless="${result.unchanged()}">Saved as version <span th:text="${result.versionNo()}">2</span>.</strong>
+    </th:block>
+    <div th:unless="${#lists.isEmpty(result.assignedIds())}" class="small">
+        <span th:text="${mode == 'save'} ? 'New IDs assigned:' : 'IDs that would be assigned:'">New IDs:</span>
+        <code th:text="${#strings.listJoin(result.assignedIds(), ', ')}">work-3, work-3.h1</code>
+    </div>
+    <ul th:unless="${#lists.isEmpty(result.notes())}" class="note-list small">
+        <li th:each="n : ${result.notes()}" th:text="${n}">Skill 'Kubernetes' is unevidenced.</li>
+    </ul>
+</div>
+
+<textarea th:if="${savedJson != null}" id="master-json" name="json" class="json-editor" spellcheck="false"
+          hx-swap-oob="true" th:text="${savedJson}"></textarea>
+<p th:if="${savedJson != null}" id="master-version" class="muted" hx-swap-oob="true"
+   th:insert="~{layout :: masterVersionText}"></p>
+
+</th:block>

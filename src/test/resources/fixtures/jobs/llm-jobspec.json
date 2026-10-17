@@ -1,0 +1,13 @@
+{
+  "title": "Backend Engineer", "company": "Example Payments Pte Ltd", "location": "Singapore", "seniority": "Junior",
+  "employmentType": "Full-time", "salaryRange": { "min": 0, "max": 0, "currency": "" },
+  "requiredSkills": [
+    { "term": "Java", "aliases": [] }, { "term": "Spring Boot", "aliases": ["Springboot"] },
+    { "term": "PostgreSQL", "aliases": ["Postgres"] }, { "term": "REST APIs", "aliases": ["RESTful APIs"] },
+    { "term": "Kafka", "aliases": ["Apache Kafka"] }, { "term": "Java", "aliases": [] }
+  ],
+  "preferredSkills": [ { "term": "Kubernetes", "aliases": ["k8s"] }, { "term": "AWS", "aliases": [] } ],
+  "responsibilities": ["Build payment APIs", ""], "qualifications": ["Degree in Computer Science or related field"],
+  "keywordsRaw": ["payments"], "companyFacts": ["Processes payments for 2,000 merchants in Southeast Asia"],
+  "applyInstructions": "", "coverLetterRequested": true, "warnings": []
+}

@@ -1,0 +1,3 @@
+{ "rule": "KW-02", "expect": "WARN",
+  "pass": { "bullets": [ {"text": "Built refund APIs in Java and Spring Boot backed by PostgreSQL"} ] },
+  "fail": { "bullets": [ {"text": "Used Java, Spring Boot, PostgreSQL, Redis, Kafka, Docker and Kubernetes daily"} ] } }

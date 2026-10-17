@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "LLM output for prompts/tailor.md (spec 2.4 TailoredResume). Every property is required and there are no unions (structured-output limits); summary.text \"\" means no summary.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["targetTitleLine", "summary", "sectionOrder", "experience", "projects", "skillsLines", "omitted", "gapsNotAddressed"],
+  "properties": {
+    "targetTitleLine": { "type": "string" },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["text", "sourceIds"],
+      "properties": {
+        "text": { "type": "string" },
+        "sourceIds": { "$ref": "#/$defs/ids" }
+      }
+    },
+    "sectionOrder": {
+      "type": "array",
+      "items": { "enum": ["summary", "education", "experience", "projects", "skills", "certifications", "awards", "volunteering", "languages"] }
+    },
+    "experience": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["workId", "bullets"],
+        "properties": {
+          "workId": { "type": "string", "pattern": "^(work|vol)-[1-9][0-9]*$" },
+          "bullets": { "type": "array", "items": { "$ref": "#/$defs/bullet" } }
+        }
+      }
+    },
+    "projects": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["projectId", "bullets"],
+        "properties": {
+          "projectId": { "type": "string", "pattern": "^proj-[1-9][0-9]*$" },
+          "bullets": { "type": "array", "items": { "$ref": "#/$defs/bullet" } }
+        }
+      }
+    },
+    "skillsLines": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["category", "items"],
+        "properties": {
+          "category": { "type": "string", "pattern": "\\S" },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["name", "skillId"],
+              "properties": {
+                "name": { "type": "string" },
+                "skillId": { "type": "string", "pattern": "^skill-[1-9][0-9]*$" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "omitted": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "reason"],
+        "properties": { "id": { "type": "string" }, "reason": { "type": "string" } }
+      }
+    },
+    "gapsNotAddressed": { "type": "array", "items": { "type": "string" } }
+  },
+  "$defs": {
+    "ids": { "type": "array", "items": { "type": "string" } },
+    "bullet": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["text", "sourceIds"],
+      "properties": {
+        "text": { "type": "string", "pattern": "\\S" },
+        "sourceIds": { "$ref": "#/$defs/ids" }
+      }
+    }
+  }
+}

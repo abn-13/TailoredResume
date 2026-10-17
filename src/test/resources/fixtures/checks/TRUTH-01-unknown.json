@@ -1,0 +1,3 @@
+{ "rule": "TRUTH-01", "expect": "ERROR", "expectMessage": "not in your master",
+  "pass": { "bullets": [ {"itemId": "work-1", "sourceIds": ["work-1.h2"], "text": "Built REST endpoints for merchant refunds with Spring Boot and PostgreSQL"} ] },
+  "fail": { "bullets": [ {"itemId": "work-1", "sourceIds": ["work-1.h9"], "text": "Built REST endpoints for merchant refunds with Spring Boot and PostgreSQL"} ] } }

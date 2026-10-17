@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{layout :: htmlHead('Master Resume Changes')}"></head>
+<body>
+<header th:replace="~{layout :: topbar('master')}"></header>
+
+<main class="container">
+    <section class="page-head">
+        <h1>Changes from v<span th:text="${from}">1</span> to v<span th:text="${to}">2</span></h1>
+        <p class="lede">Items are matched by ID, so a moved highlight shows as moved, not as everything changing.</p>
+    </section>
+    <nav th:replace="~{layout :: masterTabs('history')}"></nav>
+
+    <section class="panel">
+        <form class="inline-form" method="get" th:action="@{/master/diff}">
+            <label for="from">From</label>
+            <select id="from" name="from">
+                <option th:each="n : ${versionNumbers}" th:value="${n}" th:text="'v' + ${n}" th:selected="${n == from}">v1</option>
+            </select>
+            <label for="to">to</label>
+            <select id="to" name="to">
+                <option th:each="n : ${versionNumbers}" th:value="${n}" th:text="'v' + ${n}" th:selected="${n == to}">v2</option>
+            </select>
+            <button type="submit" class="btn btn-secondary">Show changes</button>
+        </form>
+    </section>
+
+    <section class="panel">
+        <div th:if="${#lists.isEmpty(changes)}" class="empty"><p>No differences.</p></div>
+        <div class="table-wrap" th:unless="${#lists.isEmpty(changes)}">
+            <table>
+                <thead><tr><th>Change</th><th>Where</th><th>Before</th><th>After</th></tr></thead>
+                <tbody>
+                <tr th:each="c : ${changes}">
+                    <td><span class="change" th:classappend="'change-' + ${#strings.toLowerCase(c.type())}"
+                              th:text="${#strings.toLowerCase(c.type())}">changed</span></td>
+                    <td class="wrap mono small" th:text="${c.path()}">work › work-1 › position</td>
+                    <td class="wrap diff-before" th:text="${c.before()}">Intern</td>
+                    <td class="wrap diff-after" th:text="${c.after()}">Software Engineering Intern</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+
+<footer th:replace="~{layout :: siteFooter}"></footer>
+</body>
+</html>

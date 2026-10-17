@@ -1,0 +1,3 @@
+{ "rule": "TRUTH-04", "expect": "ERROR", "expectMessage": "Grab",
+  "pass": { "bullets": [ {"itemId": "work-1", "sourceIds": ["work-1.h1"], "text": "Reduced p95 latency of the payment status API at Example Fintech by 35% by adding a Redis cache"} ] },
+  "fail": { "bullets": [ {"itemId": "work-1", "sourceIds": ["work-1.h1"], "text": "Reduced p95 latency of the payment status API for Grab by 35% by adding a Redis cache"} ] } }

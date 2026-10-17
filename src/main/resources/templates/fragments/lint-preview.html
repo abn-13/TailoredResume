@@ -1,0 +1,15 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="preview" id="lint-preview" class="lint-preview" aria-live="polite">
+    <p th:if="${empty}" class="muted small">Bullet checks appear here as you type.</p>
+    <p th:if="${!empty and #lists.isEmpty(findings)}" class="small lint-ok">Looks good: action verb, length, no filler.</p>
+    <ul th:unless="${#lists.isEmpty(findings)}" class="findings compact">
+        <li th:each="f : ${findings}" th:classappend="'sev-' + ${#strings.toLowerCase(f.severity().name())}">
+            <span class="sev" th:text="${f.severity()}">WARN</span> <code th:text="${f.checkId()}">LINT-01</code>
+            <span th:text="${f.message()}">message</span>
+            <span th:if="${!#strings.isEmpty(f.suggestedFix())}" class="fix" th:text="'→ ' + ${f.suggestedFix()}"></span>
+        </li>
+    </ul>
+</div>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!--
+  Export tab (Phase 6). Export is refused while ERRORs exist unless a reason is typed (P5); the reason is
+  stored with the file. Shows the last export check: the scorecard including ATS round-trip results, and
+  the "what an ATS would likely extract" table (ATS-10).
+-->
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="exportTab" class="export-tab">
+    <section class="panel" th:if="${tailored == null}">
+        <h2>Nothing to export yet</h2><p>Tailor the resume first (Resume tab).</p>
+    </section>
+
+    <th:block th:if="${tailored != null}">
+        <section class="panel">
+            <h2>Export the resume</h2>
+            <p th:if="${report != null and report.hasErrors()}" class="callout">
+                The resume has <strong th:text="${#lists.size(report.errors())}">2</strong> ERROR finding(s)
+                (<span th:each="e, st : ${report.errors()}" th:text="${e.checkId()} + (${st.last} ? '' : ', ')">TRUTH-02</span>).
+                Fix them on the <a th:href="@{/applications/{id}(id=${app.id})}">Resume tab</a>, or type why you are exporting anyway.
+            </p>
+            <p th:if="${report != null and !report.hasErrors()}" class="muted">No blocking errors in the resume checks. Export runs the
+                ATS round-trip checks on the file too.</p>
+            <form method="post" th:action="@{/applications/{id}/export(id=${app.id})}" class="entry-form">
+                <div class="form-grid">
+                    <div class="field"><label>Format</label>
+                        <label class="check"><input type="radio" name="type" value="PDF" checked> PDF</label>
+                        <label class="check"><input type="radio" name="type" value="DOCX"> Word (DOCX)</label></div>
+                    <div class="field span-2"><label for="overrideReason">Reason to export despite errors
+                        <span class="muted">(only needed when there are ERRORs; at least 10 characters; stored with the file)</span></label>
+                        <textarea id="overrideReason" name="overrideReason" rows="2"
+                                  placeholder="e.g. TRUTH-04 flags 'Testcontainers' but it is in my master under another spelling"></textarea></div>
+                </div>
+                <div class="actions">
+                    <button type="submit" class="btn">Export</button>
+                    <button type="submit" name="checkOnly" value="true" class="btn btn-secondary">Check only (don't save)</button>
+                </div>
+                <p class="muted small">Saved to <code>data/exports/Company_Title_date/</code> as
+                    <code th:text="${@resumeView.exportName(doc, job.company)}">Jordan_Tan_Resume_Company.pdf</code>.</p>
+            </form>
+        </section>
+
+        <section class="panel" th:if="${exportCheck != null}">
+            <h2>Last export check
+                <span class="badge" th:classappend="${exportCheck.blocked()} ? 'badge-fail' : 'badge-pass'"
+                      th:text="${exportCheck.blocked()} ? 'blocked' : 'passed or overridden'">passed</span></h2>
+            <p class="muted small" th:text="${exportCheck.type()} + ' · ' + ${exportCheck.pageCount()} + ' page(s) · ' + ${@resumeView.when(exportCheck.at())}">PDF · 1 page</p>
+            <section th:replace="~{fragments/scorecard :: scorecard(${exportCheck.report()}, '', false)}"></section>
+
+            <h3>What an ATS would likely extract <span class="muted small">(ATS-10, heuristic parser)</span></h3>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Field</th><th>Expected (from your master)</th><th>Parser found</th><th></th></tr></thead>
+                    <tbody><tr th:each="f : ${exportCheck.fields()}">
+                        <td th:text="${f.field()}">Job title</td>
+                        <td class="wrap" th:text="${f.expected()}">Software Engineering Intern</td>
+                        <td class="wrap" th:text="${f.extracted()} ?: ''">Software Engineering Intern</td>
+                        <td><span class="badge" th:classappend="${f.ok()} ? 'badge-pass' : 'badge-fail'" th:text="${f.ok()} ? 'ok' : 'missed'">ok</span></td>
+                    </tr></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="panel">
+            <h2>Exported files</h2>
+            <div th:if="${#lists.isEmpty(resumeFiles) and #lists.isEmpty(letterFiles)}" class="empty"><p>None yet.</p></div>
+            <div class="table-wrap" th:unless="${#lists.isEmpty(resumeFiles) and #lists.isEmpty(letterFiles)}">
+                <table>
+                    <thead><tr><th>File</th><th>Pages</th><th>Saved</th><th>SHA-256</th><th>Override reason</th></tr></thead>
+                    <tbody>
+                    <tr th:each="f : ${resumeFiles}">
+                        <td class="wrap"><a th:href="@{/applications/{id}/exports/{f}(id=${app.id}, f=${f.id})}" th:text="${f.fileName}">file.pdf</a></td>
+                        <td th:text="${f.pageCount}">1</td>
+                        <td th:text="${@resumeView.when(f.createdAt)}">17 Oct</td>
+                        <td><code class="small" th:text="${#strings.substring(f.sha256, 0, 12)} + '…'" th:title="${f.sha256}">abc</code></td>
+                        <td class="wrap small" th:text="${f.overrideReason} ?: ''"></td>
+                    </tr>
+                    <tr th:each="f : ${letterFiles}">
+                        <td class="wrap"><a th:href="@{/applications/{id}/exports/{f}(id=${app.id}, f=${f.id})}" th:text="${f.fileName}">letter.pdf</a></td>
+                        <td th:text="${f.pageCount}">1</td>
+                        <td th:text="${@resumeView.when(f.createdAt)}">17 Oct</td>
+                        <td><code class="small" th:text="${#strings.substring(f.sha256, 0, 12)} + '…'" th:title="${f.sha256}">abc</code></td>
+                        <td class="wrap small" th:text="${f.overrideReason} ?: ''"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </th:block>
+</div>
+</body>
+</html>

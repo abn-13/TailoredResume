@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!--
+      Spring Boot 4.1.x: current OSS-supported line (until Jul 2027).
+      The parent POM manages versions for Spring, Jackson, Hibernate, H2, Thymeleaf etc.,
+      so most dependencies below have no <version>.
+    -->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>4.1.1</version>
+        <relativePath/>
+    </parent>
+
+    <groupId>com.bu</groupId>
+    <artifactId>tailorsg</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>TailorSG</name>
+    <description>Local resume and cover-letter tailoring for the Singapore job market, with deterministic quality checks</description>
+
+    <properties>
+        <java.version>21</java.version>
+        <!-- Versions not managed by Spring Boot. Verified on Maven Central 2026-10-15. -->
+        <anthropic-java.version>2.72.0</anthropic-java.version>
+        <json-schema-validator.version>3.0.8</json-schema-validator.version>
+        <htmx.version>2.0.11</htmx.version>
+        <pdfbox.version>3.0.8</pdfbox.version>
+        <poi.version>5.5.1</poi.version>
+        <jsoup.version>1.23.2</jsoup.version>
+        <imageio-webp.version>3.15.3</imageio-webp.version>
+        <openhtmltopdf.version>1.1.97</openhtmltopdf.version>
+    </properties>
+
+    <dependencies>
+        <!-- Web layer: Spring MVC (Boot 4 renamed spring-boot-starter-web to -webmvc) + Thymeleaf views -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webmvc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+
+        <!-- Persistence: JPA over an H2 file database in ./data -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <!-- Browser console at /h2-console for inspecting the DB while developing (Boot 4 moved it to its own module) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-h2console</artifactId>
+        </dependency>
+
+        <!-- Official Anthropic Java SDK. It uses Jackson 2 (com.fasterxml.*) internally; our code uses Jackson 3 (tools.jackson.*). -->
+        <dependency>
+            <groupId>com.anthropic</groupId>
+            <artifactId>anthropic-java</artifactId>
+            <version>${anthropic-java.version}</version>
+        </dependency>
+
+        <!-- JSON Schema validation of every LLM response (3.x line is built on Jackson 3, matching Boot 4) -->
+        <dependency>
+            <groupId>com.networknt</groupId>
+            <artifactId>json-schema-validator</artifactId>
+            <version>${json-schema-validator.version}</version>
+        </dependency>
+
+        <!-- Text extraction from uploaded resumes (Phase 2) and exported files (Phase 6) -->
+        <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox</artifactId>
+            <version>${pdfbox.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>${poi.version}</version>
+        </dependency>
+
+        <!-- Job descriptions: HTML fetching and parsing (Phase 4), HTML to PDF DOM conversion (Phase 6) -->
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>${jsoup.version}</version>
+        </dependency>
+        <!-- HTML/CSS to PDF (Phase 6). The maintained fork on PDFBox 3; com.openhtmltopdf was abandoned in 2021 -->
+        <dependency>
+            <groupId>io.github.openhtmltopdf</groupId>
+            <artifactId>openhtmltopdf-pdfbox</artifactId>
+            <version>${openhtmltopdf.version}</version>
+        </dependency>
+        <!-- Lets javax.imageio read WebP screenshots (PNG and JPEG are built in) -->
+        <dependency>
+            <groupId>com.twelvemonkeys.imageio</groupId>
+            <artifactId>imageio-webp</artifactId>
+            <version>${imageio-webp.version}</version>
+        </dependency>
+
+        <!-- htmx served locally from a WebJar (no CDN, works offline) -->
+        <dependency>
+            <groupId>org.webjars.npm</groupId>
+            <artifactId>htmx.org</artifactId>
+            <version>${htmx.version}</version>
+        </dependency>
+        <!-- Lets templates use /webjars/htmx.org/dist/htmx.min.js without repeating the version -->
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>webjars-locator-lite</artifactId>
+        </dependency>
+
+        <!-- Auto-restart on recompile during development; excluded from the packaged jar -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <scope>runtime</scope>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- Tests: JUnit 5 + AssertJ + Mockito (spring-boot-starter-test), MockMvc support (webmvc-test) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webmvc-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <systemPropertyVariables>
+                        <!-- Every test runs with the "test" profile: in-memory H2, never touches ./data -->
+                        <spring.profiles.active>test</spring.profiles.active>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

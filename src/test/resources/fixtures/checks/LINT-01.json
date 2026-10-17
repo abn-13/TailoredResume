@@ -1,0 +1,3 @@
+{ "rule": "LINT-01", "expect": "ERROR",
+  "pass": { "bullets": [ {"text": "Built REST endpoints for refunds with Spring Boot and PostgreSQL, covered by 40 integration tests"} ] },
+  "fail": { "bullets": [ {"text": "Responsible for building REST endpoints for refunds with Spring Boot and PostgreSQL"} ] } }

@@ -1,0 +1,16 @@
+# Local data: H2 database, exported resumes, uploads. Personal, never commit.
+/data/
+
+# Secrets. Only the template is tracked.
+.env
+.env.*
+!.env.example
+
+# Build output
+target/
+
+# IDE / OS
+.idea/
+*.iml
+.vscode/
+.DS_Store

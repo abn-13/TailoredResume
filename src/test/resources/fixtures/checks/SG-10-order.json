@@ -1,0 +1,5 @@
+{ "rule": "SG-10", "expect": "ERROR",
+  "pass": { "entries": [ {"section": "Experience", "id": "work-1", "start": "2026-05", "end": null},
+                         {"section": "Experience", "id": "work-2", "start": "2021-07", "end": "2024-12"} ] },
+  "fail": { "entries": [ {"section": "Experience", "id": "work-2", "start": "2021-07", "end": "2024-12"},
+                         {"section": "Experience", "id": "work-1", "start": "2026-05", "end": null} ] } }

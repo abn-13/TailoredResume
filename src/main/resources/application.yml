@@ -1,0 +1,162 @@
+spring:
+  application:
+    name: tailorsg
+  datasource:
+    # H2 in file mode: data survives restarts and lives in ./data (git-ignored).
+    # DB_CLOSE_ON_EXIT=FALSE lets Spring, not a JVM shutdown hook, close the DB cleanly.
+    url: jdbc:h2:file:./data/tailorsg;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password: ""
+  servlet:
+    multipart:
+      max-file-size: 5MB             # resume uploads (TextExtractor also enforces 5 MB)
+      max-request-size: 6MB
+  mvc:
+    problemdetails:
+      enabled: true          # framework errors (bad params, 405...) also answer as RFC 9457 problem JSON
+  jpa:
+    hibernate:
+      # Dev convenience while the model is young; revisit (Flyway migrations) once entities settle.
+      ddl-auto: update
+    # Don't keep a DB connection open while Thymeleaf renders; forces data loading into services.
+    open-in-view: false
+  h2:
+    console:
+      enabled: true          # http://localhost:8080/h2-console (JDBC URL as above, user sa, blank password)
+      path: /h2-console
+
+server:
+  port: 8080
+  # Local single-user app: only accept connections from this machine.
+  address: 127.0.0.1
+  servlet:
+    session:
+      # Cookie only: stops Tomcat adding ";jsessionid=..." to redirect URLs (flash messages use the session).
+      tracking-modes: cookie
+
+logging:
+  level:
+    com.bu.tailorsg: INFO
+
+tailorsg:
+  # Model IDs verified against platform.claude.com/docs/en/about-claude/models/overview on 2026-10-15.
+  models:
+    writer: claude-sonnet-5-5      # tailoring, cover letters
+    extractor: claude-haiku-5-5    # JD extraction, free-text parsing, ping
+
+  llm:
+    # DEMO MODE: answer every prompt locally (llm/demo/DemoLlmTransport), no API key, no cost, banner on every
+    # page. For trying the app and for screenshots only. Turn on with --tailorsg.llm.demo-mode=true.
+    demo-mode: false
+    timeout: 180s                  # long enough for a full resume import
+    max-retries: 2                 # SDK retries on 429 / 5xx / network errors (not schema retries)
+    writer:
+      effort: high                 # Sonnet 5.5 default; quality matters most here
+      max-tokens: 16000            # includes thinking tokens
+      refusal-fallback: true       # server-side refusal fallback (beta header server-side-fallback-2026-07-01)
+    extractor:
+      effort: medium               # Haiku 5.5 default, set explicitly. Try "low" for cheaper extraction.
+      max-tokens: 16000            # a 2-page resume import is ~4k tokens of JSON, plus thinking
+
+  # USD per million tokens, from platform.claude.com/docs/en/about-claude/pricing (checked 2026-10-15).
+  # Used only for the running cost estimate. Keys must match the model IDs above.
+  pricing:
+    demo-local:                    # demo mode's local answers cost nothing
+      input: 0
+      output: 0
+      cache-write: 0
+      cache-read: 0
+    claude-sonnet-5-5:
+      input: 2.00
+      output: 10.00
+      cache-write: 2.50            # 5-minute cache TTL
+      cache-read: 0.10
+    claude-haiku-5-5:
+      input: 0.10
+      output: 0.50
+      cache-write: 0.125
+      cache-read: 0.01
+      long-context:                # Haiku 5.5 bills prompts over 100k tokens at higher rates
+        threshold-tokens: 100000
+        input: 0.50
+        output: 2.50
+        cache-write: 0.625
+        cache-read: 0.05
+
+  storage:
+    exports-dir: ./data/exports    # {company}_{title}_{date}/ folders go here
+
+  # Job description fetching (spec 3, "URL ingestion strategy")
+  jobs:
+    timeout: 10s
+    user-agent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36"
+    min-text-chars: 500            # less readable text than this means a login wall or a blocked page
+    mcf-api-base: https://api.mycareersfuture.gov.sg
+    greenhouse-api-base: https://boards-api.greenhouse.io
+    lever-api-base: https://api.lever.co
+    lever-eu-api-base: https://api.eu.lever.co
+    allow-private-hosts: false     # never fetch localhost / private network addresses from a pasted link
+
+  # Check thresholds (spec 6). All are heuristics from published guidance; tune them here or on the
+  # Settings page (which stores overrides in the database).
+  # Job fit (Phase 5b). Employment Pass minimum qualifying salaries for NEW applications, monthly SGD, for the
+  # youngest applicants (the floor rises with age). Checked 2026-10-17: S$5,600 (financial services S$6,200)
+  # since 1 Jan 2025; S$6,000 (S$6,600) from 1 Jan 2027 (Budget 2026). Re-check on MOM's site each year.
+  fit:
+    ep-source-url: https://www.mom.gov.sg/passes-and-permits/employment-pass/eligibility
+    ep-thresholds:
+      - { from: 2025-01-01, general: 5600, financial-services: 6200 }
+      - { from: 2027-01-01, general: 6000, financial-services: 6600 }
+
+  checks:
+    kw:
+      required-pass: 0.80          # required-skill coverage for PASS
+      required-warn: 0.60          # below this: FAIL (still only a warning, never blocks export)
+      max-keyword-repeats: 3
+      max-skills-per-bullet: 4
+    lint:
+      min-words: 12
+      max-words: 28
+      max-lines: 2
+      chars-per-line: 95           # A4, 2 cm margins, 11pt Liberation Sans
+      experience-metric-share: 0.50
+      project-metric-share: 0.30
+      max-same-start-verb: 2
+      cliches: [team player, hard-working, hardworking, detail-oriented, results-driven, go-getter, self-starter,
+                synergy, passionate, dynamic, think outside the box, various, etc., successfully, highly motivated,
+                proven track record, fast-paced, rockstar, ninja, guru, wear many hats]
+      redundant:
+        "[conducted research]": Researched
+        "[performed an analysis]": Analysed
+        "[performed analysis]": Analysed
+        "[was responsible for]": start with the action itself
+        "[carried out]": Ran / Did
+        "[in order to]": to
+        "[made improvements to]": Improved
+        "[gave a presentation]": Presented
+        "[provided assistance]": Supported
+        "[conducted an investigation]": Investigated
+        "[utilised]": used
+        "[utilized]": used
+        "[was involved in]": say what you did
+        "[had the opportunity to]": say what you did
+    pages:
+      words-per-page: 500          # spec 5.3: one page is about 450-550 words of body text
+    ats:
+      min-text-chars: 300
+      min-text-ratio: 0.90
+      order-warn: 0.90
+      order-error: 0.75
+      min-body-pt: 10.5
+      error-body-pt: 10.0
+      parser-recall: 0.90
+      date-window-chars: 400
+      fonts: [LiberationSans, Liberation Sans, Arial, ArialMT, Helvetica, Carlito, Calibri]
+    cl:
+      min-words: 250
+      max-words: 380
+      hard-max-words: 450
+      max-i-run: 3
+      banned-phrases: [I am writing to apply, I am excited to apply, delve, testament, tapestry, thrilled, leverage,
+                       leveraging, leveraged, synergy, passionate about, in today's fast-paced world,
+                       I believe I would be a great fit, hit the ground running, To Whom It May Concern]

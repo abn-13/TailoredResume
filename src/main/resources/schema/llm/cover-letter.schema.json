@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "LLM output for prompts/cover-letter.md (spec 5.4). The contact line and date are added by the renderer from the master (P2).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["recipientLine", "subject", "paragraphs", "signOff", "wordCount"],
+  "properties": {
+    "recipientLine": { "type": "string", "minLength": 1 },
+    "subject": { "type": "string", "minLength": 1 },
+    "paragraphs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["text", "sourceIds"],
+        "properties": {
+          "text": { "type": "string", "minLength": 1 },
+          "sourceIds": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "signOff": { "type": "string" },
+    "wordCount": { "type": "integer", "minimum": 0 }
+  }
+}

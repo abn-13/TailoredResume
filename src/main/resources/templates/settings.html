@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{layout :: htmlHead('Settings')}"></head>
+<body>
+<header th:replace="~{layout :: topbar('settings')}"></header>
+
+<main class="container">
+    <section class="page-head">
+        <h1>Settings</h1>
+        <p class="lede">Models and prices come from <code>src/main/resources/application.yml</code> (restart after
+            changing them). Check thresholds can be edited here.</p>
+    </section>
+    <div th:replace="~{layout :: flash}"></div>
+
+    <section class="panel">
+        <h2>Models</h2>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                <tr>
+                    <th>Role</th><th>Model ID</th><th>Effort</th><th>Max tokens</th>
+                    <th class="num">Input $/MTok</th><th class="num">Output $/MTok</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:with="m=${props.models().writer()}, p=${props.pricing().get(props.models().writer())}">
+                    <td>Writer</td>
+                    <td class="mono" th:text="${m}">claude-sonnet-5-5</td>
+                    <td th:text="${props.llm().writer().effort()}">high</td>
+                    <td th:text="${props.llm().writer().maxTokens()}">16000</td>
+                    <td class="num" th:text="${p != null} ? ${#numbers.formatDecimal(p.input(), 1, 'COMMA', 2, 'POINT')} : 'not set'">2.00</td>
+                    <td class="num" th:text="${p != null} ? ${#numbers.formatDecimal(p.output(), 1, 'COMMA', 2, 'POINT')} : 'not set'">10.00</td>
+                </tr>
+                <tr th:with="m=${props.models().extractor()}, p=${props.pricing().get(props.models().extractor())}">
+                    <td>Extractor</td>
+                    <td class="mono" th:text="${m}">claude-haiku-5-5</td>
+                    <td th:text="${props.llm().extractor().effort()}">medium</td>
+                    <td th:text="${props.llm().extractor().maxTokens()}">8000</td>
+                    <td class="num" th:text="${p != null} ? ${#numbers.formatDecimal(p.input(), 1, 'COMMA', 2, 'POINT')} : 'not set'">0.10</td>
+                    <td class="num" th:text="${p != null} ? ${#numbers.formatDecimal(p.output(), 1, 'COMMA', 2, 'POINT')} : 'not set'">0.50</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="panel">
+        <h2>Claude connection</h2>
+        <p class="muted">Sends one tiny request to the extractor model through the full pipeline: prompt file,
+            structured output, schema validation and cost meter. Costs well under a cent.</p>
+        <!--
+          htmx: on click, POST /settings/ping and put the returned HTML inside #ping-result.
+          hx-disabled-elt stops double clicks while the request is in flight.
+        -->
+        <button class="btn"
+                hx-post="/settings/ping"
+                hx-target="#ping-result"
+                hx-disabled-elt="this"
+                hx-indicator="#ping-indicator"
+                th:disabled="${!status.apiKeyConfigured()}">Test Claude connection</button>
+        <span id="ping-indicator" class="htmx-indicator muted">Calling Claude…</span>
+        <p class="muted" th:unless="${status.apiKeyConfigured()}">ANTHROPIC_API_KEY is not set, so the test is disabled.</p>
+        <div id="ping-result" aria-live="polite"></div>
+    </section>
+
+    <section class="panel" id="thresholds">
+        <h2>Check thresholds
+            <span class="badge" th:classappend="${thresholdsOverridden} ? 'badge-warn' : 'badge-muted'"
+                  th:text="${thresholdsOverridden} ? 'edited here' : 'application.yml defaults'">defaults</span></h2>
+        <p class="muted">Every number and word list the rules use (spec 6). Scores are heuristics from published guidance,
+            so adjust them if they do not match your experience. Saved values are validated (for example
+            <code>lint.minWords</code> must be below <code>lint.maxWords</code>) and apply to the next check run.</p>
+        <form method="post" th:action="@{/settings/thresholds}">
+            <label for="thresholdsJson" class="visually-hidden">Thresholds JSON</label>
+            <textarea id="thresholdsJson" name="thresholdsJson" class="json-editor" rows="22" spellcheck="false"
+                      th:text="${thresholdsJson}"></textarea>
+            <div class="actions">
+                <button type="submit" class="btn">Save thresholds</button>
+                <button type="submit" class="btn btn-ghost" th:formaction="@{/settings/thresholds/reset}"
+                        th:disabled="${!thresholdsOverridden}">Reset to defaults</button>
+            </div>
+        </form>
+    </section>
+
+    <section class="panel">
+        <h2>Recent model calls</h2>
+        <p class="muted">Token counts and estimated cost only; prompts and answers are never stored.</p>
+        <div th:if="${#lists.isEmpty(recentCalls)}" class="empty"><p>No calls yet.</p></div>
+        <div class="table-wrap" th:unless="${#lists.isEmpty(recentCalls)}">
+            <table>
+                <thead><tr><th>When</th><th>Prompt</th><th>Model</th><th class="num">In</th><th class="num">Out</th>
+                    <th class="num">Cache read</th><th class="num">Cost (US$)</th></tr></thead>
+                <tbody><tr th:each="c : ${recentCalls}">
+                    <td th:text="${@resumeView.when(c.createdAt)}">17 Oct</td>
+                    <td th:text="${c.promptId} + ' v' + ${c.promptVersion}">tailor v1</td>
+                    <td class="mono" th:text="${c.model}">claude-sonnet-5-5</td>
+                    <td class="num" th:text="${c.inputTokens}">1200</td>
+                    <td class="num" th:text="${c.outputTokens}">800</td>
+                    <td class="num" th:text="${c.cacheReadTokens}">0</td>
+                    <td class="num" th:text="${c.costUsd != null} ? ${#numbers.formatDecimal(c.costUsd, 1, 4)} : 'unpriced'">0.0123</td>
+                </tr></tbody>
+            </table>
+        </div>
+    </section>
+</main>
+
+<footer th:replace="~{layout :: siteFooter}"></footer>
+</body>
+</html>

@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{layout :: htmlHead('Add Info')}"></head>
+<body>
+<header th:replace="~{layout :: topbar('add-info')}"></header>
+
+<main class="container">
+    <section class="page-head">
+        <h1>Add Info</h1>
+        <p class="lede">Add something new to your master resume. Each form proposes a change you review
+            before it is saved, and nothing is reworded: what you type is what is stored.</p>
+    </section>
+
+    <nav class="tabs" aria-label="Entry type">
+        <a th:each="t : ${types}" th:href="@{/add-info(type=${t})}" th:classappend="${t == type} ? 'active'"
+           th:text="${#strings.capitalize(t)}">Work</a>
+        <a th:href="@{/add-info(type='free-text')}" th:classappend="${type == 'free-text'} ? 'active'">Free text</a>
+    </nav>
+
+    <section class="panel" th:unless="${hasMaster}">
+        <div class="callout">
+            <p><strong>Create your master resume first.</strong> These forms add to an existing master resume.</p>
+            <p><a th:href="@{/master/import}">Import a PDF or DOCX</a> · <a th:href="@{/master}">Open the editor</a></p>
+        </div>
+    </section>
+
+    <div th:replace="~{layout :: flash}"></div>
+
+    <section class="panel" th:if="${hasMaster and type == 'free-text'}">
+        <h2>Describe it in your own words</h2>
+        <p class="muted">The extractor model turns this into a proposed change to your master resume. It may only use what
+            you write; it asks about anything missing (like the measurable result), and code flags any number or skill that
+            is not in your text. Nothing is saved until you apply it.</p>
+        <form method="post" th:action="@{/add-info/free-text}">
+            <label class="visually-hidden" for="free-text">What you did</label>
+            <textarea id="free-text" name="text" class="json-editor free-text" rows="7" th:text="${freeText}"
+                      placeholder="e.g. In my internship I moved the refund service's nightly batch job from cron to a Spring Batch job on Kubernetes. Failures dropped from about 4 a month to none in August."></textarea>
+            <div class="actions">
+                <button type="submit" class="btn" th:disabled="${!llmConfigured}">Propose a change</button>
+                <span th:unless="${llmConfigured}" class="muted small">Needs ANTHROPIC_API_KEY (or demo mode). The forms work without it.</span>
+            </div>
+        </form>
+    </section>
+
+    <section class="panel" th:if="${hasMaster and type != 'free-text'}">
+        <div th:if="${patchError != null or (problems != null and !#lists.isEmpty(problems))}" class="result result-fail">
+            <strong>This would make your master resume invalid, so nothing was proposed.</strong>
+            <div th:if="${patchError != null}" th:text="${patchError}"></div>
+            <th:block th:if="${problems != null}"><ul th:replace="~{layout :: errorList(${problems})}"></ul></th:block>
+        </div>
+
+        <!-- ============================ work ============================ -->
+        <form th:if="${type == 'work'}" th:object="${form}" th:action="@{/add-info/work}" method="post" class="entry-form">
+            <div class="form-grid">
+                <div class="field"><label for="position">Job title</label>
+                    <input type="text" th:field="*{position}" placeholder="Software Engineering Intern">
+                    <p class="field-error" th:if="${#fields.hasErrors('position')}" th:errors="*{position}"></p></div>
+                <div class="field"><label for="name">Employer</label>
+                    <input type="text" th:field="*{name}" placeholder="Company Pte Ltd">
+                    <p class="field-error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></p></div>
+                <div class="field"><label for="location">Location</label>
+                    <input type="text" th:field="*{location}" placeholder="Singapore"></div>
+                <div class="field"><label for="employmentType">Employment type</label>
+                    <select th:field="*{employmentType}">
+                        <option value="">(not stated)</option>
+                        <option th:each="t : ${employmentTypes}" th:value="${t}" th:text="${t}">Internship</option>
+                    </select>
+                    <p class="field-error" th:if="${#fields.hasErrors('employmentType')}" th:errors="*{employmentType}"></p></div>
+                <div class="field"><label for="startDate">Start</label>
+                    <input type="month" th:field="*{startDate}" placeholder="YYYY-MM">
+                    <p class="field-error" th:if="${#fields.hasErrors('startDate')}" th:errors="*{startDate}"></p></div>
+                <div class="field"><label for="endDate">End <span class="muted">(blank if you still work here)</span></label>
+                    <input type="month" th:field="*{endDate}" placeholder="YYYY-MM">
+                    <p class="field-error" th:if="${#fields.hasErrors('endDate')}" th:errors="*{endDate}"></p></div>
+                <div class="field span-2"><label for="url">Company website <span class="muted">(optional)</span></label>
+                    <input type="text" th:field="*{url}" placeholder="https://">
+                    <p class="field-error" th:if="${#fields.hasErrors('url')}" th:errors="*{url}"></p></div>
+                <div class="field span-2"><label for="summary">One-line context <span class="muted">(optional, e.g. team or product)</span></label>
+                    <input type="text" th:field="*{summary}"></div>
+                <div class="field span-2"><label for="highlights">Highlights <span class="muted">(one per line; add metrics and skills later with the Highlight tab)</span></label>
+                    <textarea th:field="*{highlights}" rows="6" placeholder="Reduced p95 latency of the payment API by 35% by adding a Redis cache"></textarea>
+                    <p class="field-error" th:if="${#fields.hasErrors('highlights')}" th:errors="*{highlights}"></p></div>
+            </div>
+            <button type="submit" class="btn">Propose this change</button>
+        </form>
+
+        <!-- ============================ project ============================ -->
+        <form th:if="${type == 'project'}" th:object="${form}" th:action="@{/add-info/project}" method="post" class="entry-form">
+            <div class="form-grid">
+                <div class="field"><label for="name">Project name</label>
+                    <input type="text" th:field="*{name}">
+                    <p class="field-error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></p></div>
+                <div class="field"><label for="role">Your role</label>
+                    <input type="text" th:field="*{role}" placeholder="Sole developer"></div>
+                <div class="field"><label for="startDate">Start</label>
+                    <input type="month" th:field="*{startDate}" placeholder="YYYY-MM">
+                    <p class="field-error" th:if="${#fields.hasErrors('startDate')}" th:errors="*{startDate}"></p></div>
+                <div class="field"><label for="endDate">End <span class="muted">(blank if ongoing)</span></label>
+                    <input type="month" th:field="*{endDate}" placeholder="YYYY-MM">
+                    <p class="field-error" th:if="${#fields.hasErrors('endDate')}" th:errors="*{endDate}"></p></div>
+                <div class="field"><label for="url">Live URL</label>
+                    <input type="text" th:field="*{url}" placeholder="https://">
+                    <p class="field-error" th:if="${#fields.hasErrors('url')}" th:errors="*{url}"></p></div>
+                <div class="field"><label for="repo">Repository</label>
+                    <input type="text" th:field="*{repo}" placeholder="https://github.com/...">
+                    <p class="field-error" th:if="${#fields.hasErrors('repo')}" th:errors="*{repo}"></p></div>
+                <div class="field span-2"><label for="description">Description</label>
+                    <input type="text" th:field="*{description}"></div>
+                <div class="field span-2"><label for="keywords">Keywords <span class="muted">(comma-separated)</span></label>
+                    <input type="text" th:field="*{keywords}" placeholder="Spring Boot, PostgreSQL"></div>
+                <div class="field span-2"><label for="highlights">Highlights <span class="muted">(one per line)</span></label>
+                    <textarea th:field="*{highlights}" rows="5"></textarea>
+                    <p class="field-error" th:if="${#fields.hasErrors('highlights')}" th:errors="*{highlights}"></p></div>
+            </div>
+            <button type="submit" class="btn">Propose this change</button>
+        </form>
+
+        <!-- ============================ education ============================ -->
+        <form th:if="${type == 'education'}" th:object="${form}" th:action="@{/add-info/education}" method="post" class="entry-form">
+            <div class="form-grid">
+                <div class="field"><label for="studyType">Qualification</label>
+                    <input type="text" th:field="*{studyType}" placeholder="Graduate Diploma in Systems Analysis">
+                    <p class="field-error" th:if="${#fields.hasErrors('studyType')}" th:errors="*{studyType}"></p></div>
+                <div class="field"><label for="institution">Institution</label>
+                    <input type="text" th:field="*{institution}">
+                    <p class="field-error" th:if="${#fields.hasErrors('institution')}" th:errors="*{institution}"></p></div>
+                <div class="field"><label for="area">Field of study</label>
+                    <input type="text" th:field="*{area}" placeholder="Software Engineering"></div>
+                <div class="field"><label for="score">Grade <span class="muted">(and scale)</span></label>
+                    <div class="inline-form"><input type="text" th:field="*{score}" placeholder="4.3" size="6">
+                        <span>/</span><input type="text" th:field="*{scoreScale}" placeholder="5.0" size="6"></div></div>
+                <div class="field"><label for="startDate">Start</label>
+                    <input type="month" th:field="*{startDate}" placeholder="YYYY-MM">
+                    <p class="field-error" th:if="${#fields.hasErrors('startDate')}" th:errors="*{startDate}"></p></div>
+                <div class="field"><label for="endDate">End <span class="muted">(expected is fine)</span></label>
+                    <input type="month" th:field="*{endDate}" placeholder="YYYY-MM">
+                    <p class="field-error" th:if="${#fields.hasErrors('endDate')}" th:errors="*{endDate}"></p></div>
+                <div class="field span-2"><label for="courses">Relevant courses <span class="muted">(comma-separated)</span></label>
+                    <input type="text" th:field="*{courses}"></div>
+            </div>
+            <button type="submit" class="btn">Propose this change</button>
+        </form>
+
+        <!-- ============================ skill ============================ -->
+        <form th:if="${type == 'skill'}" th:object="${form}" th:action="@{/add-info/skill}" method="post" class="entry-form">
+            <div class="form-grid">
+                <div class="field"><label for="name">Skill</label>
+                    <input type="text" th:field="*{name}" placeholder="Kubernetes">
+                    <p class="field-error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></p></div>
+                <div class="field"><label for="category">Category</label>
+                    <select th:field="*{category}">
+                        <option value="">Choose…</option>
+                        <option th:each="c : ${categories}" th:value="${c}" th:text="${c}">Languages</option>
+                    </select>
+                    <p class="field-error" th:if="${#fields.hasErrors('category')}" th:errors="*{category}"></p></div>
+                <div class="field"><label for="level">Level <span class="muted">(optional)</span></label>
+                    <input type="text" th:field="*{level}" placeholder="Working knowledge"></div>
+                <div class="field span-2"><label for="evidenceIds">Evidence: highlights that show this skill in use
+                    <span class="muted">(Ctrl/Cmd-click for several; none means "unevidenced")</span></label>
+                    <select th:field="*{evidenceIds}" multiple size="8">
+                        <option th:each="o : ${highlightOptions}" th:value="${o.value()}" th:text="${o.label()}">work-1.h1: ...</option>
+                    </select>
+                    <p class="field-error" th:if="${#fields.hasErrors('evidenceIds')}" th:errors="*{evidenceIds}"></p></div>
+            </div>
+            <button type="submit" class="btn">Propose this change</button>
+        </form>
+
+        <!-- ============================ certificate ============================ -->
+        <form th:if="${type == 'certificate'}" th:object="${form}" th:action="@{/add-info/certificate}" method="post" class="entry-form">
+            <div class="form-grid">
+                <div class="field"><label for="name">Certificate</label>
+                    <input type="text" th:field="*{name}">
+                    <p class="field-error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></p></div>
+                <div class="field"><label for="issuer">Issuer</label>
+                    <input type="text" th:field="*{issuer}">
+                    <p class="field-error" th:if="${#fields.hasErrors('issuer')}" th:errors="*{issuer}"></p></div>
+                <div class="field"><label for="date">Date</label>
+                    <input type="month" th:field="*{date}" placeholder="YYYY-MM">
+                    <p class="field-error" th:if="${#fields.hasErrors('date')}" th:errors="*{date}"></p></div>
+                <div class="field"><label for="url">Verification link <span class="muted">(optional)</span></label>
+                    <input type="text" th:field="*{url}" placeholder="https://">
+                    <p class="field-error" th:if="${#fields.hasErrors('url')}" th:errors="*{url}"></p></div>
+            </div>
+            <button type="submit" class="btn">Propose this change</button>
+        </form>
+
+        <!-- ============================ award ============================ -->
+        <form th:if="${type == 'award'}" th:object="${form}" th:action="@{/add-info/award}" method="post" class="entry-form">
+            <div class="form-grid">
+                <div class="field"><label for="title">Award</label>
+                    <input type="text" th:field="*{title}">
+                    <p class="field-error" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></p></div>
+                <div class="field"><label for="awarder">Awarded by</label>
+                    <input type="text" th:field="*{awarder}"></div>
+                <div class="field"><label for="date">Date</label>
+                    <input type="month" th:field="*{date}" placeholder="YYYY-MM">
+                    <p class="field-error" th:if="${#fields.hasErrors('date')}" th:errors="*{date}"></p></div>
+                <div class="field span-2"><label for="summary">What it was for</label>
+                    <input type="text" th:field="*{summary}"></div>
+            </div>
+            <button type="submit" class="btn">Propose this change</button>
+        </form>
+
+        <!-- ============================ highlight ============================ -->
+        <form th:if="${type == 'highlight'}" th:object="${form}" th:action="@{/add-info/highlight}" method="post" class="entry-form">
+            <div class="form-grid">
+                <div class="field span-2"><label for="parentId">Belongs to</label>
+                    <select th:field="*{parentId}">
+                        <option value="">Choose a job, project or course…</option>
+                        <option th:each="p : ${parents}" th:value="${p.id()}" th:text="${p.id()} + ' · ' + ${p.label()}">work-1 · Intern, Company</option>
+                    </select>
+                    <p class="field-error" th:if="${#fields.hasErrors('parentId')}" th:errors="*{parentId}"></p></div>
+                <div class="field span-2"><label for="text">Highlight</label>
+                    <!-- htmx: re-lint the draft 400 ms after typing stops (and once on load) -->
+                    <textarea th:field="*{text}" rows="3"
+                              hx-post="/add-info/lint-preview" hx-trigger="keyup changed delay:400ms, load"
+                              hx-target="#lint-preview" hx-swap="outerHTML" hx-include="[name='parentId']"
+                              placeholder="Reduced p95 latency of the payment status API by 35% by adding a Redis cache"></textarea>
+                    <p class="field-error" th:if="${#fields.hasErrors('text')}" th:errors="*{text}"></p>
+                    <div id="lint-preview" class="lint-preview"></div></div>
+                <div class="field span-2"><label>Metric <span class="muted">(optional: a number you stated above)</span></label>
+                    <div class="metric-row">
+                        <input type="text" th:field="*{metricValue}" placeholder="35" aria-label="Metric value">
+                        <input type="text" th:field="*{metricUnit}" placeholder="%" aria-label="Metric unit">
+                        <input type="text" th:field="*{metricLabel}" placeholder="p95 latency reduction" aria-label="What it measures">
+                    </div>
+                    <p class="field-error" th:if="${#fields.hasErrors('metricLabel')}" th:errors="*{metricLabel}"></p></div>
+                <div class="field"><label for="skills">Skills it shows <span class="muted">(becomes evidence)</span></label>
+                    <select th:field="*{skills}" multiple size="8">
+                        <option th:each="n : ${skillNames}" th:value="${n}" th:text="${n}">Java</option>
+                    </select>
+                    <p class="field-error" th:if="${#fields.hasErrors('skills')}" th:errors="*{skills}"></p></div>
+                <div class="field"><label>New skills <span class="muted">(created with this highlight as evidence)</span></label>
+                    <div class="new-skill-row" th:each="s, it : *{newSkills}">
+                        <input type="text" th:field="*{newSkills[__${it.index}__].name}" placeholder="Skill name" aria-label="New skill name">
+                        <select th:field="*{newSkills[__${it.index}__].category}" aria-label="New skill category">
+                            <option value="">Category…</option>
+                            <option th:each="c : ${categories}" th:value="${c}" th:text="${c}">Tools</option>
+                        </select>
+                        <p class="field-error" th:if="${#fields.hasErrors('newSkills[__${it.index}__].name')}" th:errors="*{newSkills[__${it.index}__].name}"></p>
+                        <p class="field-error" th:if="${#fields.hasErrors('newSkills[__${it.index}__].category')}" th:errors="*{newSkills[__${it.index}__].category}"></p>
+                    </div></div>
+                <div class="field"><label for="tags">Tags <span class="muted">(comma-separated)</span></label>
+                    <input type="text" th:field="*{tags}" placeholder="backend, performance"></div>
+                <div class="field"><label for="priority">Priority</label>
+                    <select th:field="*{priority}">
+                        <option value="">(not set)</option>
+                        <option th:each="n : ${#numbers.sequence(1, 5)}" th:value="${n}" th:text="${n} + (${n} == 1 ? ' (highest)' : '')">1</option>
+                    </select>
+                    <p class="field-error" th:if="${#fields.hasErrors('priority')}" th:errors="*{priority}"></p></div>
+            </div>
+            <button type="submit" class="btn">Propose this change</button>
+        </form>
+
+        <!-- ============================ metric (quick fix from Master health, LINT-02) ============================ -->
+        <form th:if="${type == 'metric'}" th:object="${form}" th:action="@{/add-info/metric}" method="post" class="entry-form">
+            <h2>Add a metric to <code th:text="*{highlightId}">work-1.h3</code></h2>
+            <p class="muted small">Only a number you actually know. Never estimate one for the resume's sake.</p>
+            <input type="hidden" th:field="*{highlightId}">
+            <p class="field-error" th:if="${#fields.hasErrors('highlightId')}" th:errors="*{highlightId}"></p>
+            <div class="form-grid">
+                <div class="field span-2"><label>Metric</label>
+                    <div class="metric-row">
+                        <input type="text" th:field="*{value}" placeholder="3" aria-label="Metric value">
+                        <input type="text" th:field="*{unit}" placeholder="hours/week" aria-label="Metric unit">
+                        <input type="text" th:field="*{label}" placeholder="time saved" aria-label="What it measures">
+                    </div>
+                    <p class="field-error" th:if="${#fields.hasErrors('value')}" th:errors="*{value}"></p>
+                    <p class="field-error" th:if="${#fields.hasErrors('label')}" th:errors="*{label}"></p></div>
+                <div class="field span-2"><label for="text">Highlight text <span class="muted">(edit it to mention the number)</span></label>
+                    <textarea th:field="*{text}" rows="3"></textarea>
+                    <p class="field-error" th:if="${#fields.hasErrors('text')}" th:errors="*{text}"></p></div>
+            </div>
+            <button type="submit" class="btn">Propose this change</button>
+        </form>
+    </section>
+</main>
+
+<footer th:replace="~{layout :: siteFooter}"></footer>
+</body>
+</html>

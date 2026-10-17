@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PingResponse",
+  "description": "Response to prompts/ping.md. pattern and maxLength are enforced locally (the API ignores them).",
+  "type": "object",
+  "properties": {
+    "ok": { "type": "boolean", "const": true },
+    "nonce": { "type": "string", "pattern": "^[0-9a-f]{6}$" },
+    "message": { "type": "string", "minLength": 1, "maxLength": 80 }
+  },
+  "required": ["ok", "nonce", "message"],
+  "additionalProperties": false
+}

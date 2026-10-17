@@ -1,0 +1,3 @@
+{ "rule": "SG-11", "expect": "WARN",
+  "pass": { "text": "Optimised queries and organised the team's colour palette" },
+  "fail": { "text": "Optimised queries and organized the backlog" } }

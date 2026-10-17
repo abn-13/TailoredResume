@@ -1,0 +1,5 @@
+{ "rule": "TRUTH-02", "expect": "ERROR", "mode": "COVER_LETTER", "expectMessage": "1000",
+  "pass": { "coverLetter": { "recipientLine": "Dear Hiring Manager,", "subject": "", "signOff": "Yours sincerely,", "wordCount": 0,
+            "paragraphs": [ {"text": "At Example Fintech I wrote 40 integration tests with Testcontainers for our refund endpoints.", "sourceIds": ["work-1.h2"]} ] } },
+  "fail": { "coverLetter": { "recipientLine": "Dear Hiring Manager,", "subject": "", "signOff": "Yours sincerely,", "wordCount": 0,
+            "paragraphs": [ {"text": "At Example Fintech I wrote 1,000 integration tests with Testcontainers for our refund endpoints.", "sourceIds": ["work-1.h2"]} ] } } }

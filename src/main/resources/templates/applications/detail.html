@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{layout :: htmlHead(${job.title} ?: 'Application')}"></head>
+<body>
+<header th:replace="~{layout :: topbar('applications')}"></header>
+
+<main class="container">
+    <section class="page-head app-head">
+        <h1><span th:text="${job.title} ?: '(untitled job)'">Backend Engineer</span>
+            <span class="muted" th:if="${job.company != null}" th:text="'at ' + ${job.company}">at Acme</span></h1>
+        <div class="app-meta">
+            <span th:text="'Application #' + ${app.id}">Application #1</span>
+            <form method="post" th:action="@{/applications/{id}/status(id=${app.id})}" class="inline-form status-form">
+                <label class="visually-hidden" for="status">Status</label>
+                <select id="status" name="status" onchange="this.form.submit()">
+                    <option th:each="s : ${statuses}" th:value="${s}" th:text="${s}" th:selected="${s == app.status}">DRAFT</option>
+                </select>
+                <noscript><button type="submit" class="btn btn-small">Set</button></noscript>
+            </form>
+            <a th:href="@{/jobs/{id}(id=${job.id})}">Job details</a>
+            <span th:if="${app.masterVersionNo != null}" class="muted" th:text="'Tailored from master v' + ${app.masterVersionNo}">master v3</span>
+            <span th:each="pv : ${promptVersions}" class="badge badge-muted" th:text="${pv.key} + ' prompt v' + ${pv.value}">tailor v1</span>
+        </div>
+    </section>
+
+    <div th:replace="~{layout :: flash}"></div>
+
+    <nav class="tabs" aria-label="Application">
+        <a th:href="@{/applications/{id}(id=${app.id})}" th:classappend="${tab == 'resume'} ? 'active'">Resume</a>
+        <a th:href="@{/applications/{id}(id=${app.id}, tab='fit')}" th:classappend="${tab == 'fit'} ? 'active'">Fit <span class="badge badge-muted">advisory</span></a>
+        <a th:href="@{/applications/{id}(id=${app.id}, tab='cover')}" th:classappend="${tab == 'cover'} ? 'active'">Cover letter</a>
+        <a th:href="@{/applications/{id}(id=${app.id}, tab='export')}" th:classappend="${tab == 'export'} ? 'active'">Export</a>
+    </nav>
+
+    <!-- ===== Resume tab. Inline edits replace this whole element (htmx outerHTML swap). ===== -->
+    <div id="workspace" th:fragment="workspace" th:if="${tab == 'resume'}" class="workspace">
+        <div th:if="${workspaceMessage}" class="flash flash-ok" role="status" th:text="${workspaceMessage}">Saved.</div>
+        <div th:if="${workspaceError}" class="flash flash-fail" role="alert" th:text="${workspaceError}">Error.</div>
+
+        <section th:if="${tailored == null}" class="panel">
+            <h2>Not tailored yet</h2>
+            <p th:unless="${llmConfigured}" class="callout">Tailoring needs <code>ANTHROPIC_API_KEY</code> (or demo mode, see the README).</p>
+            <form method="post" th:action="@{/applications/{id}/tailor(id=${app.id})}">
+                <button type="submit" class="btn" th:disabled="${!llmConfigured}">Tailor now</button>
+                <span class="muted small">Uses the writer model; takes up to a minute or two.</span>
+            </form>
+        </section>
+
+        <th:block th:if="${tailored != null and doc != null}">
+            <div th:if="${masterChanged}" class="callout">
+                Your master resume changed since this was tailored (v<span th:text="${app.masterVersionNo}">2</span>
+                → v<span th:text="${currentMasterVersion}">3</span>). Names, titles and dates below already come from the
+                current master; re-tailor to use new highlights.
+            </div>
+            <div class="workspace-grid">
+                <section class="panel preview-panel">
+                    <div class="panel-bar">
+                        <h2>Preview</h2>
+                        <div class="actions">
+                            <form method="post" th:action="@{/applications/{id}/check(id=${app.id})}">
+                                <button type="submit" class="btn btn-secondary btn-small">Re-check</button></form>
+                            <form method="post" th:action="@{/applications/{id}/tailor(id=${app.id})}"
+                                  onsubmit="return confirm('Re-tailor from scratch? Your manual edits will be replaced.')">
+                                <button type="submit" class="btn btn-ghost btn-small" th:disabled="${!llmConfigured}">Re-tailor</button></form>
+                        </div>
+                    </div>
+                    <p class="muted small">Hover a bullet to see the master text it cites. Click "jump to" on a finding to highlight its bullet.</p>
+                    <article th:replace="~{fragments/document :: document(${doc}, ${sources}, ${app.id})}"></article>
+
+                    <details th:unless="${#lists.isEmpty(tailored.gapsNotAddressed())}" class="result-details" open>
+                        <summary>Job requirements your master has no evidence for (left out on purpose)</summary>
+                        <p><span th:each="g : ${tailored.gapsNotAddressed()}" class="kw kw-gap" th:text="${g}">Kafka</span></p>
+                        <p class="muted small">See the Fit tab for whether these matter, and the cover letter for how to address them honestly.</p>
+                    </details>
+                    <details th:unless="${#lists.isEmpty(tailored.omitted())}" class="result-details">
+                        <summary th:text="'Left out of this resume (' + ${#lists.size(tailored.omitted())} + ')'">Left out</summary>
+                        <ul class="plain-list">
+                            <li th:each="o : ${tailored.omitted()}"><code th:text="${o.id()}">work-2.h3</code>
+                                <span th:text="${sources[o.id()]} ?: ''" class="muted"></span> <span th:text="'· ' + ${o.reason()}">less relevant</span></li>
+                        </ul>
+                    </details>
+                </section>
+
+                <aside class="panel score-panel" th:if="${report != null}">
+                    <h2>Scorecard</h2>
+                    <section th:replace="~{fragments/scorecard :: scorecard(${report}, '', false)}"></section>
+                    <section th:replace="~{fragments/scorecard :: keywordPanel(${report.keywords()}, ${app.id})}"></section>
+                </aside>
+            </div>
+        </th:block>
+    </div>
+
+    <!-- ===== Fit tab (Phase 5b) ===== -->
+    <th:block th:if="${tab == 'fit'}">
+        <div th:replace="~{applications/fit :: fitTab}"></div>
+    </th:block>
+
+    <!-- ===== Cover letter tab (Phase 7) ===== -->
+    <th:block th:if="${tab == 'cover'}">
+        <div th:replace="~{applications/cover :: coverTab}"></div>
+    </th:block>
+
+    <!-- ===== Export tab (Phase 6) ===== -->
+    <th:block th:if="${tab == 'export'}">
+        <div th:replace="~{applications/export :: exportTab}"></div>
+    </th:block>
+</main>
+
+<footer th:replace="~{layout :: siteFooter}"></footer>
+</body>
+</html>

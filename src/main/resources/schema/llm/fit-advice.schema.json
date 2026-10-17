@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "LLM output for prompts/fit-advice.md (Phase 5b, ADVISORY). Every property is required; projectSuggestion.title \"\" means no project.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["recommendation", "headline", "reasons", "strengths", "gapsToAddress", "projectSuggestion"],
+  "properties": {
+    "recommendation": { "enum": ["APPLY_NOW", "APPLY_AND_ADDRESS_GAP", "BUILD_PROJECT_FIRST", "SKIP"] },
+    "headline": { "type": "string", "minLength": 1 },
+    "reasons": { "type": "array", "items": { "type": "string" } },
+    "strengths": {
+      "type": "array",
+      "items": {
+        "type": "object", "additionalProperties": false, "required": ["point", "sourceIds"],
+        "properties": {
+          "point": { "type": "string" },
+          "sourceIds": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "gapsToAddress": {
+      "type": "array",
+      "items": {
+        "type": "object", "additionalProperties": false, "required": ["term", "howToAddress"],
+        "properties": { "term": { "type": "string" }, "howToAddress": { "type": "string" } }
+      }
+    },
+    "projectSuggestion": {
+      "type": "object", "additionalProperties": false,
+      "required": ["title", "targetsGaps", "description", "scope", "estimatedDays", "showcase"],
+      "properties": {
+        "title": { "type": "string" },
+        "targetsGaps": { "type": "array", "items": { "type": "string" } },
+        "description": { "type": "string" },
+        "scope": { "type": "array", "items": { "type": "string" } },
+        "estimatedDays": { "type": "integer", "minimum": 0 },
+        "showcase": { "type": "string" }
+      }
+    }
+  }
+}

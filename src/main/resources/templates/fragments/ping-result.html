@@ -1,0 +1,25 @@
+<!--
+  Returned to htmx by POST /settings/ping. Not a full page: two top-level elements.
+  1. The result box, swapped into #ping-result (the button's hx-target).
+  2. An out-of-band swap (hx-swap-oob) that replaces the footer's #llm-cost with the new total.
+-->
+<div xmlns:th="http://www.thymeleaf.org"
+     class="result" th:classappend="${ping.ok()} ? 'result-ok' : 'result-fail'">
+    <th:block th:if="${ping.ok()}">
+        <strong>Connected.</strong>
+        <span class="mono" th:text="${ping.model()}">claude-haiku-5-5</span> replied
+        “<span th:text="${ping.message()}">Hello</span>”
+        <div class="muted small">
+            <span th:text="${ping.latencyMs()}">850</span> ms ·
+            <span th:text="${ping.usage().input()}">60</span> in /
+            <span th:text="${ping.usage().output()}">40</span> out tokens ·
+            <span th:text="${ping.costUsd()}">$0.0000</span> ·
+            attempt<span th:if="${ping.attempts() != 1}">s</span> <span th:text="${ping.attempts()}">1</span>
+        </div>
+    </th:block>
+    <th:block th:unless="${ping.ok()}">
+        <strong>Failed.</strong> <span th:text="${ping.error()}">error</span>
+    </th:block>
+</div>
+<span xmlns:th="http://www.thymeleaf.org" id="llm-cost" hx-swap-oob="true"
+      th:insert="~{layout :: llmCostText}"></span>

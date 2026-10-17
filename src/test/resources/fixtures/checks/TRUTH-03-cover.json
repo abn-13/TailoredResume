@@ -1,0 +1,5 @@
+{ "rule": "TRUTH-03", "expect": "ERROR", "mode": "COVER_LETTER", "expectMessage": "Kafka",
+  "pass": { "coverLetter": { "recipientLine": "Dear Hiring Manager,", "subject": "", "signOff": "Yours sincerely,", "wordCount": 0,
+            "paragraphs": [ {"text": "I built REST endpoints with Spring Boot and PostgreSQL. I have not used Kafka in production yet.", "sourceIds": ["work-1.h2"]} ] } },
+  "fail": { "coverLetter": { "recipientLine": "Dear Hiring Manager,", "subject": "", "signOff": "Yours sincerely,", "wordCount": 0,
+            "paragraphs": [ {"text": "I built event-driven refund services with Spring Boot and Kafka.", "sourceIds": ["work-1.h2"]} ] } } }

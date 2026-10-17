@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{layout :: htmlHead('Job Postings')}"></head>
+<body>
+<header th:replace="~{layout :: topbar('new-application')}"></header>
+<main class="container">
+    <section class="page-head"><h1>Job postings</h1>
+        <p class="lede"><a th:href="@{/applications/new}">Add another</a></p></section>
+    <section class="panel">
+        <div th:if="${#lists.isEmpty(rows)}" class="empty"><p>No job postings yet.</p></div>
+        <div class="table-wrap" th:unless="${#lists.isEmpty(rows)}">
+            <table>
+                <thead><tr><th>Title</th><th>Company</th><th>Source</th><th>Added</th></tr></thead>
+                <tbody><tr th:each="r : ${rows}">
+                    <td class="wrap"><a th:href="@{/jobs/{id}(id=${r.id()})}" th:text="${r.title()} ?: '(untitled)'">Backend Engineer</a></td>
+                    <td class="wrap" th:text="${r.company()}">Acme</td>
+                    <td th:text="${r.source()}">MyCareersFuture</td>
+                    <td th:text="${r.created()}">17 Oct 2026</td>
+                </tr></tbody>
+            </table>
+        </div>
+    </section>
+</main>
+<footer th:replace="~{layout :: siteFooter}"></footer>
+</body>
+</html>
