@@ -7,9 +7,9 @@ descriptions, then checks the output with deterministic, rule-based checks, not 
 - Design decisions and conventions: [CLAUDE.md](CLAUDE.md)
 - Licence: MIT ([LICENSE](LICENSE))
 
-**Status:** all phases (0-9, plus 5b) are built and tested: 425 automated tests pass. Screenshots of every
-page are in [docs/screenshots/](docs/screenshots/), and a sample exported resume and cover letter (fake person)
-are in [docs/samples/](docs/samples/).
+**Status:** all phases (0-9, plus 5b) are built and tested: 438 automated tests pass, plus 2 live API tests
+that run only when a key is set. Screenshots of every page are in [docs/screenshots/](docs/screenshots/), and a
+sample exported resume and cover letter (fake person) are in [docs/samples/](docs/samples/).
 
 ## Getting started
 
@@ -132,7 +132,7 @@ Tests use an in-memory database (the `test` profile is set in `pom.xml`) and nev
 Run each step in order. Expected results are in *italics*.
 
 1. **Tests pass without a key.** In a shell without `ANTHROPIC_API_KEY`: `./mvnw test`.
-   *`Failures: 0, Errors: 0, Skipped: 1` (the skipped one is the live ping).*
+   *`Failures: 0, Errors: 0, Skipped: 2` (the two live API tests: ping and schema compile).*
 2. **App starts without a key.** `./mvnw spring-boot:run`.
    *Log ends with `Started TailorSgApplication`. `./data/tailorsg.mv.db` now exists.*
 3. **Health endpoint.** `curl -s localhost:8080/api/health`
@@ -170,7 +170,7 @@ Try this phase on a **throwaway in-memory database** first, so the fake sample n
 ./mvnw spring-boot:run -Dspring-boot.run.arguments="--spring.datasource.url=jdbc:h2:mem:try"
 ```
 
-1. **Tests.** `./mvnw test` *All pass, 1 skipped (live ping without a key).*
+1. **Tests.** `./mvnw test` *All pass, 2 skipped (live API tests without a key).*
 2. **Empty state.** Open <http://localhost:8080/master>.
    *"No master resume yet" and a **Load sample (fake data)** button. Dashboard shows Master resume "Not created".*
 3. **Load the sample.** Click **Load sample**.
@@ -218,7 +218,7 @@ Again on a throwaway database, with the sample loaded:
 # then open http://localhost:8080/master and click Load sample
 ```
 
-1. **Tests.** `./mvnw test` *All pass, 1 skipped (live ping).*
+1. **Tests.** `./mvnw test` *All pass, 2 skipped (live API tests).*
 2. **Readable view.** Master Resume, then **View**.
    *Jordan Tan's resume in reading order: dates like "May 2026 - Present", IDs such as `work-1.h1` next to each
    highlight, green metric chips, skills grouped by category, Kubernetes with a dashed "no evidence" chip.*
@@ -252,7 +252,9 @@ Again on a throwaway database, with the sample loaded:
     With a key, on a fresh throwaway DB, upload your resume PDF or DOCX.
     *You land on a review page with a "Check these" list: lines removed for privacy, model warnings, assumed
     +65, year-only dates set to January, and any name, title, bullet or number not found in your file. Open
-    "Resulting master resume" and compare it against your resume line by line before applying.*
+    "Resulting master resume" and compare it against your resume line by line before applying.* Settings,
+    "Recent model calls" shows *two calls, `master-import-profile` and `master-import-entries` (together well
+    under a cent)*: the import is split in two because the API rejects the whole schema as too large.
     A scanned or image-only PDF gives *"No readable text found..."*.
 12. **Your real data.** When happy, run normally (`./mvnw spring-boot:run`), import your real resume, review every
     note, and apply.
@@ -271,7 +273,7 @@ Claude's own output go through the same checks.
 
 **Phase 3: CheckEngine and master health**
 
-1. **Tests.** `./mvnw test` *All pass, 1 skipped.* `CheckRuleFixturesTest` runs a passing and a failing JSON
+1. **Tests.** `./mvnw test` *All pass, 2 skipped (live API tests).* `CheckRuleFixturesTest` runs a passing and a failing JSON
    fixture for every rule (`src/test/resources/fixtures/checks/`).
 2. **Health.** Master Resume, **Health**. *Scorecard with "Singapore norms" and "Bullet quality" panels,
    PASS/WARN/FAIL badges and 0-100 sub-scores, the banner "Scores are heuristics from published guidance, not a

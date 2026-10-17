@@ -25,7 +25,9 @@ import java.util.Set;
  * happens to be <em>named</em> "pattern" or "title" is left alone.
  *
  * <p>Not handled here: the API's per-request limits of 24 optional properties and 16 union-typed
- * properties. Schemas sent to the API are written to stay within them (see the import schema test).
+ * properties, and its unpublished limit on compiled grammar size ("The compiled grammar is too large").
+ * Schemas sent to the API are written to stay within them; {@code LlmSchemaLimitsTest} checks all three
+ * offline, and {@code LlmSchemaCompileLiveTest} checks against the real API when a key is set.
  */
 @Component
 public class ApiSchemaSanitizer {

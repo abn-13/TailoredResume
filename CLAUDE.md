@@ -83,6 +83,11 @@ not the LLM's own opinion.
   `LlmSchemaLimitsTest` checks every prompt's schema; add new prompts to it. Pattern for big outputs:
   make every property required and use `""` / `[]` for "absent" (see `master-import.schema.json`), then
   clean up deterministically in code (see `ImportMapper`).
+- **Grammar size limit (unpublished, 400 "The compiled grammar is too large"):** independent of the two
+  limits above. Measured 2026-10-17: schemas with ≤ 68 properties after expanding `$ref`s compiled, ≥ 80 were
+  rejected (`LlmSchemaLimitsTest.MAX_EXPANDED_PROPERTIES`). Bigger outputs are split into several prompts and
+  merged in code (see `ResumeImportService.PROMPTS`). `LlmSchemaCompileLiveTest` (`live`) sends every
+  prompt's schema to the real API for about $0.001.
 - **Retry policy:** invalid JSON or schema errors lead to exactly one retry with the errors appended as an
   extra user block, then `LlmValidationException`. `refusal` / `max_tokens` /
   `model_context_window_exceeded` fail immediately (no retry).
@@ -174,7 +179,9 @@ not the LLM's own opinion.
   Dated entries are inserted newest-first. Highlight form: selected skills get the new highlight as
   evidence; "new skills" are created with it as evidence.
 - **Import** (`ResumeImportService`): extract text (`documents/TextExtractor`, type from magic bytes) →
-  redact P6 lines → extractor model (`prompts/master-import.md` v1) → `ImportMapper` (empties dropped,
+  redact P6 lines → extractor model in two calls (`master-import-profile` v1, then `master-import-entries`
+  v1: the whole schema exceeded the grammar size limit), merged into `master-import.schema.json` (local
+  only; `ImportSchemaSplitTest` proves the parts are exact slices of it) → `ImportMapper` (empties dropped,
   YYYY→YYYY-01, SG phone → +65, bare domains → https://, each with a warning) → `EvidenceLinker` (skill
   evidence by highlight skills list or whole-word mention; names under 3 chars only via the list) →
   `ImportVerifier` (every name, title, bullet and number must appear in the uploaded text, else a note).
@@ -275,6 +282,10 @@ not the LLM's own opinion.
 - Exported files survive `@Transactional` rollback: tests use a random exports folder per context
   (`${random.uuid}` in application-test.yml) and clear it in `@BeforeEach`.
 - A generic `.field input { width: 100% }` rule also stretches radio buttons: scope it.
+- **Structured outputs: passing the published limits is not enough.** The first live import failed with
+  "The compiled grammar is too large" (the error text mentions tools, but our requests have none) for a
+  schema with 0 optional and 0 union properties: 96 properties once `$ref`s are expanded. Inlining the refs
+  or dropping one section did not help; splitting it in two did. Probe new schemas live before relying on them.
 
 ## Phases
 
@@ -325,12 +336,13 @@ not the LLM's own opinion.
 
 ## Current phase
 
-**All phases complete (2026-10-17).** 425 tests pass, 1 skipped (live ping without a key). Smoke-tested end to
-end in demo mode on a scratch database; screenshots in `docs/screenshots/`, sample exports in `docs/samples/`.
-The real LLM prompts (tailor, fit-advice, cover-letter, master-update, jd-extract, master-import) have not
-run against the live API yet (no key in the dev shell): their schemas pass `LlmSchemaLimitsTest`, and every
-pipeline is tested with canned outputs. First thing to do with a key: run one real application through and
-compare its scorecard with the demo's.
+**All phases complete (2026-10-17).** 438 tests pass offline; 2 live tests (ping, schema compile) are skipped
+without a key. Smoke-tested end to end in demo mode on a scratch database; screenshots in `docs/screenshots/`,
+sample exports in `docs/samples/`.
+With a key (2026-10-17): every prompt's schema compiles on the live API (`LlmSchemaCompileLiveTest`), and
+resume import ran live on the sample PDF (2 Haiku calls, $0.0028, applies with no errors) after the
+grammar-size fix. Tailor, fit-advice, cover-letter, master-update and jd-extract have compiled but not yet
+produced a real answer: run one real application through and compare its scorecard with the demo's.
 
 Ideas not built (ask before starting): Skills Framework for ICT import (`skills/sfw_ict.csv`), a form-based
 threshold editor, per-application option editing after creation (page target, summary).

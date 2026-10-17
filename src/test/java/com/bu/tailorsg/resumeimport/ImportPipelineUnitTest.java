@@ -12,6 +12,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * The deterministic parts of resume import, without Spring or an LLM: redaction, mapping the model's
@@ -41,6 +42,35 @@ class ImportPipelineUnitTest {
                 .contains("Alex Lim", "Example Logistics Pte Ltd", "Languages: Java, Python, SQL");
         assertThat(redacted.notes()).hasSize(2)
                 .allSatisfy(n -> assertThat(n).doesNotContain("S1234567D", "1995").contains("not stored or sent"));
+    }
+
+    // ---------------------------------------------------------------- merging the two extraction requests
+
+    @Test
+    void mergeJoinsThePartsAndKeepsEachWarningOnce() {
+        JsonNode profile = JSON.readTree("""
+                {"basics": {"name": "Alex Lim"}, "skills": [],
+                 "warnings": ["Left out date of birth (never stored)"]}""");
+        JsonNode entries = JSON.readTree("""
+                {"work": [{"name": "Example Co"}],
+                 "warnings": ["Left out date of birth (never stored)", "Education dates give only years"]}""");
+
+        ObjectNode merged = ResumeImportService.merge(List.of(profile, entries));
+
+        assertThat(merged.propertyNames()).containsExactlyInAnyOrder("basics", "skills", "work", "warnings");
+        assertThat(merged.at("/work/0/name").stringValue()).isEqualTo("Example Co");
+        assertThat(merged.path("warnings").values()).extracting(w -> w.stringValue(""))
+                .containsExactly("Left out date of birth (never stored)", "Education dates give only years");
+    }
+
+    @Test
+    void mergeRefusesPartsThatBothReturnTheSameSection() {
+        List<JsonNode> overlapping = List.of(
+                JSON.readTree("{\"skills\": [], \"warnings\": []}"),
+                JSON.readTree("{\"skills\": [], \"warnings\": []}"));
+
+        assertThatThrownBy(() -> ResumeImportService.merge(overlapping))
+                .isInstanceOf(IllegalStateException.class).hasMessageContaining("\"skills\"");
     }
 
     // ---------------------------------------------------------------- mapper

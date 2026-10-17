@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "LLM output for prompts/master-import-entries.md: the experience half of a resume import (entries with their bullets). Every property is copied unchanged from master-import.schema.json (ImportSchemaSplitTest checks this). The import is split in two because the whole schema compiles to a structured-output grammar the API rejects as too large.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["work", "projects", "education", "volunteer", "warnings"],
+  "properties": {
+    "work": { "type": "array", "items": { "$ref": "#/$defs/experience" } },
+    "volunteer": { "type": "array", "items": { "$ref": "#/$defs/experience" } },
+    "projects": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "role", "url", "startDate", "endDate", "description", "highlights", "keywords"],
+        "properties": {
+          "name": { "type": "string" },
+          "role": { "type": "string" },
+          "url": { "type": "string" },
+          "startDate": { "type": "string" },
+          "endDate": { "type": "string" },
+          "description": { "type": "string" },
+          "highlights": { "type": "array", "items": { "$ref": "#/$defs/highlight" } },
+          "keywords": { "$ref": "#/$defs/stringList" }
+        }
+      }
+    },
+    "education": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["institution", "area", "studyType", "startDate", "endDate", "score", "scoreScale", "courses", "highlights"],
+        "properties": {
+          "institution": { "type": "string" },
+          "area": { "type": "string", "description": "Field of study, e.g. Mechanical Engineering" },
+          "studyType": { "type": "string", "description": "Qualification, e.g. Master of Engineering" },
+          "startDate": { "type": "string" },
+          "endDate": { "type": "string" },
+          "score": { "type": "string", "description": "Grade or GPA as written" },
+          "scoreScale": { "type": "string", "description": "e.g. 5.0 for a GPA out of 5" },
+          "courses": { "$ref": "#/$defs/stringList" },
+          "highlights": { "type": "array", "items": { "$ref": "#/$defs/highlight" } }
+        }
+      }
+    },
+    "warnings": { "$ref": "#/$defs/stringList" }
+  },
+  "$defs": {
+    "stringList": { "type": "array", "items": { "type": "string" } },
+    "metric": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "unit", "label"],
+      "properties": {
+        "value": { "type": "string", "description": "The number exactly as written" },
+        "unit": { "type": "string", "description": "e.g. %, ms, users; empty if none" },
+        "label": { "type": "string", "description": "What it measures, e.g. latency reduction" }
+      }
+    },
+    "highlight": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["text", "metrics", "skills"],
+      "properties": {
+        "text": { "type": "string", "description": "One bullet point, verbatim" },
+        "metrics": { "type": "array", "items": { "$ref": "#/$defs/metric" } },
+        "skills": { "$ref": "#/$defs/stringList" }
+      }
+    },
+    "experience": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "position", "location", "employmentType", "startDate", "endDate", "summary", "highlights"],
+      "properties": {
+        "name": { "type": "string", "description": "Employer or organisation" },
+        "position": { "type": "string" },
+        "location": { "type": "string" },
+        "employmentType": { "enum": ["Internship", "Full-time", "Contract", "Part-time", ""] },
+        "startDate": { "type": "string" },
+        "endDate": { "type": "string" },
+        "summary": { "type": "string" },
+        "highlights": { "type": "array", "items": { "$ref": "#/$defs/highlight" } }
+      }
+    }
+  }
+}

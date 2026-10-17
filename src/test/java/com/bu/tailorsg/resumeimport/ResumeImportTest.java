@@ -3,6 +3,8 @@ package com.bu.tailorsg.resumeimport;
 import com.bu.tailorsg.documents.TestDocuments;
 import com.bu.tailorsg.llm.ClaudeClient;
 import com.bu.tailorsg.llm.ClaudeClient.LlmResult;
+import com.bu.tailorsg.llm.JsonSchemaService;
+import com.bu.tailorsg.llm.PromptLibrary;
 import com.bu.tailorsg.llm.TokenUsage;
 import com.bu.tailorsg.master.MasterResumeService;
 import com.bu.tailorsg.updates.PendingUpdate;
@@ -26,6 +28,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -33,7 +36,8 @@ import static org.mockito.Mockito.when;
 
 /**
  * Import end to end with the extractor model mocked: a DOCX goes in, a reviewable update comes out, and
- * applying it creates a valid master resume. The mock returns fixtures/import/llm-output.json.
+ * applying it creates a valid master resume. The import makes two requests (profile and entries); each
+ * mock returns the sections of fixtures/import/llm-output.json that its part schema owns.
  */
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -44,6 +48,8 @@ class ResumeImportTest {
     @Autowired private ResumeImportService importer;
     @Autowired private PendingUpdateService updates;
     @Autowired private MasterResumeService master;
+    @Autowired private JsonSchemaService schemas;
+    @Autowired private PromptLibrary prompts;
     @Autowired private JsonMapper json;
     @Autowired private MockMvcTester mvc;
 
@@ -54,8 +60,11 @@ class ResumeImportTest {
         resumeDocx = TestDocuments.docx(Arrays.asList(ImportPipelineUnitTest.fixture("resume.txt").split("\n")));
         JsonNode llmOutput = json.readTree(ImportPipelineUnitTest.fixture("llm-output.json"));
         when(claude.isConfigured()).thenReturn(true);
-        when(claude.callJson(eq("master-import"), anyList())).thenReturn(
-                new LlmResult(llmOutput, "master-import", 1, "claude-haiku-5-5", 1, TokenUsage.ZERO, BigDecimal.ZERO));
+        for (String prompt : ResumeImportService.PROMPTS) {
+            JsonNode part = ImportSchemaSplitTest.slice(llmOutput, schemas.rawSchema(prompts.get(prompt).schemaPath()));
+            when(claude.callJson(eq(prompt), anyList())).thenReturn(
+                    new LlmResult(part, prompt, 1, "claude-haiku-5-5", 1, TokenUsage.ZERO, BigDecimal.ZERO));
+        }
     }
 
     @Test
@@ -70,6 +79,8 @@ class ResumeImportTest {
                 .anySatisfy(n -> assertThat(n).contains("From the model: Education dates give only years"))
                 .anySatisfy(n -> assertThat(n).contains("assumed Singapore (+65)"))
                 .anySatisfy(n -> assertThat(n).contains("Skill \"Kubernetes\" was not found"));
+        // Both mocked parts repeat the fixture's warning; the merge keeps it once.
+        assertThat(updates.notesOf(update)).filteredOn(n -> n.contains("Education dates give only years")).hasSize(1);
 
         PendingUpdateService.Preview preview = updates.preview(update);
         assertThat(preview.errors()).isEmpty();
@@ -88,10 +99,13 @@ class ResumeImportTest {
     void personalDataNeverReachesTheModelOrTheDatabase() {
         PendingUpdate update = importer.importResume("alex-lim.docx", resumeDocx);
 
-        @SuppressWarnings("unchecked")
-        ArgumentCaptor<List<String>> sent = ArgumentCaptor.forClass(List.class);
-        verify(claude).callJson(eq("master-import"), sent.capture());
-        assertThat(sent.getValue().getFirst()).doesNotContain("S1234567D", "1 January 1995").contains("Alex Lim");
+        for (String prompt : ResumeImportService.PROMPTS) {
+            @SuppressWarnings("unchecked")
+            ArgumentCaptor<List<String>> sent = ArgumentCaptor.forClass(List.class);
+            verify(claude).callJson(eq(prompt), sent.capture());
+            assertThat(sent.getValue().getFirst()).as(prompt)
+                    .doesNotContain("S1234567D", "1 January 1995").contains("Alex Lim");
+        }
         assertThat(update.getRawInput()).doesNotContain("S1234567D", "1 January 1995");
     }
 
@@ -115,7 +129,7 @@ class ResumeImportTest {
         assertThat(mvc.post().multipart().uri("/master/import").file(scanned))
                 .hasRedirectedUrl("/master/import")
                 .flash().containsKey("flashError");
-        verify(claude, never()).callJson(eq("master-import"), anyList());
+        verify(claude, never()).callJson(anyString(), anyList());
     }
 
     @Test

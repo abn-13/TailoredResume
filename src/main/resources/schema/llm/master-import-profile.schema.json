@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "LLM output for prompts/master-import-profile.md: the profile half of a resume import. Every property is copied unchanged from master-import.schema.json (ImportSchemaSplitTest checks this). The import is split in two because the whole schema compiles to a structured-output grammar the API rejects as too large.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["basics", "skills", "certificates", "awards", "languages", "extras", "warnings"],
+  "properties": {
+    "basics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "label", "email", "phone", "url", "city", "countryCode", "profiles", "summary", "workAuthorization"],
+      "properties": {
+        "name": { "type": "string" },
+        "label": { "type": "string", "description": "Headline under the name, e.g. Software Engineer" },
+        "email": { "type": "string" },
+        "phone": { "type": "string" },
+        "url": { "type": "string", "description": "Personal website, if any" },
+        "city": { "type": "string" },
+        "countryCode": { "type": "string" },
+        "profiles": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["network", "username", "url"],
+            "properties": {
+              "network": { "enum": ["LinkedIn", "GitHub", "Portfolio", "Other"] },
+              "username": { "type": "string" },
+              "url": { "type": "string" }
+            }
+          }
+        },
+        "summary": { "type": "string", "description": "The resume's summary or profile paragraph, verbatim" },
+        "workAuthorization": { "enum": ["EP_REQUIRED", "EP_HOLDER", "PR", "CITIZEN", "OTHER", ""] }
+      }
+    },
+    "skills": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "category"],
+        "properties": {
+          "name": { "type": "string" },
+          "category": { "enum": ["Languages", "Frameworks", "Cloud/DevOps", "Databases", "Tools", "Domain", "Soft"] }
+        }
+      }
+    },
+    "certificates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "issuer", "date", "url"],
+        "properties": {
+          "name": { "type": "string" },
+          "issuer": { "type": "string" },
+          "date": { "type": "string" },
+          "url": { "type": "string" }
+        }
+      }
+    },
+    "awards": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["title", "awarder", "date", "summary"],
+        "properties": {
+          "title": { "type": "string" },
+          "awarder": { "type": "string" },
+          "date": { "type": "string" },
+          "summary": { "type": "string" }
+        }
+      }
+    },
+    "languages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["language", "fluency"],
+        "properties": {
+          "language": { "type": "string" },
+          "fluency": { "type": "string" }
+        }
+      }
+    },
+    "extras": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["type", "text", "date"],
+        "properties": {
+          "type": { "enum": ["publication", "leadership", "cca", "other"] },
+          "text": { "type": "string" },
+          "date": { "type": "string" }
+        }
+      }
+    },
+    "warnings": { "$ref": "#/$defs/stringList" }
+  },
+  "$defs": {
+    "stringList": { "type": "array", "items": { "type": "string" } }
+  }
+}

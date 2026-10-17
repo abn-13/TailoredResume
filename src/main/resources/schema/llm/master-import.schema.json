@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "description": "LLM output for prompts/master-import.md. Every property is required (use \"\" or [] when absent) and there are no union types, to stay within the structured-output limits of 24 optional and 16 union-typed properties per request. ImportMapper turns this into a master resume; the strict master schema then validates the result.",
+  "description": "The merged output of a resume import: master-import-profile plus master-import-entries, joined by ResumeImportService. Validated locally only and never sent to the API whole: sent as one structured-output schema it compiled to a grammar the API rejected as too large (HTTP 400, 2026-10-17). Every property is required (use \"\" or [] when absent) and there are no union types, to stay within the structured-output limits of 24 optional and 16 union-typed properties per request. ImportMapper turns this into a master resume; the strict master schema then validates the result.",
   "type": "object",
   "additionalProperties": false,
   "required": ["basics", "work", "projects", "education", "skills", "certificates", "awards", "languages", "volunteer", "extras", "warnings"],
